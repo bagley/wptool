@@ -177,6 +177,7 @@ function wpdb() {
     if [[ -n "$2" ]]; then
       if [[ "$2" != *.sql ]]; then echo -e "'$2' is not a valid filename!\n" && return
       elif [[ -f "$2" ]]; then echo -e "File '$2' already exists!\n" && return
+      fi
     else wpconn "wpdbexport" "$2"
     fi
     echo
