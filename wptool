@@ -115,7 +115,7 @@ function wpconn() {
   elif [[ $1 == "wpdbexport" ]]; then
     file="$2"
     [[ -z "$file" ]] && file="$dbname"_$(now).sql
-    mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" > "$2" && echo "Exported database '$dbname' to file '$file'." || echo "Failed to export database '$dbname' to file '$2'"!
+    mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" > "$file" && echo "Exported database '$dbname' to file '$file'." || echo "Failed to export database '$dbname' to file '$file'"!
     return
   elif [[ $1 == "wpdb" ]]; then q=$q'SHOW tables like "'$dbprefix'%";';
   elif [[ $1 == "wpdbver" ]]; then q=$q'SELECT option_value FROM '$dbprefix'options WHERE option_name = "db_version";'
