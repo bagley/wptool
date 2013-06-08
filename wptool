@@ -96,6 +96,7 @@ function wpht() {
 EOF
   php ht_$temp.php 1>/dev/null && echo "Wrote to .htaccess..." || echo Error running fix_$temp or writing to .htaccess!
   rm -f ht_$temp.php && echo "Removed ht_$temp.php..."
+  echo
 }
 
 function wpconn() {
@@ -171,10 +172,11 @@ function wpdb() {
   else
     [[ $1 == "-q" ]] && echo -e "\tDatabase:\tOK" || echo -e "Database connection settings appear to be fine.\n"
   fi
-  if [[ $1 == "-i" ]]; then [[ ! -f "$2" ||  "$2" != *.sql ]] && echo "'$2' is not a valid file!\n" || wpconn "wpdbimport" "$2"
+  if [[ $1 == "-i" ]]; then [[ ! -f "$2" ||  "$2" != *.sql ]] && echo -e "'$2' is not a valid file!\n" || wpconn "wpdbimport" "$2"
   elif [[ $1 == "-e" ]]; then
-    if [[ -n "$2" && "$2" != *.sql ]]; then echo -e "'$2' is not a valid filename!\n"
-    elif [[ -f "$2" ]]; then echo -e "File '$2' already exists!\n"
+    if [[ -n "$2" ]]; then
+      if [[ "$2" != *.sql ]]; then echo -e "'$2' is not a valid filename!\n" && return
+      elif [[ -f "$2" ]]; then echo -e "File '$2' already exists!\n" && return
     else wpconn "wpdbexport" "$2"
     fi
     echo
@@ -317,7 +319,7 @@ function wpuser() {
     elif [[ $2 == "-u" ]]; then echo -e "Updated username for user $1 from '$(echo -e "$myconn" | tail -1)' to '$3'..."
     elif [[ $2 == "-a" ]]; then echo -e "Promoted user $1 to admin..."
     elif [[ $2 == "-d" ]]; then echo -e "\nDeleted user $1 ('$(echo -e "$myconn" | tail -1)')..."
-    elif [[ $1 == "new" ]]; then echo -e "Created new admin (user '$(echo -e "$myconn" | tail -1)') with username 'deleteme' and password 'deleteme'..."
+    elif [[ $1 == "new" || $1 == "-n" ]]; then echo -e "Created new admin (user '$(echo -e "$myconn" | tail -1)') with username 'deleteme' and password 'deleteme'..."
     elif [[ -z $2 ]]; then echo -e "$myconn" | tail -n +2
     fi
   else echo "$myconn"
@@ -331,7 +333,7 @@ function wpplug() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "This tool does basic plugin functions, such as displaying active and available plugins, or disabling them all.\n"
     echo -e "Usage:\n"
-    echo -e "\twpuser [option]\n"
+    echo -e "\twpplug [option]\n"
     echo -e "\t-d\n\t\tdisable all plugins by renaming the plugins folder\n"
     return
   elif [[ ! -d $folder ]]; then echo "The $folder folder was not found"! && return
@@ -356,7 +358,7 @@ function wptests() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "This tool does basic tests on the install.\n"
     echo -e "Usage:\n"
-    echo -e "\twpuser [param [option param]]\n"
+    echo -e "\twptests [param [option param]]\n"
     echo -e "\tall\n\t\ttests each item in wp-content/plugins on the server\n"
     echo -e "\tall --url URL\n\t\ttests HTTP status code for each item in wp-content/plugins at specified url URL\n"
     return
@@ -397,7 +399,7 @@ function wptests() {
 
 function wpstats() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
-    echo -e "This tool returns a basic overview of the Wordpress install.\n\nUsage:\n\n\twpstats\n" && return
+    echo -e "\nThis tool returns a basic overview of the Wordpress install.\n\nUsage:\n\n\twpstats\n" && return
   elif [[ -n $1 ]]; then return
   fi
   echo
