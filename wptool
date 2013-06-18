@@ -42,7 +42,7 @@ function wpfix() {
     return
   elif [[ ! -f wp-config.php || ! -f wp-admin/upgrade-functions.php ]]; then
     echo -e "Could not find one or more of the necessary files (wp-config.php or wp-admin/upgrade-functions.php)!\n"
-    return
+    return 9
   fi
   temp=$(now)
   cat >fix_$temp.php <<EOF
@@ -64,7 +64,7 @@ function wpfix() {
 ?>
 EOF
   echo "Created fix_$temp.php..."
-  php fix_$temp.php | egrep -v "(ol|html)" && echo "Ran fix_$temp.php..." || echo Error running fix_$temp!
+  php -q fix_$temp.php && echo "Ran fix_$temp.php..." || echo Error running fix_$temp!
   rm -f fix_$temp.php && echo "Removed fix_$temp.php..."
   echo
 }
@@ -77,7 +77,7 @@ function wpht() {
   elif [[ ! -f wp-config.php ]]; then
     echo -e "Could not find one or more of the necessary files:\n"
     echo -e "\twp-config.php\n\twp-admin/includes/misc.php\n\twp-admin/includes/file.php\n"
-    return
+    return 9
   fi
   temp=$(now)
   [[ -f .htaccess ]] && mv .htaccess .htaccess_$temp
@@ -94,7 +94,7 @@ function wpht() {
   }
 ?>
 EOF
-  php ht_$temp.php 1>/dev/null && echo "Wrote to .htaccess..." || echo Error running fix_$temp or writing to .htaccess!
+  php -q ht_$temp.php 1>/dev/null && echo "Wrote to .htaccess..." || echo Error running fix_$temp or writing to .htaccess!
   rm -f ht_$temp.php && echo "Removed ht_$temp.php..."
   echo
 }
@@ -103,19 +103,19 @@ function wpconn() {
   [[ -z $1 || $1 != wp* ]] && return
   if [[ ! -f wp-config.php ]]; then
     echo -e "\nCould not find wp-config.php!\n"
-    return
+    return 9
   fi
   myconn=""
   read dbname dbuser dbpass dbhost junk dbprefix <<< $(cat wp-config.php | egrep "'DB_|table_prefix" | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
   [[ -z $dbprefix ]] && dbprefix=$junk #sometimes there isn't a junk entry
   q="USE $dbname; "
   if [[ $1 == "wpdbimport" ]]; then
-    mysql -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" < "$2" && echo "Imported file '$2' to database '$dbname'." || echo "Failed to import file '$2' to database '$dbname'"!
+    mysql -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" < "$2" && echo -e "Imported file '$2' to database '$dbname'.\n" || echo -e "Failed to import file '$2' to database '$dbname'!\n"
     return
   elif [[ $1 == "wpdbexport" ]]; then
     file="$2"
     [[ -z "$file" ]] && file="$dbname"_$(now).sql
-    mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" > "$file" && echo "Exported database '$dbname' to file '$file'." || echo "Failed to export database '$dbname' to file '$file'"!
+    mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" > "$file" && echo -e "Exported database '$dbname' to file '$file'.\n" || echo -e "Failed to export database '$dbname' to file '$file'!\n"
     return
   elif [[ $1 == "wpdb" ]]; then q=$q'SHOW tables like "'$dbprefix'%";';
   elif [[ $1 == "wpdbver" ]]; then q=$q'SELECT option_value FROM '$dbprefix'options WHERE option_name = "db_version";'
@@ -160,7 +160,7 @@ function wpdb() {
     echo -e "\t-i FILE\n\t\texport current database to file FILE. The specified FILE must end in .sql"
     echo -e "\t-e [FILE]\n\t\texport current database to optional file FILE. If a FILE is specified, it must end in .sql\n"
     return
-  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return
+  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
   wpconn "wpdb"
   [[ $1 != "-q" ]] && echo -e "\n\tDB user:\t$dbuser\n\tDB pass:\t$dbpass\n\tDB host:\t$dbhost\n\tDB name:\t$dbname\n\tDB prefix:\t$dbprefix\n"
@@ -172,13 +172,21 @@ function wpdb() {
   else
     [[ $1 == "-q" ]] && echo -e "\tDatabase:\tOK" || echo -e "Database connection settings appear to be fine.\n"
   fi
-  if [[ $1 == "-i" ]]; then [[ ! -f "$2" ||  "$2" != *.sql ]] && echo -e "'$2' is not a valid file!\n" || wpconn "wpdbimport" "$2"
+  if [[ $1 == "-i" ]]; then
+    if [[ -z "$2" ]]; then echo -e "No import file specified!\n" && return
+    elif [[ "$2" != *.sql ]]; then echo -e "'$2' is not a valid file!\n" && return
+    elif [[ ! -f "$2" ]]; then echo -e "File '$2' does not exist!\n" && return
+    else
+      echo "Starting import..."
+      wpconn "wpdbimport" "$2"
   elif [[ $1 == "-e" ]]; then
     if [[ -n "$2" ]]; then
       if [[ "$2" != *.sql ]]; then echo -e "'$2' is not a valid filename!\n" && return
       elif [[ -f "$2" ]]; then echo -e "File '$2' already exists!\n" && return
       fi
-    else wpconn "wpdbexport" "$2"
+    else
+      echo "Starting export..."
+      wpconn "wpdbexport" "$2"
     fi
     echo
   fi
@@ -193,7 +201,7 @@ function wpurl() {
     echo -e "\twpurl [URL]\n"
     echo -e "\tURL\n\t\tspecify a URL to change the site to. If the URL does not start with 'http://' or 'https://' it will automatically append 'http://'.\n"
     return
-  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return
+  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
   if [[ -n $1 ]]; then
     newurl=$1
@@ -217,7 +225,7 @@ function wptheme() {
     echo -e "\tTHEME -s\n\t\tchange only the WP stylesheet"
     echo -e "\tTHEME -t\n\t\tchange only the WP template\n"
     return
-  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return
+  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
   folder=wp-content/themes
   if [[ $1 == "-q" || -z $1 ]]; then
@@ -264,7 +272,7 @@ function wpver() {
     return
   elif [[ ! -f wp-includes/version.php ]]; then
     [[ $1 == "-q" ]] && echo "Unknown" || echo -e "\tCould not find wp-includes/version.php!\n"
-    return
+    return 9
   fi
   ver=$(cat wp-includes/version.php | grep "wp_version " | sed "s/.*'\(.*\)'.*/\1/")
   if [[ $1 == "-q" ]]; then
@@ -272,7 +280,7 @@ function wpver() {
     return
   fi
   echo -e "\tWP version:\t$ver"
-  [[ ! -f wp-config.php ]] && echo -e "\tCould not find wp-config.php!\n" && return 1
+  [[ ! -f wp-config.php ]] && echo -e "\tCould not find wp-config.php!\n" && return 9
   wpconn "wpdbver"
   if [[ $myconn == "ERROR"* ]]; then echo -e "\tDB version:\tnot found"!
   else
@@ -295,7 +303,7 @@ function wpuser() {
     echo -e "\tUSERID -d\n\t\tdelete user USERID"
     echo -e "\t-n, new\n\t\tcreate new admin user\n"
     return
-  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return
+  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
   if [[ -z $1 ]]; then wpconn "wpuser"				#list users
   elif [[ $1 == "-q" ]]; then wpconn "wpuser1"			#list first user
@@ -337,8 +345,8 @@ function wpplug() {
     echo -e "\twpplug [option]\n"
     echo -e "\t-d\n\t\tdisable all plugins by renaming the plugins folder\n"
     return
-  elif [[ ! -d $folder ]]; then echo "The $folder folder was not found"! && return
-  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return
+  elif [[ ! -d $folder ]]; then echo "The $folder folder was not found"! && return 9
+  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
   if [[ $1 == "-d" ]]; then
     temp=$(now)
@@ -363,7 +371,7 @@ function wptests() {
     echo -e "\tall\n\t\ttests each item in wp-content/plugins on the server\n"
     echo -e "\tall --url URL\n\t\ttests HTTP status code for each item in wp-content/plugins at specified url URL\n"
     return
-  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return
+  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
   if [[ $2 == "--url" && -n $3 ]]; then status=$(curl -sIL -o /dev/null -w "%{http_code}\n" $3)
   else status=$(php index.php >/dev/null && php wp-admin/index.php >/dev/null; echo $?); fi
