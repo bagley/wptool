@@ -179,6 +179,7 @@ function wpdb() {
     else
       echo "Starting import..."
       wpconn "wpdbimport" "$2"
+    fi
   elif [[ $1 == "-e" ]]; then
     if [[ -n "$2" ]]; then
       if [[ "$2" != *.sql ]]; then echo -e "'$2' is not a valid filename!\n" && return
@@ -188,7 +189,6 @@ function wpdb() {
       echo "Starting export..."
       wpconn "wpdbexport" "$2"
     fi
-    echo
   fi
 }
 
