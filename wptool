@@ -106,8 +106,9 @@ function wpconn() {
     return 9
   fi
   myconn=""
-  read dbname dbuser dbpass dbhost junk dbprefix <<< $(cat wp-config.php | egrep "'DB_|table_prefix" | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
-  [[ -z $dbprefix ]] && dbprefix=$junk #sometimes there isn't a junk entry
+  #read dbname dbuser dbpass dbhost junk dbprefix <<< $(cat wp-config.php | egrep "'DB_|table_prefix" | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+  read dbname dbuser dbpass dbhost dbprefix <<< $(cat wp-config.php | egrep "'DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+  #[[ -z $dbprefix ]] && dbprefix=$junk #sometimes there isn't a junk entry
   q="USE $dbname; "
   if [[ $1 == "wpdbimport" ]]; then
     mysql -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" < "$2" && echo -e "Imported file '$2' to database '$dbname'.\n" || echo -e "Failed to import file '$2' to database '$dbname'!\n"
