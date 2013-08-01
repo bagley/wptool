@@ -107,7 +107,7 @@ function wpconn() {
   fi
   myconn=""
   #read dbname dbuser dbpass dbhost junk dbprefix <<< $(cat wp-config.php | egrep "'DB_|table_prefix" | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
-  read dbname dbuser dbpass dbhost dbprefix <<< $(cat wp-config.php | egrep "'DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+  read dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*'DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
   #[[ -z $dbprefix ]] && dbprefix=$junk #sometimes there isn't a junk entry
   q="USE $dbname; "
   if [[ $1 == "wpdbimport" ]]; then
