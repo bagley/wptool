@@ -130,6 +130,8 @@ function wpconn() {
     [[ -z "$file" ]] && file="$dbname"_$(now).sql.gz
     mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" | gzip > "$file" && echo -e "Exported gzipped database '$dbname' to file '$file'.\n" || echo -e "Failed to export database '$dbname' to file '$file'!\n"
     return
+  elif [[ $1 == "wpdbdrop" ]]; then q='DROP database '$dbname'; CREATE DATABASE '$dbname';';
+    return
   elif [[ $1 == "wpdb" ]]; then q=$q'SHOW tables like "'$dbprefix'%";';
   elif [[ $1 == "wpdbver" ]]; then q=$q'SELECT option_value FROM '$dbprefix'options WHERE option_name = "db_version";'
   elif [[ $1 == "wpurl" ]]; then q=$q'SELECT option_id, option_name, option_value FROM '$dbprefix'options WHERE option_name = "siteurl" OR option_name = "home";'
@@ -202,6 +204,9 @@ function wpdb() {
     else
       wpconn "wpdbexport"
     fi
+  elif [[ $1 == "drop" ]]; then
+    echo "Dropping database..."
+    wpconn "wpdbdrop"
   fi
 }
 
