@@ -205,7 +205,7 @@ function wpdb() {
     fi
   elif [[ $1 == "drop" ]]; then
     read -p "$(echo $'\t')Delete database? " -n 1 -r
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
       echo -e "\nDropping database..."
       wpconn "wpdbdrop"
       [[ $myconn != "ERROR"* ]] && echo -e "Dropped database!\n" || echo -e "Failed to drop database!\n"
