@@ -467,11 +467,11 @@ function wptool() {
   echo -e "\twpfix:   built-in WP fixes"
   echo -e "\twpver:   returns the current version"
   echo
-  echo -e "Version: 1.5 (8 June 2013)"
+  echo -e "Version: 1.6 (7 August 2013)"
   echo -e "Site:    https://code.google.com/p/wptool/"
   echo
 }
 
 #search, multisite
-echo -e "\n\tInjected WPtool into current bash session. For details, type 'wptool'.\n"
+echo -e "\n\tInjected WPtool 1.6 into current bash session. For details, type 'wptool'.\n"
 unset HISTFILE
