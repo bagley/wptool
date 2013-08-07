@@ -131,7 +131,6 @@ function wpconn() {
     mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" | gzip > "$file" && echo -e "Exported gzipped database '$dbname' to file '$file'.\n" || echo -e "Failed to export database '$dbname' to file '$file'!\n"
     return
   elif [[ $1 == "wpdbdrop" ]]; then q='DROP database '$dbname'; CREATE DATABASE '$dbname';';
-    return
   elif [[ $1 == "wpdb" ]]; then q=$q'SHOW tables like "'$dbprefix'%";';
   elif [[ $1 == "wpdbver" ]]; then q=$q'SELECT option_value FROM '$dbprefix'options WHERE option_name = "db_version";'
   elif [[ $1 == "wpurl" ]]; then q=$q'SELECT option_id, option_name, option_value FROM '$dbprefix'options WHERE option_name = "siteurl" OR option_name = "home";'
@@ -205,8 +204,13 @@ function wpdb() {
       wpconn "wpdbexport"
     fi
   elif [[ $1 == "drop" ]]; then
-    echo "Dropping database..."
-    wpconn "wpdbdrop"
+    read -p "$(echo $'\t')Delete database? " -n 1 -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      echo -e "\nDropping database..."
+      wpconn "wpdbdrop"
+      [[ $myconn != "ERROR"* ]] && echo -e "Dropped database!\n" || echo -e "Failed to drop database!\n"
+    else echo -e "\tDeletion of database '$1' cancelled"!"\n"
+    fi
   fi
 }
 
