@@ -111,12 +111,24 @@ function wpconn() {
   #[[ -z $dbprefix ]] && dbprefix=$junk #sometimes there isn't a junk entry
   q="USE $dbname; "
   if [[ $1 == "wpdbimport" ]]; then
+    echo "Starting import..."
     mysql -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" < "$2" && echo -e "Imported file '$2' to database '$dbname'.\n" || echo -e "Failed to import file '$2' to database '$dbname'!\n"
     return
+  elif [[ $1 == "wpdbimportgz" ]]; then
+    echo "Starting import..."
+    gunzip < "$2" | mysql -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" && echo -e "Imported gzipped file '$2' to database '$dbname'.\n" || echo -e "Failed to import file '$2' to database '$dbname'!\n"
+    return
   elif [[ $1 == "wpdbexport" ]]; then
+    echo "Starting export..."
     file="$2"
     [[ -z "$file" ]] && file="$dbname"_$(now).sql
     mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" > "$file" && echo -e "Exported database '$dbname' to file '$file'.\n" || echo -e "Failed to export database '$dbname' to file '$file'!\n"
+    return
+  elif [[ $1 == "wpdbexportgz" ]]; then
+    echo "Starting export..."
+    file="$2"
+    [[ -z "$file" ]] && file="$dbname"_$(now).sql.gz
+    mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" | gzip > "$file" && echo -e "Exported gzipped database '$dbname' to file '$file'.\n" || echo -e "Failed to export database '$dbname' to file '$file'!\n"
     return
   elif [[ $1 == "wpdb" ]]; then q=$q'SHOW tables like "'$dbprefix'%";';
   elif [[ $1 == "wpdbver" ]]; then q=$q'SELECT option_value FROM '$dbprefix'options WHERE option_name = "db_version";'
@@ -174,21 +186,21 @@ function wpdb() {
     [[ $1 == "-q" ]] && echo -e "\tDatabase:\tOK" || echo -e "Database connection settings appear to be fine.\n"
   fi
   if [[ $1 == "-i" ]]; then
-    if [[ -z "$2" ]]; then echo -e "No import file specified!\n" && return
-    elif [[ "$2" != *.sql ]]; then echo -e "'$2' is not a valid file!\n" && return
-    elif [[ ! -f "$2" ]]; then echo -e "File '$2' does not exist!\n" && return
-    else
-      echo "Starting import..."
-      wpconn "wpdbimport" "$2"
+    if [[ -z "$2" ]]; then echo -e "No import file specified!\n"
+    elif [[ ! -f "$2" ]]; then echo -e "File '$2' does not exist!\n"
+    elif [[ "$2" == *sql ]]; then wpconn "wpdbimport" "$2"
+    elif [[ "$2" == *sql.gz ]]; then wpconn "wpdbimportgz" "$2"
+    else echo -e "'$2' is not a valid file!\n"
     fi
   elif [[ $1 == "-e" ]]; then
     if [[ -n "$2" ]]; then
-      if [[ "$2" != *.sql ]]; then echo -e "'$2' is not a valid filename!\n" && return
-      elif [[ -f "$2" ]]; then echo -e "File '$2' already exists!\n" && return
+      if [[ -f "$2" ]]; then echo -e "File '$2' already exists!\n"
+      elif [[ "$2" == *sql ]]; then wpconn "wpdbexport" "$2"
+      elif [[ "$2" == *sql.gz ]]; then wpconn "wpdbexportgz" "$2"
+      else echo -e "'$2' is not a valid filename!\n" && return
       fi
     else
-      echo "Starting export..."
-      wpconn "wpdbexport" "$2"
+      wpconn "wpdbexport"
     fi
   fi
 }
@@ -273,7 +285,7 @@ function wpver() {
     return
   elif [[ ! -f wp-includes/version.php ]]; then
     [[ $1 == "-q" ]] && echo "Unknown" || echo -e "\tCould not find wp-includes/version.php!\n"
-    return 9
+    return 9 #need to continue in the future
   fi
   ver=$(cat wp-includes/version.php | grep "wp_version " | sed "s/.*'\(.*\)'.*/\1/")
   if [[ $1 == "-q" ]]; then
