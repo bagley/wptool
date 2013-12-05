@@ -47,9 +47,9 @@ function wpfix() {
   temp=$(now)
   cat >fix_$temp.php <<EOF
 <?php
-  require('wp-config.php');
+  require_once('wp-config.php');
   echo "WordPress loaded...\n";
-  require('wp-admin/upgrade-functions.php');
+  require_once('wp-admin/upgrade-functions.php');
   echo "Upgrade functions loaded...\n";
   wp_cache_flush();
   echo "Object cache flushed...\n";
@@ -83,9 +83,9 @@ function wpht() {
   [[ -f .htaccess ]] && mv .htaccess .htaccess_$temp
   cat >ht_$temp.php <<EOF && echo "Created ht_$temp.php..." && echo "Generated rewrite rules..."
 <?php
-  require('wp-config.php');
-  require('wp-admin/includes/misc.php');
-  require('wp-admin/includes/file.php');
+  require_once('wp-config.php');
+  require_once('wp-admin/includes/misc.php');
+  require_once('wp-admin/includes/file.php');
   \$home_path = get_home_path();
   \$htaccess_file = \$home_path.'.htaccess';
   if ((!file_exists(\$htaccess_file) && is_writable(\$home_path) && \$wp_rewrite->using_mod_rewrite_permalinks()) || is_writable(\$htaccess_file)) {
