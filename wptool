@@ -8,31 +8,41 @@ function wpcore() {
     echo -e "\nThis tool downloads the latest core, a new core of the current version, or a\nspecified version.\n"
     echo -e "Usage:\n"
     echo -e "\twpcore [VERSION]\n"
-    echo -e "\tVERSION\n\t\tdownload version VERSION of the Wordpress core, in the form of\n\t\t#.#.# or 'cur' for current version\n"
+    echo -e "\t    VERSION\n\t\tdownload version VERSION of the Wordpress core, in the form of\n\t\t#.#.# or 'cur' for current version\n"
     return
+  elif [[ -n $1 ]]; then file="wordpress-$1"
+  elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q)
+  else file="latest"
   fi
+  
+  cur_dir="$(pwd)"
   temp=$(now)
-  tempdir="download_$temp"
-  mkdir $tempdir && echo "Created $tempdir..."
-  file="latest"
-  [[ -n $1 ]] && file="wordpress-$1"
-  [[ $1 == "cur" ]] && file=wordpress-$(wpver -q|sed "s/\t.*\t\(.*\)/\1/")
-  ! wget -qP $tempdir http://wordpress.org/$file.zip && echo Unable to download $file.zip! && rm -rf $tempdir && echo "Removed download_$temp..." && return 9 || echo "Downloaded $file.zip..."
-  ! unzip $tempdir/$file.zip -d $tempdir >/dev/null && echo "Failed to extract new core files" && return 1 || echo "Extracted new core files..."
-  
-  oldcore="core_$temp"
-  mkdir $oldcore && echo "Created $oldcore..."
-  mv wp-includes* $oldcore || echo "No wp-includes folder"!
-  mv wp-admin* $oldcore || echo "No wp-admin folder"!
-  mv wp-content* $oldcore || echo "No wp-content folder"!
-  find . -maxdepth 1 -type f -exec mv -t $oldcore {} + && echo "Moved old core to $oldcore..."
-  
-  mv $tempdir/wordpress/* . && echo "Moved new core to its new home..."
-  mv wp-content wp-content_stock && echo "Moved default wp-content to wp-content_stock..."
-  mv $oldcore/wp-content . && echo "Moved old wp-content back into place..."
-  cp $oldcore/wp-config.php . && echo "Moved old wp-config.php back into place..."
-  rm -rf $tempdir && echo "Removed temporary download folder..."
-  wpht
+  if ! is_empty "$cur_dir"; then
+    oldcore="core_$temp"
+    mkdir "$oldcore"
+    echo "Files found in directory. Checking for WP files..."
+    mv wp-* index.php license.txt readme.html xmlrpc.php wordpress-*.tar.gz latest.tar.gz "$oldcore" 2>/dev/null
+    if is_empty "$oldcore"; then
+      rm -rf "$oldcore"
+      echo "No WP files found"!
+    else echo "Moved WP files to $oldcore..."
+    fi
+  fi
+
+  ! wget -q http://wordpress.org/$file.tar.gz && echo "Unable to download $file.tar.gz"! && return 9 || echo "Downloaded $file.tar.gz..."
+  tar -xf "$file.tar.gz" --strip-components=1 && echo "Extracted new core files..."
+  rm -rf "$file.tar.gz" && echo "Removed $file.tar.gz..."
+  if [[ -d "$oldcore/wp-content" ]]; then
+    mv wp-content wp-content_stock && echo "Moved default wp-content to wp-content_stock..."
+    mv "$oldcore/wp-content" "$cur_dir" && echo "Moved old wp-content back into place..."
+  fi
+  if [[ -f "$oldcore/wp-config.php" ]]; then
+    cp "$oldcore/wp-config.php" "$cur_dir"
+    echo "Copied old wp-config.php back into place..."
+  else
+    cp wp-config-sample.php wp-config.php
+    echo "Copied wp-config-sample.php into place..."
+  fi
 }
 
 function wpfix() {
@@ -467,11 +477,11 @@ function wptool() {
   echo -e "\twpfix:   built-in WP fixes"
   echo -e "\twpver:   returns the current version"
   echo
-  echo -e "Version: 1.6.1 (9 August 2013)"
+  echo -e "Version: 1.6.5 (12 March 2014)"
   echo -e "Site:    https://code.google.com/p/wptool/"
   echo
 }
 
 #search, multisite
-echo -e "\n\tInjected WPtool 1.6.1 into current bash session. For details, type 'wptool'.\n"
+echo -e "\n\tInjected WPtool 1.6.5 into current bash session. For details, type 'wptool'.\n"
 unset HISTFILE
