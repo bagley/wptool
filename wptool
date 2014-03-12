@@ -2,6 +2,10 @@ function now() {
   date -u +"%Y%m%d-%H%M%S"
 }
 
+function is_empty() {
+  find "$1" -maxdepth 0 -empty 2>/dev/null | read junk
+}
+
 function wpcore() {
   #Also need to add option to download the version that matches the db
   if [[ $1 == "--help" || $1 == "-h" ]]; then
