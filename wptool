@@ -14,8 +14,8 @@ function wpcore() {
     echo -e "\twpcore [VERSION]\n"
     echo -e "\t    VERSION\n\t\tdownload version VERSION of the Wordpress core, in the form of\n\t\t#.#.# or 'cur' for current version\n"
     return
-  elif [[ -n $1 ]]; then file="wordpress-$1"
   elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q)
+  elif [[ -n $1 ]]; then file="wordpress-$1"
   else file="latest"
   fi
   
