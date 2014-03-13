@@ -2,10 +2,6 @@ function now() {
   date -u +"%Y%m%d-%H%M%S"
 }
 
-function is_empty() {
-  find "$1" -maxdepth 0 -empty 2>/dev/null | read junk
-}
-
 function wpcore() {
   #Also need to add option to download the version that matches the db
   if [[ $1 == "--help" || $1 == "-h" ]]; then
@@ -19,29 +15,34 @@ function wpcore() {
   else file="latest"
   fi
   
-  cur_dir="$(pwd)"
-  temp=$(now)
-  if ! is_empty "$cur_dir"; then
-    oldcore="core_$temp"
-    mkdir "$oldcore"
-    echo "Files found in directory. Checking for WP files..."
-    mv wp-* index.php license.txt readme.html xmlrpc.php wordpress-*.tar.gz latest.tar.gz "$oldcore" 2>/dev/null
-    if is_empty "$oldcore"; then
-      rm -rf "$oldcore"
-      echo "No WP files found"!
-    else echo "Moved WP files to $oldcore..."
+  if [[ ! -f "$file.tar.gz" ]]; then
+    if ! wget -q "http://wordpress.org/$file.tar.gz"; then
+      echo "Unable to download $file.tar.gz"!
+      return 9
+    else echo "Downloaded $file.tar.gz..."
     fi
   fi
+  
+  temp=$(now)
+  echo "Checking for WP files..."
+  local wpfiles=$(find -maxdepth 1 -name "wp-*" -o -name index.php -o -name license.txt -o -name readme.html -o -name xmlrpc.php)
+  if [[ -z "$wpfiles" ]]; then
+    echo "No WP files found"!
+  else
+    oldcore="core_$temp"
+    echo "WP files found! Moving them to $oldcore..."
+    mkdir "$oldcore"
+    while read -r f; do mv "$f" "$oldcore"; done <<< "$wpfiles"
+  fi
 
-  ! wget -q http://wordpress.org/$file.tar.gz && echo "Unable to download $file.tar.gz"! && return 9 || echo "Downloaded $file.tar.gz..."
   tar -xf "$file.tar.gz" --strip-components=1 && echo "Extracted new core files..."
   rm -rf "$file.tar.gz" && echo "Removed $file.tar.gz..."
   if [[ -d "$oldcore/wp-content" ]]; then
     mv wp-content wp-content_stock && echo "Moved default wp-content to wp-content_stock..."
-    mv "$oldcore/wp-content" "$cur_dir" && echo "Moved old wp-content back into place..."
+    mv "$oldcore/wp-content" . && echo "Moved old wp-content back into place..."
   fi
   if [[ -f "$oldcore/wp-config.php" ]]; then
-    cp "$oldcore/wp-config.php" "$cur_dir"
+    cp "$oldcore/wp-config.php" .
     echo "Copied old wp-config.php back into place..."
   else
     cp wp-config-sample.php wp-config.php
@@ -120,8 +121,7 @@ function wpconn() {
     return 9
   fi
   myconn=""
-  #read dbname dbuser dbpass dbhost junk dbprefix <<< $(cat wp-config.php | egrep "'DB_|table_prefix" | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
-  read dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*'DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+  read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*'DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
   #[[ -z $dbprefix ]] && dbprefix=$junk #sometimes there isn't a junk entry
   q="USE $dbname; "
   if [[ $1 == "wpdbimport" ]]; then
