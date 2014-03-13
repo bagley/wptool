@@ -460,33 +460,31 @@ function wpstats() {
 
 function wptool() {
   echo -e "
- _       ______  __              __
-| |     / / __ \/ /_____  ____  / /
-| | /| / / /_/ / __/ __ \/ __ \/ / 
-| |/ |/ / ____/ /_/ /_/ / /_/ / /  
-|__/|__/_/    \__/\____/\____/_/  
-                   a toolkit production
+  _       ______  __              __
+ | |     / / __ \/ /_____  ____  / /
+ | | /| / / /_/ / __/ __ \/ __ \/ /
+ | |/ |/ / ____/ /_/ /_/ / /_/ / /
+ |__/|__/_/    \__/\____/\____/_/
+                    a toolkit production
 
+  WPtool $wptoolv is suite of bash functions to administer Wordpress installs.
+  It assumes you are running said functions in the site's root folder. Each
+  command listed below each have a -h option for more specific information:
+  
+\twpstats: basic overview
+\twpurl:   URL tools
+\twptheme: theme tools
+\twpdb:    db tools
+\twpuser:  user tools
+\twpplug:  plugin tools
+\twpht:    .htaccess generator
+\twpcore:  core replacement tools
+\twpfix:   built-in WP fixes
+\twpver:   returns the current version
 "
-  echo "WPtool is suite of bash functions to administer Wordpress installs. It assumes you are running said functions in the site's root folder. The available functions, listed below, each have a -h option for more information:"
-  echo
-  echo -e "\twpstats: basic overview"
-  echo -e "\twpurl:   URL tools"
-  echo -e "\twptheme: theme tools"
-  echo -e "\twpdb:    db tools"
-  echo -e "\twpuser:  user tools"
-  echo -e "\twpplug:  plugin tools"
-  echo -e "\twpht:    .htaccess generator"
-  echo -e "\twpcore:  core replacement tools"
-  echo -e "\twpfix:   built-in WP fixes"
-  echo -e "\twpver:   returns the current version"
-  echo
-  echo -e "Version: $wptoolv"
-  echo -e "Site:    https://code.google.com/p/wptool/"
-  echo
 }
 
 #search, multisite
-wptoolv="1.6.6 (13 March 2014)"
+wptoolv="1.6.6"
 echo -e "\n\tInjected WPtool $wptoolv into current bash session. For details, type 'wptool'.\n"
 unset HISTFILE
