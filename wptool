@@ -480,11 +480,11 @@ function wptool() {
 \twpht:    .htaccess generator
 \twpcore:  core replacement tools
 \twpfix:   built-in WP fixes
-\twpver:   returns the current version
+\twpver:   returns version info
 "
 }
 
 #search, multisite
 wptoolv="1.6.6"
-echo -e "\n\tInjected WPtool $wptoolv into current bash session. For details, type 'wptool'.\n"
+echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 unset HISTFILE
