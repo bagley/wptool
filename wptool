@@ -3,16 +3,21 @@ function now() {
 }
 
 function wpcore() {
-  #Also need to add option to download the version that matches the db
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "\nThis tool downloads the latest core, a new core of the current version, or a\nspecified version.\n"
     echo -e "Usage:\n"
     echo -e "\twpcore [VERSION]\n"
     echo -e "\t    VERSION\n\t\tdownload version VERSION of the Wordpress core, in the form of\n\t\t#.#.# or 'cur' for current version\n"
     return
-  elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q)
+  elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q | awk '{print $1}')
+  elif [[ $1 == "db" ]]; then file=wordpress-$(wpver -q | awk '{print $3}')
   elif [[ -n $1 ]]; then file="wordpress-$1"
   else file="latest"
+  fi
+
+  if [[ "$file" == "wordpress-Unknown" ]]; then
+    echo Unknown version!
+    return 9
   fi
   
   if [[ ! -f "$file.tar.gz" ]]; then
@@ -300,30 +305,31 @@ function wptheme() {
 }
 
 function wpver() {
-  [[ $1 != "-q" ]] && echo
   if [[ $1 == "--help" || $1 == "-h" ]]; then
-    echo -e "This tool returns the current install's file and database versions.\n"
-    echo -e "Usage:\n"
-    echo -e "\twpver\n"
+    echo -e "
+This tool returns the current install's file and database versions.
+
+  Usage:
+
+\twpver [option]
+
+\t  -q\tdisplay abbreviated version output
+\t  -h\tdisplay this help output
+"
     return
-  elif [[ ! -f wp-includes/version.php ]]; then
-    [[ $1 == "-q" ]] && echo "Unknown" || echo -e "\tCould not find wp-includes/version.php!\n"
-    return 9 #need to continue in the future
   fi
-  ver=$(cat wp-includes/version.php | grep "wp_version " | sed "s/.*'\(.*\)'.*/\1/")
-  if [[ $1 == "-q" ]]; then
-    [[ -z $2 ]] && echo "$ver" || echo "$dbver"
-    return
-  fi
-  echo -e "\tWP version:\t$ver"
-  [[ ! -f wp-config.php ]] && echo -e "\tCould not find wp-config.php!\n" && return 9
+  local filever="Unknown"
+  local dbver="Unknown"
+  local dbver_files="Unknown"
+  [[ -f wp-includes/version.php ]] && filever=$(cat wp-includes/version.php | grep "wp_version " | sed "s/.*'\(.*\)'.*/\1/")
   wpconn "wpdbver"
-  if [[ $myconn == "ERROR"* ]]; then echo -e "\tDB version:\tnot found"!
-  else
+  if [[ $? == 0 && $myconn != "ERROR"* ]]; then
     dbver=$(echo -e "$myconn" | tail -1)
-    echo -e "\tDB version:\t$dbver (up to "$(curl -Ss http://codex.wordpress.org/FAQ_Installation | grep "= $dbver" | head -1 | awk '{print $1}')")"
+    dbver_files=$(curl -Ss http://codex.wordpress.org/FAQ_Installation | grep "= $dbver" | head -1 | awk '{print $1}')
   fi
-  echo
+  if [[ "$1" == "-q" ]]; then echo -e "$filever $dbver $dbver_files"
+  else echo -e "\n\tWP version:\t$filever\n\tDB version:\t$dbver (up to $dbver_files)\n"
+  fi
 }
 
 function wpuser() {
@@ -485,6 +491,6 @@ function wptool() {
 }
 
 #search, multisite
-wptoolv="1.6.6"
+wptoolv="1.6.7"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 unset HISTFILE
