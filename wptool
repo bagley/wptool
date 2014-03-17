@@ -42,10 +42,10 @@ specified version.
   echo "Checking for WP files..."
   local wpfiles=$(find -maxdepth 1 -name "wp-*" -o -name index.php -o -name license.txt -o -name readme.html -o -name xmlrpc.php)
   if [[ -z "$wpfiles" ]]; then
-    echo "No WP files found"!
+    echo "No old WP files found..."
   else
     oldcore="core_$temp"
-    echo "WP files found! Moving them to $oldcore..."
+    echo "Old WP files found! Moving them to $oldcore..."
     mkdir "$oldcore"
     while read -r f; do mv "$f" "$oldcore"; done <<< "$wpfiles"
   fi
