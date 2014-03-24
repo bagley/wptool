@@ -464,7 +464,7 @@ function wpstats() {
   elif [[ -n $1 ]]; then return
   fi
   echo
-  echo -e "\tWP version:\t"$(wpver -q)
+  echo -e "\tWP version:\t"$(wpver -q | awk '{print $1}')
   echo -e "\tStatus code:\t"$( temp=$(wptests -q); [[ $temp != "255" ]] && echo "OK" || echo "Error"!)
   if wpdb -q; then
     echo -e "\tUserID 1:\t"$(wpuser -q)
