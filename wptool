@@ -73,9 +73,8 @@ function wpfix() {
   elif [[ ! -f wp-config.php || ! -f wp-admin/upgrade-functions.php ]]; then
     echo -e "Could not find one or more of the necessary files (wp-config.php or wp-admin/upgrade-functions.php)!\n"
     return 9
-  fi
-  temp=$(now)
-  cat >fix_$temp.php <<EOF
+  fi 
+  php -q <<"EOF" && echo "Ran fix..." || echo Error running fix!
 <?php
   require_once('wp-config.php');
   echo "WordPress loaded...\n";
@@ -87,15 +86,12 @@ function wpfix() {
   echo "Database made current...\n";
   upgrade_160();
   echo "Data upgraded...\n";
-  \$wp_rewrite->flush_rules();
+  $wp_rewrite->flush_rules();
   echo "Rewrite rules flushed...\n";
   wp_cache_flush();
   echo "Object cache flushed...\n";
 ?>
 EOF
-  echo "Created fix_$temp.php..."
-  php -q fix_$temp.php && echo "Ran fix_$temp.php..." || echo Error running fix_$temp!
-  rm -f fix_$temp.php && echo "Removed fix_$temp.php..."
   echo
 }
 
@@ -104,28 +100,22 @@ function wpht() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "This tool generates a new .htaccess file.\n\nUsage:\n\n\twpht\n"
     return
-  elif [[ ! -f wp-config.php ]]; then
+  elif [[ ! -f wp-config.php || ! -f wp-admin/includes/misc.php ]]; then
     echo -e "Could not find one or more of the necessary files:\n"
-    echo -e "\twp-config.php\n\twp-admin/includes/misc.php\n\twp-admin/includes/file.php\n"
+    echo -e "\twp-config.php\n\twp-admin/includes/misc.php\n"
     return 9
   fi
   temp=$(now)
-  [[ -f .htaccess ]] && mv .htaccess .htaccess_$temp
-  cat >ht_$temp.php <<EOF && echo "Created ht_$temp.php..." && echo "Generated rewrite rules..."
+  [[ -f .htaccess ]] && cp .htaccess .htaccess_$temp
+  php -q <<"EOF" && echo "Generated .htaccess rules..." || echo Error writing to .htaccess!
 <?php
+  $_SERVER['SCRIPT_NAME'] = "";
   require_once('wp-config.php');
   require_once('wp-admin/includes/misc.php');
-  require_once('wp-admin/includes/file.php');
-  \$home_path = get_home_path();
-  \$htaccess_file = \$home_path.'.htaccess';
-  if ((!file_exists(\$htaccess_file) && is_writable(\$home_path) && \$wp_rewrite->using_mod_rewrite_permalinks()) || is_writable(\$htaccess_file)) {
-    \$rules = explode( "\n", \$wp_rewrite->mod_rewrite_rules() );
-    insert_with_markers( \$htaccess_file, 'WordPress', \$rules );
-  }
+  $rules = explode( "\n", $wp_rewrite->mod_rewrite_rules() );
+  insert_with_markers( '.htaccess', 'WordPress', $rules );
 ?>
 EOF
-  php -q ht_$temp.php 1>/dev/null && echo "Wrote to .htaccess..." || echo Error running fix_$temp or writing to .htaccess!
-  rm -f ht_$temp.php && echo "Removed ht_$temp.php..."
   echo
 }
 
@@ -501,6 +491,6 @@ function wptool() {
 }
 
 #search, multisite
-wptoolv="1.6.8"
+wptoolv="1.7.1"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 unset HISTFILE
