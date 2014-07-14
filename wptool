@@ -84,8 +84,8 @@ function wpfix() {
   echo "Object cache flushed...\n";
   make_db_current();
   echo "Database made current...\n";
-  upgrade_160();
-  echo "Data upgraded...\n";
+  /*upgrade_160();
+  echo "Data upgraded...\n";*/
   $wp_rewrite->flush_rules();
   echo "Rewrite rules flushed...\n";
   wp_cache_flush();
