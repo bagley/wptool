@@ -172,7 +172,7 @@ function wpconn() {
   elif [[ $1 == "wpuserp" ]]; then q=$q'UPDATE '$dbprefix'users SET user_pass=MD5("'$3'") WHERE ID='$2'; SELECT user_login FROM '$dbprefix'users WHERE ID='$2';'
   elif [[ $1 == "wpuseru" ]]; then q=$q'SELECT user_login FROM '$dbprefix'users WHERE ID='$2'; UPDATE '$dbprefix'users SET user_login="'$3'" WHERE ID='$2';'
   elif [[ $1 == "wpuserd" ]]; then q=$q'SELECT user_login FROM '$dbprefix'users WHERE ID='$2'; DELETE FROM '$dbprefix'users WHERE ID='$2'; DELETE FROM '$dbprefix'usermeta WHERE user_id='$2';'
-  elif [[ $1 == "wpusernew" ]]; then q=$q'INSERT INTO '$dbprefix'users (user_login, user_pass) VALUES ("deleteme", MD5("deleteme")); SET @new_id=LAST_INSERT_ID(); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'capabilities", '"'a:1:{s:13:\"administrator\";b:1;}'"'); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'user_level", 10); SELECT @new_id;'
+  elif [[ $1 == "wpusernew" ]]; then q=$q'INSERT INTO '$dbprefix'users (user_login, user_pass, user_email) VALUES ("deleteme", MD5("deleteme"), "deleteme@example.com"); SET @new_id=LAST_INSERT_ID(); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'capabilities", '"'a:1:{s:13:\"administrator\";b:1;}'"'); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'user_level", 10); SELECT @new_id;'
   else echo -e "\tInvalid query"! && return 1
   fi
   myconn=$(mysql -u "$dbuser" -p"$dbpass" -h "$dbhost" -e "$q" 2>&1)
@@ -370,7 +370,7 @@ function wpuser() {
     elif [[ $2 == "-u" ]]; then echo -e "Updated username for user $1 from '$(echo -e "$myconn" | tail -1)' to '$3'..."
     elif [[ $2 == "-a" ]]; then echo -e "Promoted user $1 to admin..."
     elif [[ $2 == "-d" ]]; then echo -e "\nDeleted user $1 ('$(echo -e "$myconn" | tail -1)')..."
-    elif [[ $1 == "new" || $1 == "-n" ]]; then echo -e "Created new admin (user '$(echo -e "$myconn" | tail -1)') with username 'deleteme' and password 'deleteme'..."
+    elif [[ $1 == "new" || $1 == "-n" ]]; then echo -e "Created new admin (user '$(echo -e "$myconn" | tail -1)') with username 'deleteme' and password 'deleteme'...\n\nMake sure to delete or rename this user"!
     elif [[ -z $2 ]]; then echo -e "$myconn" | tail -n +2
     fi
   else echo "$myconn"
@@ -491,6 +491,6 @@ function wptool() {
 }
 
 #search, multisite
-wptoolv="1.7.1"
+wptoolv="1.7.1.1"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 unset HISTFILE
