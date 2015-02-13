@@ -361,6 +361,7 @@ function wpuser() {
       else echo -e "\tNo username specified"!"\n" && return 1; fi   #...otherwise, end.
     elif [[ $2 == "-a" ]]; then wpconn "wpusera" $1	 	  #change to admin
     elif [[ $2 == "-d" ]]; then read -p "$(echo $'\t')Delete user '$1'? " -n 1 -r && echo && [[ ! $REPLY =~ ^[Yy]$ ]] && echo -e "\tDeletion of user '$1' cancelled"!"\n" && return 1 || wpconn "wpuserd" $1	 	  #delete user
+    elif [[ $2 == "-l" || $2 == "--login" ]]; then __wp_create_access_file $1 ; myconn=1   # create login link to get cookie
     elif [[ -z $2 ]]; then wpconn "wpuserinfo" $1		  #show user info
     else echo -e "\tInvalid option"!"\n" && return 1; fi		  #Otherwise, end.
   elif [[ $1 == "new" || $1 == "-n" ]]; then wpconn "wpusernew"		#create new admin...
@@ -380,6 +381,89 @@ function wpuser() {
   fi
   [[ $1 != "-q" ]] && echo
 }
+
+function __wp_get_random_string() {
+  
+  length=$1
+  string=$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c $length | xargs)
+
+}
+
+function __wp_create_access_file() {
+
+u=$1
+site=$(wpurl -q | awk '{if (NR==1) {print $3}}')
+st="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 16 | xargs)"
+if [[ -z "$st" ]] ; then
+  echo "Failed to get a random string. Exiting"
+  return;
+fi
+tmp_php_file="make-pass-${st}.php"
+
+#trap "rm -f \"$tmp_php_file\"" 5 6 7 8 10 11 12 13 14 15 16 17 18 19 20
+
+pass="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 9 | xargs)"
+
+cat > "$tmp_php_file" <<EOF
+<?php
+if ( strcmp ( \$_GET['z'], '$pass' ) ) {
+  echo 'Forbidden';
+  exit;
+}
+// this file is to give admin access
+// you can remove it at any time
+// remove on run
+class DeleteOnExit
+{
+    function __destruct()
+    { 
+        unlink(__FILE__);
+    }
+}
+\$g_delete_on_exit = new DeleteOnExit();
+// load wp libs
+require_once( './wp-load.php' );
+// cannot check as we do not have cookie
+// but left it here so to remember
+//if ( !current_user_can('admin') ) {
+// gen and set auth cookies
+wp_set_auth_cookie($u);
+//}
+// for debugging
+//print_r(\$_COOKIE);
+// redirect
+if ( user_can($u,'switch_themes') ) {
+	wp_redirect('/wp-admin');
+}
+else {
+	wp_redirect('/');
+}
+// just to be safe
+unlink(__FILE__);
+EOF
+
+
+echo "Go to this link to get your login cookies:"
+echo 
+echo "$site/$(basename $tmp_php_file)?z=$pass"
+echo 
+echo "Since a file has been created, after you go to the above link, press enter so I can remove it."
+read
+if ! [[ -f "$tmp_php_file" ]]; then
+  echo "File removed itself."
+else
+  rm -f $tmp_php_file
+  if [ $? -eq 0 ] ; then
+    echo "The file was removed."
+  else
+    echo "ERROR: Failed to remove temp file $tmp_php_file"
+  fi
+fi
+
+#trap "" 5 6 7 8 10 11 12 13 14 15 16 17 18 19 20
+
+}
+
 
 function wpplug() {
   echo
@@ -494,6 +578,6 @@ function wptool() {
 }
 
 #search, multisite
-wptoolv="1.7.1.3"
+wptoolv="1.7.1.4"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 unset HISTFILE
