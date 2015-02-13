@@ -335,6 +335,23 @@ This tool returns the current install's file and database versions.
   fi
 }
 
+function wperr() {
+  for each in "error_log" "wp-admin/error_log" ; do
+    if [ -f "$each" ] ; then
+      if [ -s "$each" ] ; then
+        echo "==> $each <=="
+        tail "$each"
+      else
+        echo "$each is empty"
+      fi
+    else
+      echo "$each was not found"
+    fi
+  done
+  # TODO: search for other error logs.
+}
+    
+
 function wpuser() {
   [[ $1 != "-q" ]] && echo
   if [[ $1 == "--help" || $1 == "-h" ]]; then
@@ -573,11 +590,12 @@ function wptool() {
 \twpht:    .htaccess generator
 \twpcore:  core replacement tools
 \twpfix:   built-in WP fixes
+\twperr:   show most recent errors
 \twpver:   returns version info
 "
 }
 
 #search, multisite
-wptoolv="1.7.1.4"
+wptoolv="1.7.3"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 unset HISTFILE
