@@ -439,8 +439,10 @@ if ( strcmp ( \$_GET['z'], '$pass' ) ) {
 class DeleteOnExit
 {
     function __destruct()
-    { 
+    {
+      if ( file_exists(__FILE__) ) {
         unlink(__FILE__);
+      }
     }
 }
 \$g_delete_on_exit = new DeleteOnExit();
@@ -462,7 +464,9 @@ else {
 	wp_redirect('/');
 }
 // just to be safe
-unlink(__FILE__);
+if ( file_exists(__FILE__) ) {
+  unlink(__FILE__);
+}
 EOF
 
 
@@ -475,8 +479,8 @@ read
 if ! [[ -f "$tmp_php_file" ]]; then
   echo "File removed itself."
 else
-  rm -f $tmp_php_file
-  if [ $? -eq 0 ] ; then
+  [ -f "$tmp_php_file" ] && rm -f "$tmp_php_file"
+  if [ $? -eq 0 ] && ! [ -f "$tmp_php_file" ] ; then
     echo "The file was removed."
   else
     echo "ERROR: Failed to remove temp file $tmp_php_file"
