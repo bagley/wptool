@@ -408,8 +408,14 @@ function __wp_get_random_string() {
 
 function __wp_create_access_file() {
 
+# set user
 u=$1
-site=$(wpurl -q | awk '{if (NR==1) {print $3}}')
+# Get site
+site="$(wpurl -q | awk '{if (NR==1) {print $3}}')"
+# Remove last /
+site="$(echo $site | sed 's|/+$||')"
+# this will be the file name
+# TODO: use tmpfile if available
 st="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 16 | xargs)"
 if [[ -z "$st" ]] ; then
   echo "Failed to get a random string. Exiting"
