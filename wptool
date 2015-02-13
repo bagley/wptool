@@ -395,6 +395,7 @@ function wpuser() {
   if [[ $myconn == "" ]]; then echo -e "\tUser not found"!
   elif [[ $myconn != "ERROR"* ]]; then
     if [[ -z $1 ]]; then echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
+       echo -e "\n\t(only showing upto 23 users. To see all use 'wpuser all')"
     elif [[ $1 == "all" ]]; then echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
     elif [[ $1 == "admins" ]]; then echo -e "\tAdmins:\n";echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
     elif [[ $1 == "-q" ]]; then echo $(echo -e "$myconn" | tail -1)
