@@ -265,7 +265,9 @@ function wptheme() {
     echo -e "This tool returns the current theme, as well as listing any available ones found in the wp-content/themes folder. It also can change to a specified stylesheet, template, both, or to a new copy of twentytwelve.\n"
     echo -e "Usage:\n"
     echo -e "\twptheme [THEME [option]]\n"
-    echo -e "\tTHEME\n\t\tspecify a THEME for both the stylesheet and template. If 'fresh' is specified as the theme, it will download and install the 'twentytwelve' theme."
+    echo -e "\tTHEME\n\t\tspecify a THEME for both the stylesheet and template."
+    echo -e "\tIf 'fresh' is specified as the theme, it will download and install"
+    echo -e "\tthe 'twentytwelve' theme. (Useful if you have no themes or damaged ones)\n"
     echo -e "\tTHEME -s\n\t\tchange only the WP stylesheet"
     echo -e "\tTHEME -t\n\t\tchange only the WP template\n"
     return
