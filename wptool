@@ -420,8 +420,16 @@ function __wp_get_random_string() {
 
 function __wp_create_access_file() {
 
-# set user
+# get and verify user
 u=$1
+if [ -n "$(wpuser $u | grep 'User not found')" ] ; then
+  # Just warn for now, until we test it better
+  echo "**** Warning, I think that user does not exist ****"
+  echo "  But if it does, please report this as a bug."
+  echo ".... Continuing anyways ...."
+  echo
+fi
+
 # Get site
 site="$(wpurl -q | awk '{if (NR==1) {print $3}}')"
 # Remove last /
