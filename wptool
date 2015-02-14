@@ -425,7 +425,7 @@ u=$1
 # Get site
 site="$(wpurl -q | awk '{if (NR==1) {print $3}}')"
 # Remove last /
-site="$(echo $site | sed 's|/+$||')"
+site="$(echo $site | sed 's|/*$||')"
 # this will be the file name
 # TODO: use tmpfile if available
 st="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 16 | xargs)"
