@@ -574,6 +574,22 @@ function wptests() {
   echo
 }
 
+function wptrace() {
+  if [[ $1 == "--help" || $1 == "-h" ]]; then
+    echo -e "This tool uses strace to show what may be causing a wsod.\n"
+    echo -e "Usage:\n"
+    echo -e "\twptrace [err]|file.php\n"
+    echo -e "\twptrace\n\t\t Run full trace\n"
+    echo -e "\twptrace err\n\t\t Only show usual errors\n"
+    echo -e "\twptrace [err] file.php\n\t\t Run strace on file.php\n"
+    return
+  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
+  fi
+  
+  strace index.php
+  
+}
+
 function wpstats() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "\nThis tool returns a basic overview of the Wordpress install.\n\nUsage:\n\n\twpstats\n" && return
