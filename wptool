@@ -439,6 +439,7 @@ tmp_php_file="make-pass-${st}.php"
 
 pass="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 9 | xargs)"
 
+# be sure to escape all php $vars or bash will try to use them
 cat > "$tmp_php_file" <<EOF
 <?php
 if ( strcmp ( \$_GET['z'], '$pass' ) ) {
@@ -470,10 +471,14 @@ wp_set_auth_cookie($u);
 //print_r(\$_COOKIE);
 // redirect
 if ( user_can($u,'switch_themes') ) {
-	wp_redirect('/wp-admin');
+	\$url = admin_url();
+  echo \$url;
+  wp_redirect( admin_url() );
 }
 else {
-	wp_redirect('/');
+	\$url = home_url();
+  echo \$url;
+  wp_redirect( home_url() );
 }
 // just to be safe
 if ( file_exists(__FILE__) ) {
