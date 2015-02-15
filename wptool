@@ -839,7 +839,7 @@ function wptool() {
 }
 
 #search, multisite
-wptoolv="1.7.5"
+wptoolv="1.7.5.1"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 
 # show a recent changes prompt for three weeks after last edit.
@@ -867,7 +867,7 @@ function __wptool_to_show_or_not() {
 # wpuser access link
 edit="1424570097"
 edit_desc="
-\t wpuser 1 -l  Generates a link for your browser which will
+\t wpuser ID -l Generates a link for your browser which will
 \t              automatically log you in as the given user.
 \t              No more needing to create and remove 'deleteme'.
 \t              See 'wpuser -h'\n"
@@ -893,6 +893,7 @@ edit="1423962898"
 edit_desc="
 \t wperr        Shows the tail of main WP error logs.\n"
 __wptool_to_show_or_not
+
 
 # ------- End Changes ----------
 
