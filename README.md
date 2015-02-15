@@ -11,6 +11,8 @@ If the toolkit has been enabled you should have a response like this:
 
 > Injected WPtool into current bash session. For details, type 'wptool'.
 
+Also, since we are using git you can easily use previous versions. Useful if something breaks. See the note at the end of the page of how to do this.
+
 Commands and features
 
 Features:
@@ -19,7 +21,8 @@ Features:
 
 2. Man pages for each command for quick syntax references. Command --help
 
-***Commands***
+Commands
+=========
 
 **wptool:** A quick guide to a list of commands injected by the wptool kit.
 
@@ -183,8 +186,29 @@ wpuser USERID # -d
 
     delete user USERID 
 
-    wpuser -n, new
+wpuser -n, new
 
-        create new admin user 
+    create new admin user 
+  
 
-Dev: Thomas Bradshaw Script pimp: Jacob Cloutier Checked and approved by RVD, Brent Lundell and Jason Earl. .
+Previous Versions
+==============
+
+This is how to use previous versions, useful if I change or break something (I am human). You can either browse the commits and get the file path, or if you get the commit hash just put it in:
+
+    # put the hash in where <commit> is:
+    . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/<commit>/wptool)
+    #
+    # So for b0381758e548cb8bf6bca8ef209ff4869dca89ff you would use:
+    . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/b0381758e548cb8bf6bca8ef209ff4869dca89ff/wptool)
+
+Credits
+======
+Developer: Thomas Bradshaw
+
+Script pimp: Jacob Cloutier 
+
+Checked and approved by RVD, Brent Lundell and Jason Earl.
+
+This version/fork is maintained by Matt Bagley.
+
