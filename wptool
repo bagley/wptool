@@ -368,6 +368,7 @@ function wpuser() {
     echo -e "\tUSERID -a\n\t\tpromote user USERID to admin"
     echo -e "\tUSERID -d\n\t\tdelete user USERID"
     echo -e "\tUSERID -l\n\t\tmake login/access link for user USERID"
+    echo -e "\t        * this is easier and faster than making a user"
     echo -e "\t-n, new\n\t\tcreate new admin user"
     echo -e "\tall\n\t\tlist all users"
     echo -e "\tadmins\n\t\tlist all admins\n"
@@ -678,4 +679,54 @@ function wptool() {
 #search, multisite
 wptoolv="1.7.4"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
+
+# show a recent changes prompt for three weeks after last edit.
+# ie, let's inform the techs, but not annoy them
+# each edit is treated separatly
+recent_changes=""
+function __wptool_to_show_or_not() {
+  diff_edit="$(($(date +%s) - $edit))"
+  # the z is in case the above string does not work...
+  # if I get complaints I can change it to -n
+  if [[ -z "$diff_edit" || $diff_edit -lt 181440 ]] ; then
+    recent_changes="$recent_changes$edit_desc"
+  fi
+}
+# each edit is the current time in epoch seconds: date +%s
+# format:
+
+# edit="run: date +%s"
+# edit_desc="
+# \t <desc/func>  Description goes here.\n"
+# __wptool_to_show_or_not
+
+# ------- Changes -----------
+
+# wpuser access link
+edit="1424570097"
+edit_desc="
+\t wpuser 1 -l  Generates a link for your browser which will
+\t              automatically log you in as the given user.
+\t              No more needing to create and remove 'deleteme'.\n"
+__wptool_to_show_or_not
+
+# wptrace
+edit="1423962898"
+edit_desc="
+\t wptrace      Does an strace to help with wsod errors.\n"
+__wptool_to_show_or_not
+
+# wperr
+edit="1423962898"
+edit_desc="
+\t wperr        Shows the tail of main WP error logs.\n"
+__wptool_to_show_or_not
+
+# ------- End Changes ----------
+
+# display them if we have any
+if [[ -n "$recent_changes" ]] ; then
+  echo -e "    Recent Changes:$recent_changes"
+fi
+
 unset HISTFILE

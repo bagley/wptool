@@ -10,6 +10,9 @@ Once you have made a SSH connection to an account with wordpress installed run t
 If the toolkit has been enabled you should have a response like this:
 
 > Injected WPtool into current bash session. For details, type 'wptool'.
+>
+> Recent Changes:
+>     [Any important changes or new features are displayed here]
 
 Also, since we are using git you can easily use previous versions. Useful if something breaks. See the note at the end of the page of how to do this.
 
