@@ -817,6 +817,7 @@ function wpscan() {
     echo -e "\twpscan quick\n\t\t Scans the core files, plugins, and themes.\n"
     echo -e "\twpscan full\n\t\t Scan all files in the current directory and down.\n"
     echo -e "\twpscan [quick|full] quiet\n\t\t Only show the actual phrase being matched. Not the whole line.\n"
+    echo -e "\t\$extra_strings\n\t\tSet any custom strings to this variable to \n\t\tbe included in the scan. Separate each with a '\\\n'.\n"
     echo -e "\tNote! Scanning can take a huge amount of cpu and disk drive.\n\tIf you abuse your provider's resources, they may shut you down.\n"
     echo
     return
@@ -866,8 +867,13 @@ x6C\x28\x67\x7A\x69\x6E\x66\x6C\x61\x74
 hacked
 pwned
 die(PHP_OS.chr(49).chr(48).chr(43).md5(0987654321)
-die(PHP_OS.chr(49).chr(49).chr(43).md5(0987654321)"
+die(PHP_OS.chr(49).chr(49).chr(43).md5(0987654321)
+shell_exec"
 
+  if [[ -n "$extra_strings" ]] ; then
+    search_strings="$(echo -e "$search_strings\n$extra_strings")"
+  fi
+  
   echo -e "
 \tNote! Scanning can take a huge amount of cpu and disk drive.
 \tIf you abuse your provider's resources, they may shut you down.
@@ -883,9 +889,10 @@ die(PHP_OS.chr(49).chr(49).chr(43).md5(0987654321)"
     return
   fi
   
-  echo -e "\nUsing the following for strings: $search_strings\n\n"  
+  echo -e "\n\nUsing the following for strings:\n=====\n$search_strings\n=====\nEnd search strings\n"  
   
-  if [[ $2 == "quiet" ]] ; then
+  quiet=''
+  if [[ "$2" == "quiet" ]] ; then
     quiet='o'
   fi
   
