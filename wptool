@@ -339,8 +339,12 @@ This tool returns the current install's file and database versions.
   fi
 }
 
+# Shows the main logs
+# TODO: add arg to search for all error_logs,
+# but cannot use find. not good on long running servers
 function wperr() {
-  for each in "error_log" "wp-admin/error_log" ; do
+  for each in "wp-admin/error_log" "error_log" ; do
+    echo
     if [ -f "$each" ] ; then
       if [ -s "$each" ] ; then
         echo "==> $each <=="
@@ -349,8 +353,9 @@ function wperr() {
         echo "$each is empty"
       fi
     else
-      echo "$each was not found"
+      echo "no $each was found"
     fi
+    echo "--"
   done
   # TODO: search for other error logs.
 }
