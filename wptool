@@ -701,7 +701,26 @@ function __wp_rand_string() {
   [[ -n "$1" ]] && length=$1
   wp_rand_string="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c $length | xargs)"
   # double check
-  [[ -n "$wp_rand_string" ]] || wp_rand_string=$RANDOM$RANDOM$RANDOM
+  
+  if [[ -z "$wp_rand_string" || ${#wp_rand_string} -lt $length ]] ; then
+    wp_rand_string="$(cat /dev/urandom | base64 -w 0 | head -c$length | sed 's/[\/\+\s \n\r]/_/g')"
+  fi
+  
+  if [[ -z "$wp_rand_string" || ${#wp_rand_string} -lt $length ]] ; then
+    x=0
+    while [[ ${#wp_rand_string} -lt $length && $x -lt $length ]] ; do
+      wp_rand_string="$wp_rand_string$RANDOM"
+      x=$(($x + 1))
+    done
+  fi
+  
+  if [[ -z "$wp_rand_string" || ${#wp_rand_string} -lt $length ]] ; then
+    echo "Warning. Failed to get a random string. Here's some nanoseconds."
+    wp_rand_string="$(now)-$(date +%N)"
+    return 9
+  fi
+}
+
 }
 
 function wpstats() {
