@@ -258,19 +258,25 @@ function wpurl() {
     echo -e "Usage:\n"
     echo -e "\twpurl [URL]\n"
     echo -e "\tURL\n\t\tspecify a URL to change the site to.\n" 
-    echo -e "\treplace OLDURL NEWURL\n\t\tdo a search and replace in posts for a new url."
+    echo -e "\tOLDURL NEWURL\n\t\tdo a search and replace in posts for a new url."
     echo -e "\t\tuseful if you moved/renamed a site's url"
     echo -e "\t\tand the pictures aren't loading.\n"
     echo -e "\tIf any of the above URLs do not start with 'http://' or 'https://', \n\tit will automatically append with 'http://'.\n"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
-  if [[ -n "$1" && "$1" == "replace" ]] ; then
-    newurl=$2
+  if [[ $# -eq 2 ]] ; then
+    newurl=$1
     __wpurl_check_http addfollow
     oldurl=$newurl
-    newurl=$3
+    newurl=$2
     __wpurl_check_http addfollow
+    echo -e "\tAre you sure you want to search and replace your posts as follows:\n"
+    echo -e "\tOld url: $oldurl"
+    echo -e "\tNew url: $newurl\n"
+    read -p "$(echo $'\t')Press y when you are sure the above is correct (N/y) " -n 1 -r
+    [[ ! $REPLY =~ ^[Yy]$ ]] && echo -e "\n\nNothing done" && return
+    echo -e "\n\nSearching and replacing. This may take some time...\n"
     wpconn "wpurlreplace" $oldurl $newurl
     if [[ $? -eq 0 ]] ; then
       echo "Successfully replaced all instances of $oldurl with $newurl"
@@ -287,11 +293,11 @@ function wpurl() {
     wpht
     
     echo "Would you like to update your picture urls too? It will run:"
-    echo -e "\n  wpurl replace $oldsite $1\n"
+    echo -e "\n  wpurl $oldsite $newurl\n"
     read -p "It is recommended that you do this if your url is changed (N/y) " -n 1 -r
     if [[ $REPLY =~ ^[Yy]$ ]] ; then
       echo
-      wpurl replace $oldsite $1
+      wpurl $oldsite $newurl
     else
       echo "Skipping the replacement of picture urls. You can still run the above command yourself."
     fi
