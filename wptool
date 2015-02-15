@@ -147,13 +147,13 @@ function wpconn() {
   elif [[ $1 == "wpdbexport" ]]; then
     echo "Starting export..."
     file="$2"
-    [[ -z "$file" ]] && file="$dbname"_$(now).sql
+    [[ -z "$file" ]] && __wp_rand_string && file="$dbname"_$(now)-${wp_rand_string}.sql
     mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" > "$file" && echo -e "Exported database '$dbname' to file '$file'.\n" || echo -e "Failed to export database '$dbname' to file '$file'!\n"
     return
   elif [[ $1 == "wpdbexportgz" ]]; then
     echo "Starting export..."
     file="$2"
-    [[ -z "$file" ]] && file="$dbname"_$(now).sql.gz
+    [[ -z "$file" ]] && __wp_rand_string && file="$dbname"_$(now)-${wp_rand_string}.sql.gz
     mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" | gzip > "$file" && echo -e "Exported gzipped database '$dbname' to file '$file'.\n" || echo -e "Failed to export database '$dbname' to file '$file'!\n"
     return
   elif [[ $1 == "wpdbdrop" ]]; then q='DROP database '$dbname'; CREATE DATABASE '$dbname';';
@@ -482,13 +482,6 @@ function wpuser() {
   [[ $1 != "-q" ]] && echo
 }
 
-function __wp_get_random_string() {
-  
-  length=$1
-  string=$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c $length | xargs)
-
-}
-
 function __wp_create_access_file() {
 
 # get and verify user
@@ -701,6 +694,15 @@ function wptrace() {
 \tTry looking for missing theme or plugins files, but note that child themes
 \talways are missing files.\n"
 
+}
+
+
+function __wp_rand_string() {
+  length=20
+  [[ -n "$1" ]] && length=$1
+  wp_rand_string="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c $length | xargs)"
+  # double check
+  [[ -n "$wp_rand_string" ]] || wp_rand_string=$RANDOM$RANDOM$RANDOM
 }
 
 function wpstats() {
