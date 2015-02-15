@@ -1,0 +1,19 @@
+Random todo list
+
+wpplug findbroken (disables plugins one by one until 500 goes away)
+
+wpplug reset (sets back to what it was when we started - aka save active_plugin as a var)
+
+wpfix should try renaming .htaccess and see if that fixes it, and resetting it
+
+what is the difference between wpfix and wptest?
+- wpfix works on issues that can actually be solved by script
+- wptest tells user where the issue likely is
+- have wpfix run wptest if it can't fix the issue
+
+test file that can check for regressions
+
+# disable plugins
+UPDATE wp_options SET option_value = 'a:0:{}' WHERE option_name = 'active_plugins';
+
+... but I want to be able to pull them out one by one to test. renaming folders can cause plugins to erase their settings.

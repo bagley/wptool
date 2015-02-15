@@ -16,9 +16,7 @@ If the toolkit has been enabled you should have a response like this:
 
 Also, since we are using git you can easily use previous versions. Useful if something breaks. See the note at the end of the page of how to do this.
 
-Commands and features
-
-Features:
+**Features**
 
 1. Auto removal of tool once SSH session ends. 
 
@@ -214,4 +212,5 @@ Script pimp: Jacob Cloutier
 Checked and approved by RVD, Brent Lundell and Jason Earl.
 
 This version/fork is maintained by Matt Bagley.
+
 
