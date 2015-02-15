@@ -3,6 +3,7 @@ Random todo list
 wpplug findbroken (disables plugins one by one until 500 goes away)
 
 wpplug reset (sets back to what it was when we started - aka save active_plugin as a var)
+- this will be useful when we start disabling plugins via the database
 
 wpfix should try renaming .htaccess and see if that fixes it, and resetting it
 
@@ -17,3 +18,20 @@ test file that can check for regressions
 UPDATE wp_options SET option_value = 'a:0:{}' WHERE option_name = 'active_plugins';
 
 ... but I want to be able to pull them out one by one to test. renaming folders can cause plugins to erase their settings.
+
+wpcore needs to check the download file that it acually succeeded. Right now it doesn't which can lead to a failed reinstall.
+
+wpuser needs to be able to search database for a string. useful on installs with lots of users, and trying to find one user
+
+standardize options
+
+wpuser admin -l : will give a access link for the first admin user
+
+have it check for deleteme user on load, or the first time wpuser is run?
+
+access link should only be available for an hour
+
+Have an option that will set higher security checks
+
+wpmal: do common malware searches. remember the disclaimer of "this is just to help"
+
