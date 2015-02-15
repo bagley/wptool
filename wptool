@@ -881,7 +881,7 @@ shell_exec"
 \tyou know php code, and what is good code and what is bad code.
 \tSo PLEASE realize that many of the files you are about to see
 \tprobably do not have malware in them. This is just to help you
-\tout. If you need someone to hold your hand, go buy a product.\n"
+\tout. So either know what you are doing, or go buy a product.\n"
 
   read -p "$(echo $'\t')Do you understand what you are doing and want to proceed? (N/y)? " -n 1 -r
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
