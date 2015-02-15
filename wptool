@@ -542,13 +542,13 @@ wp_set_auth_cookie($u);
 //print_r(\$_COOKIE);
 // redirect
 if ( user_can($u,'switch_themes') ) {
-	\$url = admin_url();
-  echo \$url;
+//	\$url = admin_url();
+//  echo \$url;
   wp_redirect( admin_url() );
 }
 else {
-	\$url = home_url();
-  echo \$url;
+//	\$url = home_url();
+//  echo \$url;
   wp_redirect( home_url() );
 }
 // just to be safe
