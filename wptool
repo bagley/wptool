@@ -867,7 +867,8 @@ function __wptool_to_show_or_not() {
 # wpuser access link
 edit="1424570097"
 edit_desc="
-\t wpuser ID -l Generates a link for your browser which will
+\t wpuser USERID -l  
+\t              Generates a link for your browser which will
 \t              automatically log you in as the given user.
 \t              No more needing to create and remove 'deleteme'.
 \t              See 'wpuser -h'\n"
