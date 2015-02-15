@@ -90,6 +90,11 @@ function wpfix() {
   echo "Rewrite rules flushed...\n";
   wp_cache_flush();
   echo "Object cache flushed...\n";
+  require_once('wp-load.php');
+  require_once('wp-includes/pluggable.php');
+  if (function_exists('w3tc_flush_all')) {
+    echo "Cleared W3 Total Caches\n";
+    w3tc_flush_all(); }
 ?>
 EOF
   echo
