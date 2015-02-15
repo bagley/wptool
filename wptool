@@ -592,15 +592,44 @@ function wptrace() {
     echo -e "This tool uses strace to show what may be causing a wsod.\n"
     echo -e "Usage:\n"
     echo -e "\twptrace [err]|file.php\n"
-    echo -e "\twptrace\n\t\t Run full trace\n"
+    echo -e "\twptrace\n\t\t Run full trace on index.php\n"
     echo -e "\twptrace err\n\t\t Only show usual errors\n"
     echo -e "\twptrace [err] file.php\n\t\t Run strace on file.php\n"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
   
-  strace index.php
+  file="./index.php"
+  if [[ $# -eq 1 && "$1" != "err" ]] ; then
+    if [[ -f "$1" ]] ; then
+      file="$1"
+    else
+      ehco "Could not find $1"
+    fi
+  elif [[ $# -eq 2 ]] ; then
+    if [[ -f "$2" ]] ; then
+      file=$2
+    else
+      echo "Could not find $2"
+    fi
+  fi
   
+  if [[ "$1" == "err" ]] ; then
+    strace php -f "$file" 2>&1 | egrep -i '(No such file or directory|error|warn)'
+  else
+    strace php -f "$file"
+  fi
+  
+  echo -e "
+\tDone tracing $file.
+\tThe above output is to help give you an *idea* of what may be hurting
+\tthe site. Read it from bottom to top, as the errors that are stopping
+\tit usually are at the bottom. Keep in mind that it is
+\tnormal to see many errors above.
+
+\tTry looking for missing theme or plugins files, but note that child themes
+\talways are missing files.\n"
+
 }
 
 function wpstats() {
