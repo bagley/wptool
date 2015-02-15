@@ -434,7 +434,7 @@ function wpuser() {
     echo -e "\tUSERID -a\n\t\tpromote user USERID to admin"
     echo -e "\tUSERID -d\n\t\tdelete user USERID"
     echo -e "\tUSERID -l\n\t\tmake login/access link for user USERID"
-    echo -e "\t        * this is easier and faster than making a user"
+    echo -e "\t        -> this is easier and faster than making a user"
     echo -e "\t-n, new\n\t\tcreate new admin user"
     echo -e "\tall\n\t\tlist all users"
     echo -e "\tadmins\n\t\tlist all admins\n"
@@ -461,8 +461,8 @@ function wpuser() {
   else echo -e "\tInvalid option"!"\n" && return 1; fi		#Otherwise, end.
   if [[ $myconn == "" ]]; then echo -e "\tUser not found"!
   elif [[ $myconn != "ERROR"* ]]; then
-    if [[ -z $1 ]]; then echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
-       echo -e "\n\t(only showing upto 23 users. To see all use 'wpuser all')"
+    if [[ -z $1 ]]; then  echo -e "\t(only showing upto 23 users. To see all use 'wpuser all')\n"
+      echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
     elif [[ $1 == "all" ]]; then echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
     elif [[ $1 == "admins" ]]; then echo -e "\tAdmins:\n";echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
     elif [[ $1 == "-q" ]]; then echo $(echo -e "$myconn" | tail -1)
