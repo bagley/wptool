@@ -190,7 +190,8 @@ function wpconn() {
   elif [[ $1 == "wpuserd" ]]; then q=$q'SELECT user_login FROM '$dbprefix'users WHERE ID='$2'; DELETE FROM '$dbprefix'users WHERE ID='$2'; DELETE FROM '$dbprefix'usermeta WHERE user_id='$2';'
   elif [[ $1 == "wpusernew" ]]; then
     # generate 20 char random password
-    deleteme_pass="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 20 | xargs)"
+    __wp_rand_string
+    deleteme_pass="$wp_rand_string"
     q=$q'INSERT INTO '$dbprefix'users (user_login, user_pass, user_email) VALUES ("deleteme", MD5("'$deleteme_pass'"), "deleteme@example.com"); SET @new_id=LAST_INSERT_ID(); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'capabilities", '"'a:1:{s:13:\"administrator\";b:1;}'"'); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'user_level", 10); SELECT @new_id;'
   else echo -e "\tInvalid argument was given to wpconn... nothing to do" && return 1
   fi
@@ -500,16 +501,14 @@ site="$(wpurl -q | awk '{if (NR==1) {print $3}}')"
 site="$(echo $site | sed 's|/*$||')"
 # this will be the file name
 # TODO: use tmpfile if available
-st="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 16 | xargs)"
-if [[ -z "$st" ]] ; then
-  echo "Failed to get a random string. Exiting"
-  return;
-fi
+__wp_rand_string 16
+st="$wp_rand_string"
 tmp_php_file="make-pass-${st}.php"
 
 #trap "rm -f \"$tmp_php_file\"" 5 6 7 8 10 11 12 13 14 15 16 17 18 19 20
 
-pass="$(tr -dc A-Za-z0-9_ < /dev/urandom | head -c 9 | xargs)"
+__wp_rand_string 10
+pass="$wp_rand_string"
 
 # be sure to escape all php $vars or bash will try to use them
 cat > "$tmp_php_file" <<EOF
