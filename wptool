@@ -769,6 +769,7 @@ function wprestore() {
     echo -e "\twprestore forcegz <file>\n\t\t Restores from a sql.gz file w/o checking it's type.\n"
     echo
     return
+  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
   
   if [[ -z "$2" || ! -f "$2" ]] ; then
