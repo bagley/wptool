@@ -156,6 +156,13 @@ function wpconn() {
   elif [[ $1 == "wpurlmod" ]]; then
     [[ -z $2 ]] && echo No URL specified! && return 9
     q=$q'UPDATE '$dbprefix'options SET option_value="'$2'" WHERE option_name="siteurl" OR option_name="home";'
+  # search the posts and rename the old url to a new one
+  elif [[ $1 == "wpurlreplace" ]]; then
+    [[ -z "$2" || -z "$3" ]] && echo To replace urls in posts there has to be two urls! && return 9
+    # I don't do a search and replace in the options table, as I've seen themes destroyed that way
+    q=$q'UPDATE '$dbprefix'posts SET guid = replace(guid, "'$2'","'$3'");
+        UPDATE '$dbprefix'posts SET post_content = replace(post_content, "'$2'", "'$3'");
+        UPDATE '$dbprefix'postmeta SET meta_value = replace(meta_value, "'$2'", "'$3'");'
   elif [[ $1 == "wpplug" ]]; then q=$q'SELECT option_value FROM '$dbprefix'options WHERE option_name = "active_plugins";'
   elif [[ $1 == "wptheme" ]]; then q=$q'SELECT option_id, option_name, option_value FROM '$dbprefix'options WHERE option_name = "stylesheet" OR option_name = "template";'
   elif [[ $1 == "wpthememod"* ]]; then
@@ -245,20 +252,59 @@ function wpurl() {
     echo -e "This tool returns the current URL settings in the database, or updates them to a specified URL.\n"
     echo -e "Usage:\n"
     echo -e "\twpurl [URL]\n"
-    echo -e "\tURL\n\t\tspecify a URL to change the site to. If the URL does not start with 'http://' or 'https://' it will automatically append 'http://'.\n"
+    echo -e "\tURL\n\t\tspecify a URL to change the site to.\n" 
+    echo -e "\treplace OLDURL NEWURL\n\t\tdo a search and replace in posts for a new url."
+    echo -e "\t\tuseful if you moved/renamed a site's url"
+    echo -e "\t\tand the pictures aren't loading.\n"
+    echo -e "\tIf any of the above URLs do not start with 'http://' or 'https://', \n\tit will automatically append with 'http://'.\n"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
-  if [[ -n $1 ]]; then
+  if [[ -n "$1" && "$1" == "replace" ]] ; then
+    newurl=$2
+    __wpurl_check_http addfollow
+    oldurl=$newurl
+    newurl=$3
+    __wpurl_check_http addfollow
+    wpconn "wpurlreplace" $oldurl $newurl
+    if [[ $? -eq 0 ]] ; then
+      echo "Successfully replaced all instances of $oldurl with $newurl"
+    else
+      echo "Failed to replace urls in database"
+    fi
+  elif [[ -n $1 ]]; then
+    oldsite="$(wpurl -q | awk '{if (NR==1) {print $3}}')"
     newurl=$1
-    [[ ! $newurl =~ https?://* ]] && newurl="http://"$newurl && echo "No 'http://' or 'https://' in provided URL"! && echo "Using '$newurl' instead..."
-    wpconn "wpurlmod" $newurl && echo "Updated URLs to $newurl..."
-  else
+    __wpurl_check_http
+    wpconn "wpurlmod" $newurl && echo "Updated home and site URLs to $newurl..."
+    # if they put it in a subfolder, the .htaccess files need updating
+    echo "Running wpht to update .htaccess rules"
+    wpht
+    
+    echo "Would you like to update your picture urls too? It will run:"
+    echo -e "\n  wpurl replace $oldsite $1\n"
+    read -p "It is recommended that you do this if your url is changed (N/y) " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]] ; then
+      echo
+      wpurl replace $oldsite $1
+    else
+      echo "Skipping the replacement of picture urls. You can still run the above command yourself."
+    fi
+  elif [[ -z "$1" ]] ; then
     wpconn "wpurl"
     [[ -z $myconn ]] && echo -e "\thome:\tnot found\n\tsiteurl:\tnot found\n" && return
     echo -e "$myconn" | tail -n +2 | awk '{print "\t"$2"("$1"):\t"$3}'
+  else
+    echo "Unknown option"
   fi
   echo
+}
+function __wpurl_check_http() {
+  [[ ! $newurl =~ https?://* ]] && newurl="http://"$newurl && echo "No 'http://' or 'https://' in provided URL" && echo -e "Using '$newurl' instead...\n"
+  if [[ "$1" == "addfollow" ]] ; then
+    newurl="$(echo $newurl | sed 's|/*$||')"
+    newurl="$newurl/"
+  fi
 }
 
 function wptheme() {
@@ -682,7 +728,7 @@ function wptool() {
 }
 
 #search, multisite
-wptoolv="1.7.4"
+wptoolv="1.7.5"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 
 # show a recent changes prompt for three weeks after last edit.
