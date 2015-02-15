@@ -695,6 +695,32 @@ function wptrace() {
 
 }
 
+function wpbackup() {
+  if [[ -z $1 || $1 == "--help" || $1 == "-h" ]]; then
+    echo -e "This tool creates a backup of the databases and/or wp-content folders\n"
+    echo -e "Usage:\n"
+    echo -e "\twpbackup [files|db|all]\n"
+    echo -e "\twpbackup\n\t\t Shows help, in case nb runs on 500G db w/o reading first.\n"
+    echo -e "\twpbackup files\n\t\t Makes a backup of files.\n"
+    echo -e "\twpbackup db|database\n\t\t Makes a backup of the database.\n"
+    echo -e "\twpbackup all\n\t\t Makes a backup of database and files.\n"
+    echo
+    return
+  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
+  fi
+  
+  if [[ "$1" == "db" || "$1" == "database" ]] ; then
+    # do database
+    wpconn wpdbexportgz
+  elif [[ "$1" == "files" ]] ; then
+    # files
+    __wp_backup_files
+  elif [[ "$1" == "all" ]] ; then
+    # db and files
+    wpconn wpdbexportgz
+    __wp_backup_files
+  fi
+}
 
 function __wp_rand_string() {
   length=20
@@ -721,6 +747,50 @@ function __wp_rand_string() {
   fi
 }
 
+function __wp_backup_files() {
+  __wp_rand_string
+  echo "Compressing files..."
+  file="wp-content-backup-$(now)-$wp_rand_string.tar.gz"
+  tar czf "$file" wp-content wp-config.php
+  if [ $? -eq 0 ] ; then
+    echo "Done. Saved files to $file"
+  else
+    echo "Failed to save files"
+    rm -f "$file"
+  fi
+}
+
+function wprestore() {  
+  if [[ -z $1 || $1 == "--help" || $1 == "-h" ]]; then
+    echo -e "This tool restores the database from a backup file. It requires that wp-config.php be installed with the correct credentails.\n"
+    echo -e "Usage:\n"
+    echo -e "\twprestore db <file>\n\t\t Restores from a regular .sql/.sql.gz file.\n"
+    echo -e "\twprestore forcedb <file>\n\t\t Restores from a sql file w/o checking it's type.\n"
+    echo -e "\twprestore forcegz <file>\n\t\t Restores from a sql.gz file w/o checking it's type.\n"
+    echo
+    return
+  fi
+  
+  if [[ -z "$2" || ! -f "$2" ]] ; then
+    echo "File does not exist: $2"
+    return 9
+  fi
+  
+  if [[ "$1" == "db" ]] ; then
+    if [[ $2 =~ \.sql\.gz$ ]] ; then
+      wpconn wpdbimportgz "$2"
+    elif [[ $2 =~ \.sql$ ]] ; then
+      wpconn wpdbimport "$2"
+    else
+      echo "Unknown file type. If you are sure, try the forcedb/forcegz option."
+    fi
+  elif [[ "$1" == "forcedb" ]] ; then
+    wpconn wpdbimport "$2"
+  elif [[ "$1" == "forcegz" ]] ; then
+    wpconn wpdbimportgz "$2"
+  else
+    echo "Unknown option"
+  fi
 }
 
 function wpstats() {
@@ -763,6 +833,8 @@ function wptool() {
 \twpfix:   built-in WP fixes
 \twperr:   show most recent errors
 \twpver:   returns version info
+\twpbackup:   backup files and/or db
+\twprestore:  restore database from file
 "
 }
 
