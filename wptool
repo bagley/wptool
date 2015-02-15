@@ -821,7 +821,6 @@ function wpscan() {
     echo -e "\tNote! Scanning can take a huge amount of cpu and disk drive.\n\tIf you abuse your provider's resources, they may shut you down.\n"
     echo
     return
-  elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
 
 # It would be nice to just write these to a file.
