@@ -98,6 +98,8 @@ function wpfix() {
 ?>
 EOF
   echo
+  echo "Also try wptest and wptrace. They help to identify errors."
+  echo
 }
 
 function wpht() {
