@@ -280,6 +280,8 @@ function wpurl() {
     wpconn "wpurlreplace" $oldurl $newurl
     if [[ $? -eq 0 ]] ; then
       echo "Successfully replaced all instances of $oldurl with $newurl"
+      wpfix
+      echo "While we have tried to clear all caches, if they have a caching plugin there may be errors until the *site*'s cached files are cleared."
     else
       echo "Failed to replace urls in database"
     fi
@@ -299,6 +301,8 @@ function wpurl() {
       echo
       wpurl $oldsite $newurl
     else
+      echo "Clearing caches"
+      wpfix
       echo "Skipping the replacement of picture urls. You can still run the above command yourself."
     fi
   elif [[ -z "$1" ]] ; then
