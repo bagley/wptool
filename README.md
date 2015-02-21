@@ -156,13 +156,17 @@ Download the latest archive of core files for wordpress.
 
     wpcore
 
-Download the core wordpress files based on the version specified in files (in the wp-includes/version.php file).
+Download and install/replace with the core wordpress files based on the version specified in files (in the wp-includes/version.php file).
 
     wpcore cur
  
-Downloads core wordpress files based on the database version.
+Download and install/replace with the core wordpress files based on the database version.
 
     wpcore db
+
+Download and install/replace with the newest version of the core wordpress files.
+
+    wpcore new
 
 download version VERSION of the Wordpress core, in the form of #.#.# or 'cur' for current version
 
@@ -179,7 +183,7 @@ This tool runs various built-in Wordpress functions and fixes. It has no options
 
 Generate a fix report
 
-    wpfix flag
+    wpfix
 
 ---------
 
@@ -194,23 +198,25 @@ Return a list of current users/ID# for that wordpress install.
 Create a link that will allow you to enter the  WordPress site as the given user in your chosen browser.
 
     wpuser USERID -l
+    # example: get a link to login as user 1
+    wpuser 1 -l
 
  Return details about specified user USERID
      
     wpuser USERID
-    # example:
+    # example: get the info of user 1
     wpuser 1
     
 Change username of user USERID to NAME
 
     wpuser USERID -u NAME
-    # example:
+    # example: change the name of user 1 to mark
     wpuser 1 -u mark
 
 Change password of user USERID to PASS 
 
     wpuser USERID -p PASS
-    # example:
+    # example: change the password of user 4
     wpuser 4 -p My@New%Prase!
 
 Promote user USERID to admin 
