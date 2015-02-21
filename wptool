@@ -34,7 +34,9 @@ specified version.
   
   if [[ ! -f "$file.tar.gz" ]]; then
     echo "Downloading install file $file.tar.gz"
-    wget -q --show-progress "https://wordpress.org/$file.tar.gz"
+    # --no-check-certificate is for older versions of wget
+    # don't be silent, in case it stalls and we are just waiting.....
+    wget --no-check-certificate "https://wordpress.org/$file.tar.gz"
     if [[ $? -ne 0 ]] ; then
       echo "Unable to download $file.tar.gz"
       rm -f "$file.tar.gz"
@@ -359,7 +361,7 @@ function wptheme() {
     echo -e "\nAvailable themes:\n"
     ls -F $folder |grep "/"|grep -v "^\."|sed "s|^\(.*\)/|\t\1|" #ls -A is overwritten by default $LS_OPTIONS in alias
   elif [[ $1 == "fresh" ]]; then
-    wget -qP $folder https://wordpress.org/extend/themes/download/twentytwelve.1.1.zip && echo "Downloaded twentytwelve.1.1.zip..." || {
+    wget --no-check-certificate -P $folder https://wordpress.org/extend/themes/download/twentytwelve.1.1.zip && echo "Downloaded twentytwelve.1.1.zip..." || {
       echo Unable to download twentytwelve.1.1.zip!
       return 9
     }
