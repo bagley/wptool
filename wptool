@@ -69,11 +69,16 @@ specified version.
     
     # Well, we don't have a wp-config.php file. So get the info and make it
     
+    # All of this is the same as running it in the browser
+    
     # get database info
 #    echo "Hello, you will first have to make a new database user and assign it to the correct database. I will wait for you to do this. (Go to cPanel -> Databases -> MySQL Databases -> Add New User)"
+# We could use current $USER-random and generate random password.
 #    read -e -p "Database Username:" -i "" db_user
 #    read -e -p "Database Name:" -i "" db_name
 #    read -e -p "Database Password:" -i "" db_pw
+#    read -e -p "Database Host:" -i "localhost" db_host
+#    read -e -p "Database Prefix:" -i "wp_" db_prefix
     
     # save database
 #    sed -i "s/username_here/$db_user/g" wp-config.php
