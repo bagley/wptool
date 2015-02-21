@@ -407,7 +407,7 @@ function wptheme() {
     wpconn "wpthememod" "twentytwelve" && echo "Changed to theme 'twentytwelve'..."
     rm -f $folder/twentytwelve.1.1.zip && echo "Deleted twentytwelve.1.1.zip..."
   else
-    [[ ! -d wp-content/themes/$1 ]] && echo -e "No such theme"!"\n" && return 1
+    [[ ! -d wp-content/themes/$1 ]] && echo -e "No such theme: $1\n" && return 1
     if [[ $2 == "-s" ]]; then wpconn "wpthememods" $1 && echo "Changed to stylesheet '$1'..."
     elif [[ $2 == "-t" ]]; then wpconn "wpthememodt" $1 && echo "Changed to template '$1'..."
     elif [[ -n $2 ]]; then echo "Invalid option"!
@@ -534,10 +534,19 @@ if [ -n "$(wpuser $u | grep 'User not found')" ] ; then
   echo
 fi
 
+# Checks
+testsite="$(wpurl)"
+if [[ -z $testsite ]] ; then
+  echo "Error. I got an blank back for the site name"
+  wpstats
+  return 9
+fi
+
 # Get site
 site="$(wpurl -q | awk '{if (NR==1) {print $3}}')"
 # Remove last /
 site="$(echo $site | sed 's|/*$||')"
+
 # this will be the file name
 # TODO: use tmpfile if available
 __wp_rand_string 16
