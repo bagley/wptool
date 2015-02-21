@@ -605,13 +605,21 @@ if ( file_exists(__FILE__) ) {
 }
 EOF
 
-
 echo "Go to this link to get your login cookies:"
 echo 
 echo "$site/$(basename $tmp_php_file)?z=$pass"
 echo 
-echo "Since a file has been created, after you go to the above link, press enter so I can remove it."
-read
+echo "After you go to the above link, press enter so I can remove it."
+echo
+x=12
+READ=""
+while [[ $x -gt 0 && -z $READ && -f "$tmp_php_file" ]] ; do
+ read -t 5
+ read_code=$?
+ [[ $read_code -eq 0 ]] && READ="ok"
+ echo $read_code
+ x=$(($x - 1))
+done
 if ! [[ -f "$tmp_php_file" ]]; then
   echo "File removed itself."
 else
