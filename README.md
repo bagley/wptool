@@ -5,19 +5,19 @@ The WPtool is suite of (SSH) bash functions to administer Wordpress installs. Wi
 
 **Features**
 
-1. Auto removal of tool once SSH session ends.
-2. Login as any user on the site, or make a new user. (wpuser)
-3. Reinstall/fix core files in a single command (wpcore)
-4. Fix common problems and htaccess issues (wpfix/wpht)
-5. Test for issues and find problems (wptests/wptrace)
-6. Show the latest site errors (wperr)
-3. List and change theme (wptheme)
-4. List and activate/deactivate plugins (wpplug)
-4. Change the url address and update that url in posts (wpurl)
-4. Quickly backup and restore the site (wpbackup/wprestore)
-4. Scan for malware (wpscan)
-2. Man pages for each command for quick syntax references:
-     command -h
+* Auto removal of tool once SSH session ends.
+* Login as any user on the site, or make a new user. (wpuser)
+* Reinstall/fix core files in a single command (wpcore)
+* Fix common problems and htaccess issues (wpfix/wpht)
+* Test for issues and find problems (wptests/wptrace)
+* Show the latest site errors (wperr)
+* List and change theme (wptheme)
+* List and activate/deactivate plugins (wpplug)
+* Change the url address and update that url in posts (wpurl)
+* Quickly backup and restore the site (wpbackup/wprestore)
+* Scan for malware (wpscan)
+* Man pages for each command for quick syntax references:
+    command -h
 
 
 ##How to load it
@@ -368,8 +368,8 @@ But if you want the latest and greatest, or you want to help out, or you are jus
 
 --------
 
-Credits
-======
+##Credits
+
 Developer: Thomas Bradshaw
 
 Script pimp: Jacob Cloutier 
