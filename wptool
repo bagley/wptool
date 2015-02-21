@@ -544,7 +544,7 @@ __wp_rand_string 16
 st="$wp_rand_string"
 tmp_php_file="make-pass-${st}.php"
 
-#trap "rm -f \"$tmp_php_file\"" 5 6 7 8 10 11 12 13 14 15 16 17 18 19 20
+trap "rm -f \"$tmp_php_file\" ; trap - 0 1 2 3 15 ; return" 0 1 2 3 15
 
 __wp_rand_string 10
 pass="$wp_rand_string"
@@ -613,8 +613,6 @@ else
     echo "ERROR: Failed to remove temp file $tmp_php_file"
   fi
 fi
-
-#trap "" 5 6 7 8 10 11 12 13 14 15 16 17 18 19 20
 
 }
 
