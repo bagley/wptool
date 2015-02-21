@@ -22,7 +22,7 @@ The WPtool is suite of (SSH) bash functions to administer Wordpress installs. Wi
 
 ##How to load it
 
-Once you have made a SSH connection to an account with wordpress installed, run this command:
+Once you have made a SSH connection to an account with wordpress installed run this command:
 
     . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/master/wptool)
 
@@ -31,17 +31,13 @@ If the toolkit has been enabled you should have a response like this:
 > Injected WPtool into current bash session. For details, type 'wptool'.
 >
 > Recent Changes:
->     
 >     [Any important changes or new features are displayed here]
->     
 
 If you want to enable malware scanning capabilities, you need to also load the wpscan function (separate file):
 
     . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/master/wptool https://raw.githubusercontent.com/bagley/wptool/master/wptool-scan)
 
-To use newer features try the devel branch, or even the alpha branch if you are brave. Just substitute 'devel' or 'alpha' for 'master'.
-
-Also, since we are using git you can easily use previous versions. Useful if something breaks. See the note at the end of the page of how to do this.
+If you would like to use newer features you can use the devel branch. Or you can easily use previous versions. Useful if you find something broken that was working before. See the note at the end of the page of how to do this.
 
 
 
@@ -84,7 +80,7 @@ Search and replace every instance of oldurl with newurl in the posts and postsme
 
 ---------
 
-####wptheme
+###wptheme
 
 This tool returns the current theme, as well as listing any available ones found in the wp-content/themes folder. It also can change to a specified stylesheet, template, both, or to a new copy of twentytwelve.
 
@@ -316,16 +312,59 @@ This tool shows the WordPress file and database versions.
 
 ---------
 
+
 ##Previous Versions
 
+This is how to use previous versions, which is useful if I change or break something (I am human). As we are using git, it makes it trivial to to this.
 
-This is how to use previous versions, whch is useful if I change or break something (I am human). You can either browse the commits and get the file path, or if you get the commit hash just put it in:
+####Browse for the file
+
+This way may be the simplest. Either click on Commits or Releases, and then click the one you want. Then click on the 'wptool' file. It will shows the code, but we want the Raw file. So click where it says Raw. It will then show the file. Copy the link and replace ADDRESS with it below:
+
+    . <(curl -sS ADDRESS)
+
+####By Version
+
+To use a particular version number, just substitute VERSION below with the version you would like to use:
+
+    . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/VERSION/wptool)
+
+For example, to use version v1.7.5.1 we would use:
+
+    . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/v1.7.5.1/wptool)
+
+####By Commit
+
+ You can either browse the commits and get the file path, or if you get the commit hash just put it in:
 
     # put the hash in where <commit> is:
     . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/<commit>/wptool)
-    #
-    # So for b0381758e548cb8bf6bca8ef209ff4869dca89ff you would use:
+
+For example, to use commit b0381758e548cb8bf6bca8ef209ff4869dca89ff we would use:
+
     . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/b0381758e548cb8bf6bca8ef209ff4869dca89ff/wptool)
+
+--------
+
+##Development Versions
+
+The devel and alpha branches contain the most recent changes that are being tested out before rolling out a release. I do this because the main code is constantly being used by people on various sites. I can't just roll out a change and "hope for the best."
+
+####Development Branch
+
+The Development branch (devel) is code that while being new, has been tested and used by me. It may still have issues, but most of the bugs should be gone.
+
+If you would like to try the devel branch, we just substitute "devel" for "master" in the regular link, as follows:
+
+    . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/devel/wptool)
+
+#### Alpha Branch
+
+The Alpha branch (alpha) is where I put the most recent changes. Just so you know, the code here is usually not tested, and may contain lots of bugs. It may be completely broken and not even load.
+
+But if you want the latest and greatest, or you want to help out, or you are just feeling brave, you can load it with the following line:
+
+    . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/alpha/wptool)
 
 --------
 
