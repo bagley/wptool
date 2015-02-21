@@ -80,8 +80,12 @@ specified version.
     cp "$oldcore/wp-config.php" .
     echo "Copied old wp-config.php back into place..."
   else
-    cp wp-config-sample.php wp-config.php
-    echo "Copied wp-config-sample.php into place..."
+    # Do not do this. On a new install the user will get:
+    #    "Error establishing a database connection"
+    # because we have copied default (incorrect) data into place...
+    #cp wp-config-sample.php wp-config.php
+    #echo "Copied wp-config-sample.php into place..."
+    echo "No config was found. You need to go to your site and run through the setup."
   fi
 }
 
