@@ -3,7 +3,7 @@ function now() {
 }
 
 function wpcore() {
-  if [[ $1 == "--help" || $1 == "-h" ]]; then
+  if [[ -z $1 || $1 == "--help" || $1 == "-h" ]]; then
     echo -e "
 This tool downloads the latest core, a new core of the current version, or a
 specified version.
@@ -16,14 +16,31 @@ specified version.
 \t    #.#.#\n\t\tdownload version VERSION of the Wordpress core
 \t    cur\n\t\tdownload new set of files matching current file version
 \t    db\n\t\tdownload set of files matching current database version
+\t    new\n\t\tinstall a new version of WordPress
 \t    -h\n\t\tdisplay this help output
 "
     return
   elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q | awk '{print $1}')
   elif [[ $1 == "db" ]]; then file=wordpress-$(wpver -q | awk '{print $3}')
+  elif [[ $1 == "new" ]]; then file="latest"
   elif [[ -n $1 ]]; then file="wordpress-$1"
-  else file="latest"
+  else echo "No parameter was given. See 'wpcore -h'" && return 9
   fi
+  
+  # checks
+  if [[ -f "wp-config.php" ]] ; then
+    echo "
+It seems there is already a Wordpress install here.
+Remove or rename wp-config.php to continue
+or use 'wpcore cur/db' to just reinstall core files"
+    return 9
+  fi
+  read -p "$(echo $'\t')Install Wordpress (N/y)? " -n 1 -r
+  if ! [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Nothing done."
+    return
+  fi
+  
 
   if [[ "$file" == "wordpress-Unknown" ]]; then
     echo Unknown version!
@@ -60,78 +77,61 @@ specified version.
     cp "$oldcore/wp-config.php" .
     echo "Copied old wp-config.php back into place..."
   else
-    cp wp-config-sample.php wp-config.php
-    echo "Copied wp-config-sample.php into place..."
+    # cp wp-config-sample.php wp-config.php
+    # echo "Copied wp-config-sample.php into place..."
+    
+    echo "No config was found. You need to go to your site and run through the setup"
+    
+    # Well, we don't have a wp-config.php file. So get the info and make it
+    
+    # get database info
+#    echo "Hello, you will first have to make a new database user and assign it to the correct database. I will wait for you to do this. (Go to cPanel -> Databases -> MySQL Databases -> Add New User)"
+#    read -e -p "Database Username:" -i "" db_user
+#    read -e -p "Database Name:" -i "" db_name
+#    read -e -p "Database Password:" -i "" db_pw
+    
+    # save database
+#    sed -i "s/username_here/$db_user/g" wp-config.php
+#    sed -i "s/database_name_here/$db_name/g" wp-config.php
+#    sed -i "s/password_here/$db_pw/g" wp-config.php
+    
+    # verify we can connect to database
+#    wpdb wpdbver
+    
+    # install wp
+#   wpfix
+#      php -q <<"EOF" && echo "Ran fix..." || echo Error running fix!
+#<?php
+#  require_once('wp-config.php');
+#  echo "WordPress loaded...\n";
+#  require_once('wp-admin/upgrade-functions.php');
+#  echo "Upgrade functions loaded...\n";
+#?>
+#EOF
+    
+    # get user info
+#    echo "Now enter the user info"
+#    read -e -p "Choose an admin username:" -i "" admin_user
+#    read -e -p "Set admin password:" -i "" admin_pw
+#    read -e -p "Set admin email:" -i "" admin_email
+    
+#    wpuser 1 -u $admin_user
+#    wpuser 1 -p $admin_pw
+    # wpuser 1 -e $admin_email
+    
+    # set keys
+    
+    
+    # set htaccess
+#    wpht
+    
+    # clear vars
+#    db_pw=""
+#    admin_pw=""
+#    unset db_user db_name db_pw admin_user admin_pw admin_email
+    
   fi
 }
-
-# Install wordpress, asking for database credentials
-# uses wpcore to install
-# 
-function wpnew() {
-  if [[ $1 == "--help" || $1 == "-h" || -z "$1" ]]; then
-    echo -e "
-\t\nThis tool downloads the latest version and installs it for you.\n
-\tUsage:\n
-\t    wpnew install\n
-\t    \t install the most recent version of Wordpress core\n
-\t    wpnew [VERSION]\n
-\t    \t download version VERSION of the Wordpress core,\n
-\t    \t in the form of #.#.# for current version\n"
-    return
-  fi
-  
-  # checks
-  if [[ -f "wp-config.php" ]] ; then
-    echo "It seems there is already a Wordpress install here. Remove or rename wp-config.php to continue"
-    echo "Or use 'wpcore cur' to reinstall a 
-    return 9
-  fi
-  read -p "$(echo $'\t')Install Wordpress (N/y)? " -n 1 -r
-  if ! [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Nothing done."
-    return
-  fi
-  
-  # install it
-  wpcore "$1"
-  if [[ $? -ne ]] ; then
-    return 9
-  fi
-  
-  # get database 
-  echo "Hello, you will first have to make a new database user and assign it to the correct database. I will wait for you to do this. (Go to cPanel -> Databases -> MySQL Databases -> Add New User)"
-  read -e -p "Enter Your Database Username:" -i "" db_user
-  read -e -p "Enter Your Database Name:" -i "" db_name
-  read -e -p "Enter Your Datbase Password:" -i "" db_pw
-  
-  # verify we can connect to database
-  
-  
-  # get user info
-  echo "Now enter the user info"
-  read -e -p "Choose an admin username:" -i "" admin_user
-  read -e -p "Set admin password:" -i "" admin_pw
-  read -e -p "Set admin email:" -i "" admin_email
-  
-  # set database
-  sed -i "s/username_here/$db_user/g" wp-config.php
-  sed -i "s/database_name_here/$db_name/g" wp-config.php
-  sed -i "s/password_here/$db_pw/g" wp-config.php
-  
-  # set keys
-  
-  
-  # set htaccess
-  wpht
-  
-  # clear vars
-  db_pw=""
-  admin_pw=""
-  unset db_user db_name db_pw admin_user admin_pw admin_email
-
-}
-
 
 
 function wpfix() {
