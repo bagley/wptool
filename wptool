@@ -44,6 +44,20 @@ specified version.
     fi
   fi
   
+  # check if file was properly downloaded and not corrupt
+  echo "Verifying downloaded file..."
+  tar tf "$file.tar.gz" > /dev/null
+  tar_exit_code=$?
+  if [[ $tar_exit_code -ne 0 ]] ; then
+    echo -e "\nError: Downloaded file was corrupt: tar gave error code $tar_exit_code"
+    rm -f "$file.tar.gz"
+    echo -e "Removed corrupt file: $file.tar.gz"
+    echo "Try running the command again...."
+    return 9
+  else
+    echo "$file.tar.gz appears to be okay."
+  fi
+  
   temp=$(now)
   echo "Checking for WP files..."
   local wpfiles=$(find -maxdepth 1 -name "wp-*" -o -name index.php -o -name license.txt -o -name readme.html -o -name xmlrpc.php)
