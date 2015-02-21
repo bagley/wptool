@@ -16,13 +16,15 @@ specified version.
 \t    #.#.#\n\t\tdownload version VERSION of the Wordpress core
 \t    cur\n\t\tdownload new set of files matching current file version
 \t    db\n\t\tdownload set of files matching current database version
+\t    new\n\t\tinstall a new version of WordPress
 \t    -h\n\t\tdisplay this help output
 "
     return
   elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q | awk '{print $1}')
   elif [[ $1 == "db" ]]; then file=wordpress-$(wpver -q | awk '{print $3}')
+  elif [[ $1 == "new" ]]; then file="latest"
   elif [[ -n $1 ]]; then file="wordpress-$1"
-  else file="latest"
+  else echo "No parameter was given. See 'wpcore -h'" && return 9
   fi
 
   if [[ "$file" == "wordpress-Unknown" ]]; then
