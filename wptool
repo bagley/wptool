@@ -27,21 +27,6 @@ specified version.
   else echo "No parameter was given. See 'wpcore -h'" && return 9
   fi
   
-  # checks
-  if [[ -f "wp-config.php" ]] ; then
-    echo "
-It seems there is already a Wordpress install here.
-Remove or rename wp-config.php to continue
-or use 'wpcore cur/db' to just reinstall core files"
-    return 9
-  fi
-  read -p "$(echo $'\t')Install Wordpress (N/y)? " -n 1 -r
-  if ! [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Nothing done."
-    return
-  fi
-  
-
   if [[ "$file" == "wordpress-Unknown" ]]; then
     echo Unknown version!
     return 9
