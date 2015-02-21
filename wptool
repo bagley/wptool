@@ -637,6 +637,8 @@ else
   fi
 fi
 
+trap - 0 1 2 3 15
+
 }
 
 
