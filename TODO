@@ -1,4 +1,9 @@
-Random todo list
+*** Bugs ***
+
+the changelog is not showing. It is only showing wpuser/wpurl updates.
+
+
+***Random todo list***
 
 wpplug findbroken (disables plugins one by one until 500 goes away)
 
@@ -35,3 +40,11 @@ Have an option that will set higher security checks
 
 wpmal: do common malware searches. remember the disclaimer of "this is just to help"
 
+make a single devel branch for all the new things
+
+wpscan: look for broken links or links that point outside of the root/home dir.
+- try to use find2perl first
+
+have the access link check for old copies of make-pass-[0-9a-zA-Z]*-\.php or
+make-pass[^\.]*\.php
+and remove them
