@@ -1,0 +1,105 @@
+# This file is a separate file in case someone wants 
+# to put wptool on their server. This routine contains
+# strings that may get a person's hosting account shut down.
+
+function wpscan() {
+  if [[ -z $1 || $1 == "--help" || $1 == "-h" ]]; then
+    echo -e "This tool scans for strings that are in typical malware.\n"
+    echo -e "Usage:\n"
+    echo -e "\twpscan [quick|full]\n\t\t\n"
+    echo -e "\twpscan quick\n\t\t Scans the core files, plugins, and themes.\n"
+    echo -e "\twpscan full\n\t\t Scan all files in the current directory and down.\n"
+    echo -e "\twpscan [quick|full] quiet\n\t\t Only show the actual phrase being matched. Not the whole line.\n"
+    echo -e "\t\$extra_strings\n\t\tSet any custom strings to this variable to \n\t\tbe included in the scan. Separate each with a '\\\n'.\n"
+    echo -e "\tNote! Scanning can take a huge amount of cpu and disk drive.\n\tIf you abuse your provider's resources, they may shut you down.\n"
+    echo
+    return
+  fi
+
+# It would be nice to just write these to a file.
+# But if their provider found it, they'd prob get shut down
+search_strings="eval(\$___(\$__));
+eval(stripslashes(@\$_POST[
+eval(stripslashes(array_pop(
+eval(base64_decode(
+eval(gzinflate(str_rot13(base64_decode(
+gzinflate(base64_decode(
+Array(base64_decode(
+sha1(base64_decode(
+print(base64_decode(
+wsoScandir(\$dir)
+substr(current(array_keys(
+cwd = @getcwd();
+\$OOO000000=urldecode(
+\$l___l_='base'.(32*2)
+substr(md5(strrev(
+cwd[strlen(\$cwd)
+=\"x62
++ r + \"&r=\" + document.referrer;
+if(strtoupper(substr(PHP_OS, 0, 3) ) == \"WIN\")
+){if(@copy(
+copy(\"endless.html
+system(\"wget
+symlink(\"/\",\"sym/root\");
+@copy(\$_FILES['file']['tmp_name']
+error_reporting(0);if(
+x6C\x28\x67\x7A\x69
+\"/.*/e\",\"\x28\x65\x76\x61
+preg_replace(\"/.*/e\",
+Windows-1251\";preg_replace(
+); exit(); } if(isset(
+system(\"\$cmd\"); die;}
+rtrim(\$security_code, \"/\");
+chr(ord(
+ini_get('safe_mode');
+window.top.location.href=\"http://
+@ini_get(\"disable_functions\")
+x6C\x28\x67\x7A\x69\x6E\x66\x6C\x61\x74
+hacked
+pwned
+die(PHP_OS.chr(49).chr(48).chr(43).md5(0987654321)
+die(PHP_OS.chr(49).chr(49).chr(43).md5(0987654321)
+shell_exec"
+
+  if [[ -n "$extra_strings" ]] ; then
+    search_strings="$(echo -e "$search_strings\n$extra_strings")"
+  fi
+  
+  echo -e "
+\tNote! Scanning can take a huge amount of cpu and disk drive.
+\tIf you abuse your provider's resources, they may shut you down.
+\tScanning for malware is an advanced topic and requires that
+\tyou know php code, and what is good code and what is bad code.
+\tSo PLEASE realize that many of the files you are about to see
+\tprobably do not have malware in them. This is just to help you
+\tout. So either know what you are doing, or go buy a product.\n"
+
+  read -p "$(echo $'\t')Do you understand what you are doing and want to proceed? (N/y)? " -n 1 -r
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo -e "\nExiting..."
+    return
+  fi
+  
+  echo -e "\n\nUsing the following for strings:\n=====\n$search_strings\n=====\nEnd search strings\n"  
+  
+  quiet=''
+  if [[ "$2" == "quiet" ]] ; then
+    quiet='o'
+  fi
+  
+  if [[ $1 == "quick" ]] ; then
+    echo Starting quickscan
+    LC_ALL=C fgrep -nr$quiet --include  \*.php "$search_strings" *.php \
+      ./wp-admin ./wp-content ./wp-includes 
+ 
+  elif [[ $1 == "full" ]] ; then
+    echo "Starting full scan"
+    LC_ALL=C fgrep -nr$quiet "$search_strings" ./
+    #LC_ALL=C grep -a -F -n -r -f ./search-strings.txt ./ | cut -c1-200
+  
+  else
+    echo "Invalid option"
+  fi
+}
+
+echo -e "\t\t\t\t\t\t\twpscan loaded."
