@@ -886,7 +886,6 @@ chr(ord(
 ini_get('safe_mode');
 window.top.location.href=\"http://
 @ini_get(\"disable_functions\")
-system(\"wget
 x6C\x28\x67\x7A\x69\x6E\x66\x6C\x61\x74
 hacked
 pwned
