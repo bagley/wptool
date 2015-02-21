@@ -33,10 +33,12 @@ specified version.
   fi
   
   if [[ ! -f "$file.tar.gz" ]]; then
-    if ! wget -q "https://wordpress.org/$file.tar.gz"; then
-      echo "Unable to download $file.tar.gz"!
+    echo "Downloading install file $file.tar.gz"
+    wget -q --show-progress "https://wordpress.org/$file.tar.gz"
+    if [[ $? -ne 0 ]] ; then
+      echo "Unable to download $file.tar.gz"
+      rm -f "$file.tar.gz"
       return 9
-    else echo "Downloaded $file.tar.gz..."
     fi
   fi
   
