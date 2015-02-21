@@ -37,7 +37,7 @@ If you want to enable malware scanning capabilities, you need to also load the w
 
     . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/master/wptool https://raw.githubusercontent.com/bagley/wptool/master/wptool-scan)
 
-If you would like to use newer features you can use the devel branch. Or you can easily use previous versions. Useful if you find something broken that was working before. See the note at the end of the page of how to do this.
+If you would like to use newer features you can use the devel branch. Or you can easily use previous versions. Useful if you find something broken that was working before. See the Developent Versions and Previous Versions sections for move info.
 
 
 
@@ -370,7 +370,7 @@ But if you want the latest and greatest, or you want to help out, or you are jus
 
 ##Credits
 
-Developer: Thomas Bradshaw
+Developers: Thomas Bradshaw and Matt Bagley
 
 Script pimp: Jacob Cloutier 
 
