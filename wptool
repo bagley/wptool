@@ -766,6 +766,7 @@ function wptrace() {
 function wpscan() {
   if [[ -z $1 || $1 == "--help" || $1 == "-h" ]]; then
     if [[ $2 == "strings" ]] ; then
+      # wpscan -h strings
       echo -e "
 \twpscan uses strings to find bad files. By default it will load
 \ta default set when a scan is run, if none are already loaded.\n
@@ -785,6 +786,7 @@ function wpscan() {
       echo
       return
     else
+      # wpscan -h
       echo -e "This tool scans for strings that are in typical malware.\n
 Usage: wpscan [quick|full|add scan_string_url]\n\t\t\n
 \twpscan quick
@@ -852,7 +854,7 @@ Usage: wpscan [quick|full|add scan_string_url]\n\t\t\n
     fi
     
   else
-    echo "Unknown option"
+    echo "Unknown option. Try 'wpscan -h'"
     return 9
   fi
   
@@ -898,14 +900,14 @@ Usage: wpscan [quick|full|add scan_string_url]\n\t\t\n
       ./wp-admin ./wp-content ./wp-includes 
  
   elif [[ $1 == "full" ]] ; then
-    echo "Starting full scan"
+    echo -e "\n\n\tStarting full scan...\n"
     LC_ALL=C fgrep -nr$quiet "$scan_strings" ./
     #LC_ALL=C grep -a -F -n -r -f ./search-strings.txt ./ | cut -c1-200
   
   else
-    echo "Invalid option"
+    echo "Invalid option. Try 'wpscan -h'"
   fi
-  echo "Scan Finished."
+  echo -e "\nScan Finished."
 }
 
 function __wpscan_show_strings() {
