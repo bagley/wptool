@@ -532,14 +532,42 @@ function wpuser() {
   fi
   [[ $1 != "-q" ]] && echo
   
-  if [[ $1 != "-q" ]] ; then
-    if [[ -n "$(ls make-pass-*.php)" || -n "$(ls access-link-*.php)" ]] ; then
-      echo Warning: there are Access Link files. These may be the files
-      echo that we use to access the Dashboard of the site. 
-      echo " ------ They probably should be removed ------"
-      ls make-pass-*.php
+  # find and remove old access links
+  if [[ -z $show_access_link_warning ]] ; then
+   if [[ -z $1 || $1 == "new" || $1 == "all" || $1 == "admins" ]] ; then
+    list_of_files="$(ls make-pass-*.php access-link-*.php 2>/dev/null)"
+    if [[ -n "$list_of_files" ]] ; then
+      access_files=""
+      # verify each file so we don't remove the wrong ones
+      # look for the string "this file is to give admin access"
+      for each in $list_of_files ; do
+        if [[ $(grep "this file is to give admin access" $each) ]] ; then
+          access_files="$each ${access_files}"
+        fi
+      done
+      if [[ -n $access_files ]] ; then
+        echo --------------------------
+        echo Warning: there are Access Link files. These may be the files
+        echo that we use to access the Dashboard of the site. 
+        echo " ------ They probably should be removed ------"
+        ls $access_files
+        echo
+      fi
+      read -p "$(echo $'\t')Would you like to remove these Access Link files? (y/N) " -n 1 -r
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm -f make-pass-*.php access-link-*.php
+        if [[ -n "$(ls make-pass-*.php 2>/dev/null)" || -n "$(ls access-link-*.php 2>/dev/null)" ]] ; then
+          echo -e "\nFailed to remove the files. Maybe there is a permissions issue?"
+        else
+          echo -e "\nRemoved access links"
+        fi
+      else
+        echo -e "\n\nYou won't be prompted again, unless you run: show_access_link_warning=''"
+      fi
       echo
+      show_access_link_warning=done
     fi
+   fi
   fi
 }
 
@@ -572,7 +600,7 @@ site="$(echo $site | sed 's|/*$||')"
 # TODO: use tmpfile if available
 __wp_rand_string 16
 st="$wp_rand_string"
-tmp_php_file="make-pass-${st}.php"
+tmp_php_file="access-link-${st}.php"
 
 trap "rm -f \"$tmp_php_file\" ; echo The file was removed. ; trap - 0 1 2 3 15 ; return" 0 1 2 3 15
 
