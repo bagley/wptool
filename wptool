@@ -786,7 +786,7 @@ function wpscan() {
       return
     else
       echo -e "This tool scans for strings that are in typical malware.\n
-Usage: wpscan [quick|full|add search_string_url]\n\t\t\n
+Usage: wpscan [quick|full|add scan_string_url]\n\t\t\n
 \twpscan quick
 \t\t Scans the core files, plugins, and themes.\n
 \twpscan full
@@ -805,32 +805,40 @@ Usage: wpscan [quick|full|add search_string_url]\n\t\t\n
   fi
   
   # manage string list
+  # show strings
   if [[ $1 == "show-strings" ]] ; then
     __wpscan_show_strings
     return
-    
+  
+  # clear strings  
   elif [[ $1 == "clear-strings" ]] ; then
     scan_strings=""
     echo "Scan strings cleared:"
     __wpscan_show_strings
     return
     
+  # add strings
   elif [[ $1 == "add-strings" ]] ; then
     if [[ -z $2 ]] ; then
       echo "No url was specified"
       return 9
     fi
-    more_scan_strings="$(curl -Ss $2)"
+    __wpscan_get_strings $2 || return 9
+    # we add it differently if there's already data in it
     if [[ -n $scan_strings ]] ; then
-      scan_strings="$(echo -e "$scan_strings\n$more_scan_strings")"
+      scan_strings="$(echo -e "$scan_strings\n$get_strings")"
     else
-      scan_strings="$(echo -e "$more_scan_strings")"
+      scan_strings="$(echo -e "$get_strings")"
     fi
     __wpscan_show_strings
+    echo "Strings successfully added"
     return
     
+  # default strings
   elif [[ $1 == "default-strings" ]] ; then
-    __wpscan_get_default_strings
+    __wpscan_get_strings || return 9
+    scan_strings=$get_strings
+    echo "Default scan strings loaded"
     # __wpscan_show_strings
     # echo "Default scan strings loaded"
     return
@@ -838,7 +846,9 @@ Usage: wpscan [quick|full|add search_string_url]\n\t\t\n
   # if this is a scan and the scan string is empty, load it.
   elif [[ $1 == "full" || $1 == "quick" ]] ; then
     if [[ -z $scan_strings ]] ; then
-      __wpscan_get_default_strings || return
+      __wpscan_get_strings || return 9
+      scan_strings=$get_strings
+      echo "Default scan strings loaded"
     fi
     
   else
@@ -849,10 +859,18 @@ Usage: wpscan [quick|full|add search_string_url]\n\t\t\n
   # add extra strings if variable is set
   if [[ -n "$extra_strings" ]] ; then
     echo "The variable \$extra_strings is set. Adding strings..."
-    scan_strings="$(echo -e "$search_strings\n$extra_strings")"
+    scan_strings="$(echo -e "$scan_strings\n$extra_strings")"
+    extra_strings=""
   fi
   
-  __wpscan_show_strings  
+  # verify we got $scan_strings
+  if [[ -z $scan_strings ]] ; then
+    echo "No scan strings were not loaded. I can't continue without them"
+    return 9
+  fi
+  __wpscan_show_strings
+  
+  
   
   echo -e "
 \tNote! Scanning can take a huge amount of cpu and disk drive.
@@ -894,15 +912,22 @@ function __wpscan_show_strings() {
   echo -e "\n==== Using the following for scan strings:\n$scan_strings\n==== End scan strings\n"
 }
 
-function __wpscan_get_default_strings() {
-  scan_strings="$(curl -Ss https://raw.githubusercontent.com/bagley/wptool/alpha/scanstrings)"
-  if [[ -z scan_strings ]] ; then
-    echo "Failed to get scan strings"
-    echo "To see what we got, you can run this:"
-    echo '  echo $scan_strings'
-    return 9
+function __wpscan_get_strings() {
+  if [[ -z $1 ]] ; then
+    get_strings="$(curl -Ssf https://raw.githubusercontent.com/bagley/wptool/alpha/scanstrings)"
+  else
+    get_strings="$(curl -Ssf $1)"
   fi
-  echo "Default scan strings loaded"
+  if [[ -z $get_strings ]] ; then
+    echo "Failed to get scan strings"
+    echo "We didn't get any output, which means there was an error."
+    return 9
+    
+  elif [[ $get_strings == "Not Found" ]] ; then
+    echo "File was not found"
+    return 9
+  
+  fi
 }
 
 
