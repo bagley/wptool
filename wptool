@@ -563,9 +563,9 @@ function wpuser() {
         fi
       else
         echo -e "\n\nYou won't be prompted again, unless you run: show_access_link_warning=''"
+        show_access_link_warning=done
       fi
       echo
-      show_access_link_warning=done
     fi
    fi
   fi
@@ -1125,7 +1125,7 @@ function wptool() {
 }
 
 #search, multisite
-wptoolv="1.7.5.1"
+wptoolv="1.7.9.5"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 
 # show a recent changes prompt for three weeks after last edit.
@@ -1136,7 +1136,9 @@ function __wptool_to_show_or_not() {
   diff_edit="$(($(date +%s) - $edit))"
   # the z is in case the above string does not work...
   # if I get complaints I can change it to -n
-  if [[ -z "$diff_edit" || $diff_edit -lt 181440 ]] ; then
+  #days_to_show=21 (1814400) 31 (2592000)
+  # I could use $(($days_to_show * 3600 * 24 )) but if the shell does not like it....
+  if [[ -z "$diff_edit" || $diff_edit -lt 2592000 ]] ; then
     recent_changes="$recent_changes$edit_desc"
   fi
 }
@@ -1149,6 +1151,12 @@ function __wptool_to_show_or_not() {
 # __wptool_to_show_or_not
 
 # ------- Changes -----------
+
+# wpscan
+edit="1424603108"
+edit_desc="
+\t wpscan       Scans the website for malware. See 'wpscan -h'\n"
+__wptool_to_show_or_not
 
 # wpuser access link
 edit="1424570097"
@@ -1181,6 +1189,11 @@ edit_desc="
 \t wperr        Shows the tail of main WP error logs.\n"
 __wptool_to_show_or_not
 
+# wpbackup/restore
+edit="1424570097"
+edit_desc="
+\t wpbackup/wprestore     Quick backup/restore. See their help pages.\n"
+__wptool_to_show_or_not
 
 # ------- End Changes ----------
 
