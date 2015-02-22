@@ -531,6 +531,16 @@ function wpuser() {
   else echo "$myconn"
   fi
   [[ $1 != "-q" ]] && echo
+  
+  if [[ $1 != "-q" ]] ; then
+    if [[ -n "$(ls make-pass-*.php)" || -n "$(ls access-link-*.php)" ]] ; then
+      echo Warning: there are Access Link files. These may be the files
+      echo that we use to access the Dashboard of the site. 
+      echo " ------ They probably should be removed ------"
+      ls make-pass-*.php
+      echo
+    fi
+  fi
 }
 
 function __wp_create_access_file() {
