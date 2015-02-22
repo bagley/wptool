@@ -35,7 +35,7 @@ If the toolkit has been enabled you should have a response like this:
 
 If you would like to use newer features you can use the devel branch. Or you can easily use previous versions. Useful if you find something broken that was working before. See the Developent Versions and Previous Versions sections for move info.
 
-*Hosting Note: If you plan on hosting (or copying) wptool elsewhere, like onto a hosting account you have, please see the note in the "Hosting WPTool" section before doing so.*
+*Hosting Note: If you plan on putting wptool on your own server/website, like onto a hosting account you have, please see the note in the "Hosting WPTool" section before doing so.*
 
 
 ##Commands
@@ -375,13 +375,15 @@ But if you want the latest and greatest, or you want to help out, or you are jus
 
 WPTool is free software, and you are welcome to copy it to your host/website/etc as you see fit.
 
-You don't have to host wptool to use it. Just run the command under "How to load it" and you will have the necessary tools.
+Just know that you don't have to host wptool to use it. Just run the command under "How to load it" and you will have the necessary tools.
 
-The only issue with hosting it is that the file has strings in it that a hosting provider may think are bad. But these strings are just to look for bad website files. And they don't have any effect if you just load the program as described in "How to load it." They only can effect your hosting account if you copy the file onto the actual account.
+The only issue with hosting is that "scanstrings" file has strings in it that a hosting provider may think are bad. But these strings are just to look for bad website files. And they don't have any effect if you just load the program as described in "How to load it." They only can effect your hosting account if you copy the "scanstrings" file onto the actual account.
 
-So before you copy it onto your hosting account, you need to verify with your hosting provider whether or not they are going to flag it, or remove the function "wpscan" from the wptool file. Also note that the .git folder will contain these strings. In the future I may provide a script to automatically remove these strings if anyone is interested.
+WPTool itself does not have any of these strings. I kept them separate on purpose.
 
-Again, the strings have no effect on the accounts that the script is loaded into, only if you actually copy it onto the hosting account's filesystem. When we only load it, we are only loading it into the user's shell. When the shell is closed, the whole program with the strings are cleared out.
+So before you copy the "scanstrings" file onto your hosting account, you need to verify with your hosting provider whether or not they are going to flag it. Or just copy WPTool over, and it will fetch the file from here. Also note that the .git folder will contain these strings.
+
+Again, the strings have no effect on the accounts that the script is loaded into, only if you actually copy the "scanstrings" file onto the hosting account's filesystem. When we only load the strings via the wpscan command, we are only loading it into the user's shell. When the shell is closed, the whole program with the strings are cleared out.
 
 --------
 
