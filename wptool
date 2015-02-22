@@ -765,66 +765,94 @@ function wptrace() {
 
 function wpscan() {
   if [[ -z $1 || $1 == "--help" || $1 == "-h" ]]; then
-    echo -e "This tool scans for strings that are in typical malware.\n"
-    echo -e "Usage:\n"
-    echo -e "\twpscan [quick|full]\n\t\t\n"
-    echo -e "\twpscan quick\n\t\t Scans the core files, plugins, and themes.\n"
-    echo -e "\twpscan full\n\t\t Scan all files in the current directory and down.\n"
-    echo -e "\twpscan [quick|full] quiet\n\t\t Only show the actual phrase being matched. Not the whole line.\n"
-    echo -e "\t\$extra_strings\n\t\tSet any custom strings to this variable to \n\t\tbe included in the scan. Separate each with a '\\\n'.\n"
-    echo -e "\tNote! Scanning can take a huge amount of cpu and disk drive.\n\tIf you abuse your provider's resources, they may shut you down.\n"
-    echo
+    if [[ $2 == "strings" ]] ; then
+      echo -e "
+\twpscan uses strings to find bad files. By default it will load
+\ta default set when a scan is run, if none are already loaded.\n
+\tYou can override with your own set(s):\n
+\twpscan show-strings [url]
+\t\tShow a list of the scan strings that are currently loaded.\n
+\twpscan add-strings [url]
+\t\tLoad your own strings from the given address.
+\t\tSee scanstrings for an example.\n
+\twpscan default-strings [url]
+\t\tOptional method to just set the strings back to the default list.
+\twpscan clear-strings [url]
+\t\tClear out all scan strings.\n
+\t\$extra_strings
+\t\tSet any custom strings to this variable to 
+\t\tbe included in the scan. Separate each with a '\\\n'."
+      echo
+      return
+    else
+      echo -e "This tool scans for strings that are in typical malware.\n
+Usage: wpscan [quick|full|add search_string_url]\n\t\t\n
+\twpscan quick
+\t\t Scans the core files, plugins, and themes.\n
+\twpscan full
+\t\t Scans all files in the current directory and down.\n
+\twpscan [quick|full] quiet
+\t\t Only show the actual phrase matched. Not the whole line.\n
+
+\tYou can use your own list of strings to search for.
+\tSee 'wpscan -h strings' for instructions on how to do so.
+
+\tNote! Scanning can take a huge amount of cpu and disk drive.
+\tIf you abuse your provider's resources, they may shut you down."
+      echo
+      return
+    fi
+  fi
+  
+  # manage string list
+  if [[ $1 == "show-strings" ]] ; then
+    __wpscan_show_strings
     return
+    
+  elif [[ $1 == "clear-strings" ]] ; then
+    scan_strings=""
+    echo "Scan strings cleared:"
+    __wpscan_show_strings
+    return
+    
+  elif [[ $1 == "add-strings" ]] ; then
+    if [[ -z $2 ]] ; then
+      echo "No url was specified"
+      return 9
+    fi
+    more_scan_strings="$(curl -Ss $2)"
+    if [[ -n $scan_strings ]] ; then
+      scan_strings="$(echo -e "$scan_strings\n$more_scan_strings")"
+    else
+      scan_strings="$(echo -e "$more_scan_strings")"
+    fi
+    __wpscan_show_strings
+    return
+    
+  elif [[ $1 == "default-strings" ]] ; then
+    __wpscan_get_default_strings
+    # __wpscan_show_strings
+    # echo "Default scan strings loaded"
+    return
+    
+  # if this is a scan and the scan string is empty, load it.
+  elif [[ $1 == "full" || $1 == "quick" ]] ; then
+    if [[ -z $scan_strings ]] ; then
+      __wpscan_get_default_strings || return
+    fi
+    
+  else
+    echo "Unknown option"
+    return 9
   fi
-
-# It would be nice to just write these to a file.
-# But if their provider found it, they'd prob get shut down
-search_strings="eval(\$___(\$__));
-eval(stripslashes(@\$_POST[
-eval(stripslashes(array_pop(
-eval(base64_decode(
-eval(gzinflate(str_rot13(base64_decode(
-gzinflate(base64_decode(
-Array(base64_decode(
-sha1(base64_decode(
-print(base64_decode(
-wsoScandir(\$dir)
-substr(current(array_keys(
-cwd = @getcwd();
-\$OOO000000=urldecode(
-\$l___l_='base'.(32*2)
-substr(md5(strrev(
-cwd[strlen(\$cwd)
-=\"x62
-+ r + \"&r=\" + document.referrer;
-if(strtoupper(substr(PHP_OS, 0, 3) ) == \"WIN\")
-){if(@copy(
-copy(\"endless.html
-system(\"wget
-symlink(\"/\",\"sym/root\");
-@copy(\$_FILES['file']['tmp_name']
-error_reporting(0);if(
-x6C\x28\x67\x7A\x69
-\"/.*/e\",\"\x28\x65\x76\x61
-preg_replace(\"/.*/e\",
-Windows-1251\";preg_replace(
-); exit(); } if(isset(
-system(\"\$cmd\"); die;}
-rtrim(\$security_code, \"/\");
-chr(ord(
-ini_get('safe_mode');
-window.top.location.href=\"http://
-@ini_get(\"disable_functions\")
-x6C\x28\x67\x7A\x69\x6E\x66\x6C\x61\x74
-hacked
-pwned
-die(PHP_OS.chr(49).chr(48).chr(43).md5(0987654321)
-die(PHP_OS.chr(49).chr(49).chr(43).md5(0987654321)
-shell_exec"
-
+  
+  # add extra strings if variable is set
   if [[ -n "$extra_strings" ]] ; then
-    search_strings="$(echo -e "$search_strings\n$extra_strings")"
+    echo "The variable \$extra_strings is set. Adding strings..."
+    scan_strings="$(echo -e "$search_strings\n$extra_strings")"
   fi
+  
+  __wpscan_show_strings  
   
   echo -e "
 \tNote! Scanning can take a huge amount of cpu and disk drive.
@@ -841,26 +869,40 @@ shell_exec"
     return
   fi
   
-  echo -e "\n\nUsing the following for strings:\n=====\n$search_strings\n=====\nEnd search strings\n"  
-  
   quiet=''
   if [[ "$2" == "quiet" ]] ; then
     quiet='o'
   fi
   
   if [[ $1 == "quick" ]] ; then
-    echo Starting quickscan
-    LC_ALL=C fgrep -nr$quiet --include  \*.php "$search_strings" *.php \
+    echo -e "\n\n\tStarting quickscan...\n"
+    LC_ALL=C fgrep -nr$quiet --include  \*.php "$scan_strings" *.php \
       ./wp-admin ./wp-content ./wp-includes 
  
   elif [[ $1 == "full" ]] ; then
     echo "Starting full scan"
-    LC_ALL=C fgrep -nr$quiet "$search_strings" ./
+    LC_ALL=C fgrep -nr$quiet "$scan_strings" ./
     #LC_ALL=C grep -a -F -n -r -f ./search-strings.txt ./ | cut -c1-200
   
   else
     echo "Invalid option"
   fi
+  echo "Scan Finished."
+}
+
+function __wpscan_show_strings() {
+  echo -e "\n==== Using the following for scan strings:\n$scan_strings\n==== End scan strings\n"
+}
+
+function __wpscan_get_default_strings() {
+  scan_strings="$(curl -Ss https://raw.githubusercontent.com/bagley/wptool/alpha/scanstrings)"
+  if [[ -z scan_strings ]] ; then
+    echo "Failed to get scan strings"
+    echo "To see what we got, you can run this:"
+    echo '  echo $scan_strings'
+    return 9
+  fi
+  echo "Default scan strings loaded"
 }
 
 
@@ -1001,13 +1043,10 @@ function wptool() {
 \twpht:    .htaccess generator
 \twpcore:  core replacement tools
 \twpfix:   built-in WP fixes
-\twperr:   show most recent errors"
-
-# only show wpscan is loaded
-declare -f -F wpscan > /dev/null
-[[ $? -eq 0 ]] && echo -e "\twpscan:  scan site files for signs of malware"
-
-echo -e "\twpver:   returns version info
+\twptrace: follow what wp is doing (and failing to do)
+\twperr:   show most recent errors
+\twpscan:  scan site files for signs of malware
+\twpver:   returns version info
 \twpbackup:   backup files and/or db
 \twprestore:  restore database from file
 "
