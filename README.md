@@ -152,23 +152,23 @@ This tool uses wordpress to create a fresh .htaccess file with required wordpres
 
 This tool downloads the latest core, a new core of the current version, or a specified version while leaving wp-config.php and wpcontent untouched.
 
-Download the latest archive of core files for wordpress.
+Only download the latest archive of core files for wordpress.
 
     wpcore
 
-Download and install/replace with the core wordpress files based on the version specified in files (in the wp-includes/version.php file).
+Download and install/replace the core wordpress files based on the version specified in wp-includes/version.php
 
     wpcore cur
- 
-Download and install/replace with the core wordpress files based on the database version.
+
+Download and install/replace the core wordpress files based on the database version. Useful if enough wordpress files are missing that the above 'cur' method can't figure out the version number, or is getting the wrong version number.
 
     wpcore db
 
-Download and install/replace with the newest version of the core wordpress files.
+Download and install/replace the newest version of the core wordpress files. This option can also be used to install a brand new wordpress version.
 
     wpcore new
 
-download version VERSION of the Wordpress core, in the form of #.#.# or 'cur' for current version
+Download and install/replace a specific version of the Wordpress core, in the form of #.#.#
 
     wpcore #.#.#
     

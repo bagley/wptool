@@ -8,16 +8,19 @@ function wpcore() {
 This tool downloads the latest core, a new core of the current version, or a
 specified version.
 
-  Usage:
+  Usage: wpcore <cur|db|new|#.#.#>
 
-\twpcore [VERSION]
-
-\t    <blank>\n\t\tdownload the latest stable version of the Wordpress core
-\t    #.#.#\n\t\tdownload version VERSION of the Wordpress core
-\t    cur\n\t\tdownload new set of files matching current file version
-\t    db\n\t\tdownload set of files matching current database version
-\t    new\n\t\tinstall a new version of WordPress
-\t    -h\n\t\tdisplay this help output
+\t    <blank>\n\t\tOnly download the latest archive of core files for wordpress.
+\t    cur\n\t\tDownload and install/replace the core wordpress files 
+\t\tbased on the version specified in wp-includes/version.php
+\t    db\n\t\tDownload and install/replace the core wordpress files
+\t\tbased on the database version. Useful if the files
+\t\tare corrupt/missing or if 'cur' can't get the version.
+\t    new\n\t\tDownload and install/replace the newest version 
+\t\tof the core wordpress files. This can be used to upgrade
+\t\twordpress or install a brand new installation.
+\t    #.#.#\n\t\tDownload and install/replace a specific version of 
+\t\tthe Wordpress core, in the form of #.#.#
 "
     return
   elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q | awk '{print $1}')
@@ -92,6 +95,8 @@ specified version.
     #cp wp-config-sample.php wp-config.php
     #echo "Copied wp-config-sample.php into place..."
     echo "No config was found. You need to go to your site and run through the setup."
+    # if it's an upgrade, run upgrades
+    wpfix
   fi
 }
 
