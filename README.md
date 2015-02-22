@@ -33,12 +33,9 @@ If the toolkit has been enabled you should have a response like this:
 > Recent Changes:
 >     [Any important changes or new features are displayed here]
 
-If you want to enable malware scanning capabilities, you need to also load the wpscan function (separate file):
-
-    . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/master/wptool https://raw.githubusercontent.com/bagley/wptool/master/wptool-scan)
-
 If you would like to use newer features you can use the devel branch. Or you can easily use previous versions. Useful if you find something broken that was working before. See the Developent Versions and Previous Versions sections for move info.
 
+*Hosting Note: If you plan on hosting (or copying) wptool elsewhere, like onto a hosting account you have, please see the note in the "Hosting WPTool" section before doing so.*
 
 
 ##Commands
@@ -244,7 +241,7 @@ This tool shows the last few lines of the error_log and wp-admin/error_log if th
 
 ###wpscan
 
-This tool will scan the site for signs of malware. Note that is is **not** a complete solution. It just only help you out in determining if you have breaking. It does not fix it. It will give you several false positives. But it's helpful.
+This tool will scan the site for signs of malware. Note that is is **not** a complete solution. It only helps you out in determining if you have breaking. It does not fix it. It will give you several false positives. But it's helpful.
 
 *Note! Scanning can take a huge amount of cpu and disk drive. If you abuse your provider's resources, they may shut you down.*
 
@@ -371,6 +368,20 @@ The Alpha branch (alpha) is where I put the most recent changes. Just so you kno
 But if you want the latest and greatest, or you want to help out, or you are just feeling brave, you can load it with the following line:
 
     . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/alpha/wptool)
+
+------
+
+##Hosting WPTool
+
+WPTool is free software, and you are welcome to copy it to your host/website/etc as you see fit.
+
+You don't have to host wptool to use it. Just run the command under "How to load it" and you will have the necessary tools.
+
+The only issue with hosting it is that the file has strings in it that a hosting provider may think are bad. But these strings are just to look for bad website files. And they don't have any effect if you just load the program as described in "How to load it." They only can effect your hosting account if you copy the file onto the actual account.
+
+So before you copy it onto your hosting account, you need to verify with your hosting provider whether or not they are going to flag it, or remove the function "wpscan" from the wptool file. Also note that the .git folder will contain these strings. In the future I may provide a script to automatically remove these strings if anyone is interested.
+
+Again, the strings have no effect on the accounts that the script is loaded into, only if you actually copy it onto the hosting account's filesystem. When we only load it, we are only loading it into the user's shell. When the shell is closed, the whole program with the strings are cleared out.
 
 --------
 
