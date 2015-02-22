@@ -564,21 +564,18 @@ __wp_rand_string 16
 st="$wp_rand_string"
 tmp_php_file="make-pass-${st}.php"
 
-trap "rm -f \"$tmp_php_file\" ; trap - 0 1 2 3 15 ; return" 0 1 2 3 15
+trap "rm -f \"$tmp_php_file\" ; echo The file was removed. ; trap - 0 1 2 3 15 ; return" 0 1 2 3 15
 
 __wp_rand_string 10
 pass="$wp_rand_string"
 
 # be sure to escape all php $vars or bash will try to use them
+# except for $u, as that is the user id
 cat > "$tmp_php_file" <<EOF
 <?php
-if ( strcmp ( \$_GET['z'], '$pass' ) ) {
-  echo 'Forbidden';
-  exit;
-}
 // this file is to give admin access
 // you can remove it at any time
-// remove on run
+// remove on run - even if they fail the pass below
 class DeleteOnExit
 {
     function __destruct()
@@ -589,6 +586,12 @@ class DeleteOnExit
     }
 }
 \$g_delete_on_exit = new DeleteOnExit();
+if ( ! isset (\$_GET['z']) 
+        or empty(\$_GET['z']) 
+        or strcmp ( \$_GET['z'], '$pass' ) ) {
+  echo 'Forbidden';
+  exit;
+}
 // load wp libs
 require_once( './wp-load.php' );
 // cannot check as we do not have cookie
@@ -619,16 +622,20 @@ EOF
 echo "Go to this link to get your login cookies:"
 echo 
 echo "$site/$(basename $tmp_php_file)?z=$pass"
-echo 
-echo "After you go to the above link, press enter so I can remove it."
+echo "
+This is a one time use only link. Make sure you use/copy it right.
+Most terminals allow you to click on the link to open it.
+
+Also, pressing enter here will remove it.
+After 60 seconds I will remove it, even if you don't press enter."
 echo
-x=12
+x=20
 READ=""
 while [[ $x -gt 0 && -z $READ && -f "$tmp_php_file" ]] ; do
- read -t 5
+ read -t 3
  read_code=$?
  [[ $read_code -eq 0 ]] && READ="ok"
- echo $read_code
+ # echo $read_code
  x=$(($x - 1))
 done
 if ! [[ -f "$tmp_php_file" ]]; then
