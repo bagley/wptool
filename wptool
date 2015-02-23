@@ -961,8 +961,10 @@ function __wpscan_show_strings() {
 
 function __wpscan_get_strings() {
   if [[ -z $1 ]] ; then
+    echo "Downloading the default strings..."
     get_strings="$(curl -Ssf https://raw.githubusercontent.com/bagley/wptool/alpha/scanstrings)"
   else
+    echo "Downloading strings from $1"
     get_strings="$(curl -Ssf $1)"
   fi
   if [[ -z $get_strings ]] ; then
