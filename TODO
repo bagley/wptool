@@ -51,10 +51,6 @@ Have an option that will set higher security checks
 wpscan: look for broken links or links that point outside of the root/home dir.
 - try to use find2perl first
 
-have the access link check for old copies of make-pass-[0-9a-zA-Z]*-\.php or
-make-pass[^\.]*\.php
-and remove them
-
 wpscan: look for symlinks that point outside of the main dir
 
 add a 'noprompt' option to any command that requires one, so we can just 
@@ -117,8 +113,15 @@ wpurl could have an "autodiscover" option, but that may be too awesome.
 |                      |
  ----------------------
 
+have the access link check for old copies of make-pass-[0-9a-zA-Z]*-\.php or
+make-pass[^\.]*\.php
+and remove them
+>> we also renamed the link to access-link and prompt the user to remove them
+>> and we check that it actually is our file
+
 wpmal: do common malware searches. remember the disclaimer of "this is just to help"
 >> became wpscan. Scanner fully implemented.
 
 make a single devel branch for all the new things
 >> made devel and alpha branches
+
