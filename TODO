@@ -1,9 +1,14 @@
-*** Bugs ***
 
-the changelog is not showing. It is only showing wpuser/wpurl updates.
+ ----------------------
+|                      |
+|      Todo  List      |
+|                      |
+ ----------------------
 
+!!BUG: wpuser 1 -l: needs to use siteurl if the wp is in a subdir
+         and if siteurl and homeurl are different
+       - it's missing the subdir part of the path
 
-***Random todo list***
 
 wpplug findbroken (disables plugins one by one until 500 goes away)
 
@@ -22,25 +27,26 @@ test file that can check for regressions
 # disable plugins
 UPDATE wp_options SET option_value = 'a:0:{}' WHERE option_name = 'active_plugins';
 
-... but I want to be able to pull them out one by one to test. renaming folders can cause plugins to erase their settings.
+... but I want to be able to pull them out one by one to test. 
+renaming folders can cause plugins to erase their settings.
 
-wpcore needs to check the download file that it acually succeeded. Right now it doesn't which can lead to a failed reinstall.
+wpcore needs to check the download file that it acually succeeded. 
+Right now it doesn't which can lead to a failed reinstall.
 
-wpuser needs to be able to search database for a string. useful on installs with lots of users, and trying to find one user
+wpuser needs to be able to search database for a string. useful on 
+installs with lots of users, and trying to find one user
 
 standardize options
 
 wpuser admin -l : will give a access link for the first admin user
+or just wplogin/wpaccess
 
 have it check for deleteme user on load, or the first time wpuser is run?
 
 access link should only be available for an hour
+- but are there situations where that won't work?
 
 Have an option that will set higher security checks
-
-wpmal: do common malware searches. remember the disclaimer of "this is just to help"
-
-make a single devel branch for all the new things
 
 wpscan: look for broken links or links that point outside of the root/home dir.
 - try to use find2perl first
@@ -48,3 +54,71 @@ wpscan: look for broken links or links that point outside of the root/home dir.
 have the access link check for old copies of make-pass-[0-9a-zA-Z]*-\.php or
 make-pass[^\.]*\.php
 and remove them
+
+wpscan: look for symlinks that point outside of the main dir
+
+add a 'noprompt' option to any command that requires one, so we can just 
+run it without a prompt. nice for non-interactive scripts.
+
+wpfix quiet: for when we need to call it from other functions w/o the info messages
+
+wpdig - check that dns is pointing here
+- also make a test file to verify?
+
+wpcheck (or wptests or wpcore verify)
+- checksum all wp files and that they really exist.
+- (optional) check plugin and theme files (if in wp repo)
+
+wptests - show extra vars in wp-config that may be causing issues
+- make a test file to verify site is hosted here
+
+wpurl (search and replace) needs to do a db backup before running
+- any tool that modifies the db should do this
+- prompts?
+
+wpurl search url - search and display matches in the db of the url
+- useful when figuring out what the previous url was
+- alias: wpdb search/-s "string"
+- can search for posts, or a full db search
+
+wpfix quick/full: do a clear cache (quick) or a full: deactivate plugins,
+  themes, check settings, verify hosting, verify php settings
+
+wpscan: if fgrep is not found, use grep or other programs.
+
+Add changelog
+
+Fallbacks for wget
+1) wget (full ssl checks)
+2) curl
+3) wget (no ssl cert check - older wget fails on w.org cert)
+
+Testing script to check for regressions
+- check for the word 'exit' (in case I put that instead of 'return')
+
+wpplug/wptheme
+- install and activate plugins/themes from the commandline
+- update them too 
+  -via loading wp core and having it do it
+  -and also have an option to force it to do so
+- have a reinstall option, to fix corrupt files.
+- it needs to be able to install specific versions of them too
+
+wpurl needs to have an option to set only siteurl or homeurl
+- some sites are setup with a subdir with content but not wanting 
+  to show a subdir path in the address bar
+
+wpurl could have an "autodiscover" option, but that may be too awesome.
+
+
+ ----------------------
+|                      |
+|       Finished       |
+|                      |
+ ----------------------
+
+wpmal: do common malware searches. remember the disclaimer of "this is just to help"
+>> became wpscan. Scanner fully implemented.
+
+make a single devel branch for all the new things
+>> made devel and alpha branches
