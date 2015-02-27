@@ -1125,7 +1125,7 @@ function wptool() {
 }
 
 #search, multisite
-wptoolv="1.7.9.5"
+wptoolv="1.8.0"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 
 # show a recent changes prompt for three weeks after last edit.

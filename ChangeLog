@@ -1,0 +1,15 @@
+ChangeLog:
+
+1.8.0
+- Added basic malware scanning
+- Improved wpuser access links
+ - Fixes in php file
+ - Removes even on Ctrl+C
+ - Handles subdir installs
+- Better documentation and Readme file
+- Verify zip files are downloaded properly
+- wpcore new can install wp
+ - then just go to the site in the browser
+   to configure database and set main user
+- made wget work on older systems
+  that don't have w.org's root cert
