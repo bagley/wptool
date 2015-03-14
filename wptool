@@ -723,6 +723,24 @@ function wpuser() {
   fi
 }
 
+# creates a access link for the first admin user it finds
+function wplogin() {
+  wpconn "wpuseradmins"
+  if [[ -z "$myconn" ]] ;then
+    echo "We either failed to connect to the database or you have no admins on this site."
+    return
+  elif [[ $myconn == "ERROR"* ]]; then
+    "Error connecting to the database: $myconn"
+    return
+  fi
+  __admin_id="$(echo -e $myconn | awk 'END{print $0}' | awk 'NF-1 {print ( $(NF-1) )}')"
+  if [[ -z "$__admin_id" ]] ; then
+    echo "Error: I was not able to get the id of any admins. Try 'wpuser admins'"
+    return
+  fi
+  wpuser $__admin_id -l
+}
+
 function __wp_create_access_file() {
 
 # get and verify user
@@ -1373,6 +1391,16 @@ edit="1426364069"
 edit_desc="
 \t wpdb -s      Shows all tables and their sizes, and total db size.\n"
 __wptool_to_show_or_not
+
+# wplogin
+edit="1426364069"
+edit_desc="
+\t wplogin      Generates a link for your browser for the first
+\t              admin user it finds, allowing you to quickly get in.
+\t              No needing to create 'deleteme' or search for usernames.\n"
+__wptool_to_show_or_not
+
+
 # ------- End Changes ----------
 
 # display them if we have any

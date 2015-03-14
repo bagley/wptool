@@ -1,6 +1,10 @@
 ChangeLog:
 
 1.8.1
+
+[New]  'wplogin' is an alias to wpuser # -l that will give you a
+   link to automatically login as first admin user it finds. 
+   No more searching for user ids, just run and click.
 - Fixed wpuser's access link to work with sites whos
   files are in a sub directory but the site is using 
   the regurlar path, for example:
