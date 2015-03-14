@@ -126,11 +126,13 @@ function wpfix() {
   echo "Rewrite rules flushed...\n";
   wp_cache_flush();
   echo "Object cache flushed...\n";
+  /* clear plugin caches. If you know of a plugin
+   * and how to have it clear the caches, please
+   * let me know and I will see about putting it in here */
   require_once('wp-load.php');
   require_once('wp-includes/pluggable.php');
   if (function_exists('w3tc_flush_all')) {
-    echo "Cleared W3 Total Caches\n";
-    w3tc_flush_all(); }
+    w3tc_flush_all();
     echo "Cleared W3 Total Caches\n"; 
   }
   if (function_exists('wp_cache_clear_cache')) {
