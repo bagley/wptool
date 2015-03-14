@@ -1339,7 +1339,7 @@ function __wptool_to_show_or_not() {
   # if I get complaints I can change it to -n
   #days_to_show=21 (1814400) 31 (2592000)
   # I could use $(($days_to_show * 3600 * 24 )) but if the shell does not like it....
-  if [[ -z "$diff_edit" || $diff_edit -lt 2592000 ]] ; then
+  if [[ -z "$diff_edit" || $diff_edit -lt 1814400 ]] ; then
     recent_changes="$recent_changes$edit_desc"
   fi
 }
@@ -1360,7 +1360,7 @@ edit_desc="
 __wptool_to_show_or_not
 
 # wpuser access link
-edit="1424570097"
+edit="1424603108"
 edit_desc="
 \t wpuser USERID -l  
 \t              Generates a link for your browser which will
