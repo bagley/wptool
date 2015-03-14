@@ -814,20 +814,27 @@ function wpscan() {
       # wpscan -h strings
       echo -e "
 \twpscan uses strings to find bad files. By default it will load
-\ta default set when a scan is run, if none are already loaded.\n
-\tYou can override with your own set(s):\n
-\twpscan show-strings [url]
-\t\tShow a list of the scan strings that are currently loaded.\n
+\ta default set when a scan is run, if none are already loaded.
+
+\twpscan show-strings
+\t\tShow a list of the scan strings that are currently loaded.
+
+\twpscan default-strings [devel|alpha]
+\t\tOptional method to set the strings back to the default list.
+\t\tOptionally specify devel or alpha to use newer(?) string lists.
+
+\tYou may also override it with your own set(s).
+
+\textra_strings='string1\\\nstring2\\\nstring3'
+\t\tSet any custom strings to the variable \$extra_strings be
+\t\tincluded in the scan. Use ' and separate each with a '\\\n'
+
 \twpscan add-strings [url]
-\t\tLoad your own strings from the given address.
-\t\tSee scanstrings for an example.\n
-\twpscan default-strings [url]
-\t\tOptional method to just set the strings back to the default list.
-\twpscan clear-strings [url]
-\t\tClear out all scan strings.\n
-\t\$extra_strings
-\t\tSet any custom strings to this variable to 
-\t\tbe included in the scan. Separate each with a '\\\n'."
+\t\tLoad your own strings from the given address, one string search
+\t\tper line. Default strings are not be added if you do this first.
+
+\twpscan clear-strings
+\t\tClear out all scan strings.'."
       echo
       return
     else

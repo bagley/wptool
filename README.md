@@ -256,16 +256,40 @@ Scan all files in the current directory and down:
 Only show the actual phrase being matched. Not the whole line:
 
     wpscan [quick|full] quiet
-	 
-Set any custom strings to this variable to be included in the scan. Separate each with a '\n':
+
+wpscan uses strings to find bad files. By default it will load a default set when a scan is run, if none are already loaded.
+
+In short, the following methods are optional.
+
+Show a list of the scan strings that are currently loaded.
+
+	wpscan show-strings
 		
-    $extra_strings='strings'
-    
-    # for example:
-    # first set the extra strings to use:
-    extra_strings='string1\nstring2\nstring3'
-    # then run the scan. It will automatically add the strings
-    wpscan full
+Optional method to set the strings back to the default list. Optionally specify devel or alpha to use the strings located in those branches. They might be new, or they might not.
+
+	wpscan default-strings [devel|alpha]
+
+You may also override the strings with your own set(s).
+
+Set any custom strings to this variable to be included in the scan. Use single quotes (') and separate each with a '\n':
+
+  extra_strings='strings'
+  
+For example:
+
+  # first set the extra strings to use:
+  extra_strings='string1\nstring2\nstring3'
+  # then run the scan. It will automatically add the strings to the current list.
+  wpscan full
+
+Load your own strings from the given address. See the scanstrings file for an example. Default strings are not be added if you do this first, as they are only loaded on a empty string list. So do this after loading the default strings if you want to use those.
+
+	wpscan add-strings [url]
+
+Clear out all scan strings.
+
+	wpscan clear-strings
+
 
 ---------		
 
