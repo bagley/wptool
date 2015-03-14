@@ -106,10 +106,6 @@ wpurl needs to have an option to set only siteurl or homeurl
 
 wpurl could have an "autodiscover" option, but that may be too awesome.
 
-wpscan: when we grab the scanstrings, we need the option to use 
-the devel or alpha branches. And the current url needs to be
-changed to use the master, as strings is in the master branch now.
-
 verify that it can handle, move, and work with domains with ports:
 http://192.168.x.x:8888/wordpress http://www.domain.com
 
@@ -150,6 +146,10 @@ wptool should look in index.php for folder if there is nothing in the current di
 |       Finished       |
 |                      |
  ----------------------
+
+wpscan: when we grab the scanstrings, we need the option to use 
+the devel or alpha branches. And the current url needs to be
+changed to use the master, as strings is in the master branch now.
 
 have the access link check for old copies of make-pass-[0-9a-zA-Z]*-\.php or
 make-pass[^\.]*\.php

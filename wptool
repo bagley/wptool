@@ -883,7 +883,7 @@ Usage: wpscan [quick|full|add scan_string_url]\n\t\t\n
     
   # default strings
   elif [[ $1 == "default-strings" ]] ; then
-    __wpscan_get_strings || return 9
+    __wpscan_get_strings $2 || return 9
     scan_strings=$get_strings
     echo "Default scan strings loaded"
     # __wpscan_show_strings
@@ -962,7 +962,16 @@ function __wpscan_show_strings() {
 function __wpscan_get_strings() {
   if [[ -z $1 ]] ; then
     echo "Downloading the default strings..."
+    get_strings="$(curl -Ssf https://raw.githubusercontent.com/bagley/wptool/master/scanstrings)"
+  
+  elif [[ $1 == "devel" ]] ; then
+    echo "Downloading the devel strings..."
+    get_strings="$(curl -Ssf https://raw.githubusercontent.com/bagley/wptool/devel/scanstrings)"
+    
+  elif [[ $1 == "alpha" ]] ; then
+    echo "Downloading the alpha strings..."
     get_strings="$(curl -Ssf https://raw.githubusercontent.com/bagley/wptool/alpha/scanstrings)"
+
   else
     echo "Downloading strings from $1"
     get_strings="$(curl -Ssf $1)"
