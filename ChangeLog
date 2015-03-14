@@ -1,5 +1,11 @@
 ChangeLog:
 
+1.8.1
+- Fixed wpuser's access link to work with sites whos
+  files are in a sub directory but the site is using 
+  the regurlar path, for example:
+  home: http://domain.com, but siteurl: http://domain.com/files
+
 1.8.0
 - Added basic malware scanning
 - Improved wpuser access links

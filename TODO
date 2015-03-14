@@ -5,11 +5,6 @@
 |                      |
  ----------------------
 
-!!BUG: wpuser 1 -l: needs to use siteurl if the wp is in a subdir
-         and if siteurl and homeurl are different
-       - it's missing the subdir part of the path
-
-
 wpplug findbroken (disables plugins one by one until 500 goes away)
 
 wpplug reset (sets back to what it was when we started - aka save active_plugin as a var)
@@ -140,12 +135,19 @@ wpkey - reset wp keys
 
 wptool should look in index.php for folder if there is nothing in the current dir. 
 
+when making the access link, put a file in the dir and try to go to it
+first try siteurl, then home, and then just use siteurl and warn the user
+that it may not work, or to add "this path" the whatever url they are using.
 
  ----------------------
 |                      |
 |       Finished       |
 |                      |
  ----------------------
+
+Bug: wpuser 1 -l: needs to use siteurl if the wp is in a subdir
+and if siteurl and homeurl are different
+- it's missing the subdir part of the path
 
 wpscan: when we grab the scanstrings, we need the option to use 
 the devel or alpha branches. And the current url needs to be

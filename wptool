@@ -298,6 +298,11 @@ function wpdb() {
 }
 
 function wpurl() {
+  if [[ $1 == "-q" ]] && [[ $2 == "--site" ]] ; then
+    wpconn "wpsiteurl" 
+    echo "$myconn" | awk 'END{print $3}'
+    return
+  fi
   [[ $1 == "-q" ]] && wpconn "wpurl" && echo "$myconn" | tail -n +2 && return
   echo
   if [[ $1 == "--help" || $1 == "-h" ]]; then
@@ -547,7 +552,7 @@ function wpuser() {
     echo -e "\tUSERID -p PASS\n\t\tchange password of user USERID to PASS"
     echo -e "\tUSERID -a\n\t\tpromote user USERID to admin"
     echo -e "\tUSERID -d\n\t\tdelete user USERID"
-    echo -e "\tUSERID -l\n\t\tmake login/access link for user USERID"
+    echo -e "\tUSERID -l, login\n\t\tmake login/access link for user USERID"
     echo -e "\t        -> this is easier and faster than making a user"
     echo -e "\t-n, new\n\t\tcreate new admin user"
     echo -e "\tall\n\t\tlist all users"
@@ -566,7 +571,7 @@ function wpuser() {
       else echo -e "\tNo username specified"!"\n" && return 1; fi   #...otherwise, end.
     elif [[ $2 == "-a" ]]; then wpconn "wpusera" $1	 	  #change to admin
     elif [[ $2 == "-d" ]]; then read -p "$(echo $'\t')Delete user '$1'? " -n 1 -r && echo && [[ ! $REPLY =~ ^[Yy]$ ]] && echo -e "\tDeletion of user '$1' cancelled"!"\n" && return 1 || wpconn "wpuserd" $1	 	  #delete user
-    elif [[ $2 == "-l" || $2 == "--login" ]]; then __wp_create_access_file $1 ; myconn=1   # create login link to get cookie
+    elif [[ $2 == "-l" || $2 == "--login" || $2 == "login" ]]; then __wp_create_access_file $1 ; myconn=1   # create login link to get cookie
     elif [[ -z $2 ]]; then wpconn "wpuserinfo" $1		  #show user info
     else echo -e "\tInvalid option"!"\n" && return 1; fi		  #Otherwise, end.
   elif [[ $1 == "new" || $1 == "-n" ]]; then wpconn "wpusernew"		#create new admin...
@@ -651,7 +656,7 @@ if [[ -z $testsite ]] ; then
 fi
 
 # Get site
-site="$(wpurl -q | awk '{if (NR==1) {print $3}}')"
+site="$(wpurl -q --site)"
 # Remove last /
 site="$(echo $site | sed 's|/*$||')"
 
@@ -1205,7 +1210,7 @@ function wptool() {
 }
 
 #search, multisite
-wptoolv="1.8.0"
+wptoolv="1.8.1"
 echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
 
 # show a recent changes prompt for three weeks after last edit.
