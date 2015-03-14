@@ -109,6 +109,7 @@ function wpfix() {
     echo -e "Could not find one or more of the necessary files (wp-config.php or wp-admin/upgrade-functions.php)!\n"
     return 9
   fi 
+  echo "Loading WordPress.."
   php -q <<"EOF" && echo "Ran fix..." || echo Error running fix!
 <?php
   require_once('wp-config.php');
@@ -155,12 +156,17 @@ function wpht() {
   fi
   temp=$(now)
   [[ -f .htaccess ]] && cp .htaccess .htaccess_$temp
+  echo "Loading WordPress..."
   php -q <<"EOF" && echo "Generated .htaccess rules..." || echo Error writing to .htaccess!
 <?php
   $_SERVER['SCRIPT_NAME'] = "";
   require_once('wp-config.php');
   require_once('wp-admin/includes/misc.php');
   $rules = explode( "\n", $wp_rewrite->mod_rewrite_rules() );
+  echo "Inserting (or updating) the following rules into .htaccess:\n\n";
+  foreach ($rules as $r) {
+    echo "$r\n";
+  }
   insert_with_markers( '.htaccess', 'WordPress', $rules );
 ?>
 EOF
@@ -250,7 +256,9 @@ function wpconn() {
     echo -e "\nConnected to the database..."
     echo -e "Query:\n\n\t$q"
     echo -e "$myconn".
-  elif [[ $myconn == "ERROR"* ]]; then return 9
+  elif [[ $myconn == "ERROR"* ]]; then 
+    echo "There was a database error: $myconn"
+    return 9
   fi
 }
 
