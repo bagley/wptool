@@ -245,8 +245,8 @@ function wpdb() {
     echo -e "\nThis tool tests the database connectivity based on settings in the wp-config.php file, and can import/export a database based on its settings.\n"
     echo -e "Usage:\n"
     echo -e "\twpdb [option [param]]\n"
-    echo -e "\t-i FILE\n\t\texport current database to file FILE. The specified FILE must end in .sql"
-    echo -e "\t-e [FILE]\n\t\texport current database to optional file FILE. If a FILE is specified, it must end in .sql\n"
+    echo -e "\t-i FILE\n\t\texport current database to file FILE.\n\t\tThe specified FILE must end in .sql\n"
+    echo -e "\t-e [FILE]\n\t\texport current database to optional file FILE.\n\t\tIf a FILE is specified, it must end in .sql\n"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
@@ -367,12 +367,12 @@ function wptheme() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "This tool returns the current theme, as well as listing any available ones found in the wp-content/themes folder. It also can change to a specified stylesheet, template, both, or to a new copy of twentytwelve.\n"
     echo -e "Usage:\n"
-    echo -e "\twptheme [THEME [option]]\n"
+    echo -e "\twptheme [THEME [option]|fresh]\n"
     echo -e "\tTHEME\n\t\tspecify a THEME for both the stylesheet and template."
-    echo -e "\tIf 'fresh' is specified as the theme, it will download and install"
-    echo -e "\tthe 'twentytwelve' theme. (Useful if you have no themes or damaged ones)\n"
     echo -e "\tTHEME -s\n\t\tchange only the WP stylesheet"
-    echo -e "\tTHEME -t\n\t\tchange only the WP template\n"
+    echo -e "\tTHEME -t\n\t\tchange only the WP template"
+    echo -e "\tfresh\n\t\tdownload and install the 'twentytwelve' theme. \n\t\tuseful if you have no themes or only damaged ones"
+    echo
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
@@ -697,9 +697,14 @@ function wpplug() {
   folder=wp-content/plugins
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "This tool does basic plugin functions, such as displaying active and available plugins, or disabling them all.\n"
-    echo -e "Usage:\n"
-    echo -e "\twpplug [option]\n"
-    echo -e "\t-d\n\t\tdisable all plugins by renaming the plugins folder\n"
+    echo -e "Usage: wpplug [-d]
+
+\t[no option]
+\t\tshow a list of enabled plugins and all plugins installed
+
+\t-d
+\t\tdisable all plugins by renaming the plugins folder
+"
     return
   elif [[ ! -d $folder ]]; then echo "The $folder folder was not found"! && return 9
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
@@ -765,11 +770,10 @@ function wptests() {
 function wptrace() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "This tool uses strace to show what may be causing a wsod.\n"
-    echo -e "Usage:\n"
-    echo -e "\twptrace [err]|file.php\n"
-    echo -e "\twptrace\n\t\t Run full trace on index.php\n"
-    echo -e "\twptrace err\n\t\t Only show usual errors\n"
-    echo -e "\twptrace [err] file.php\n\t\t Run strace on file.php\n"
+    echo -e "Usage: wptrace [[err]|file.php]\n"
+    echo -e "\tWith no options\n\t\t Run full trace on index.php\n"
+    echo -e "\terr\n\t\t Only show usual errors\n"
+    echo -e "\t[err] file.php\n\t\t Run strace on file.php\n"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
