@@ -123,11 +123,27 @@ List database name, credentials, hostname, and other information.
 
 Uses wp-config.php to import database.
 
-    wpdb -i file
+    wpdb -i file.sql
 
-exports current database to wordpress home.
+Exports current database to wordpress home.
 
-    wpdb -e FIle
+    wpdb -e file.sql
+
+Show the size of all tables and the database
+
+    wpdb -s
+
+Output will look like:
++------------------------------+------------+------------+
+| TABLE_NAME                   | table_rows | Size in MB |
++------------------------------+------------+------------+
+| wptEiW_commentmeta           |        845 |      16.75 |
+| wptEiW_comments              |        345 |      31.59 |
+.....
+
+DB size:    98.24 MB
+DB tables:  31 tables
+
 
 -------
 

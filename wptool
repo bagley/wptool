@@ -251,6 +251,38 @@ function wpconn() {
     __wp_rand_string
     deleteme_pass="$wp_rand_string"
     q=$q'INSERT INTO '$dbprefix'users (user_login, user_pass, user_email) VALUES ("deleteme", MD5("'$deleteme_pass'"), "deleteme@example.com"); SET @new_id=LAST_INSERT_ID(); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'capabilities", '"'a:1:{s:13:\"administrator\";b:1;}'"'); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'user_level", 10); SELECT @new_id;'
+  elif [[ $1 == "wptablesize" ]] ; then
+    mysql -u "$dbuser" -p"$dbpass" -h "$dbhost" -e 'SELECT TABLE_NAME, 
+      table_rows, round(((data_length + index_length) / 1024 / 1024),2) \
+      "Size in MB" FROM information_schema.TABLES WHERE table_schema = "'$dbname'";'
+      return
+  elif [[ $1 == "wpdbsize" ]] ; then
+#if [ 1 == 1 ] ; then
+#    # get db size and number of tables and other info
+#    q=$q'SELECT s.schema_name,
+#    CONCAT(IFNULL(ROUND((SUM(t.data_length)+SUM(t.index_length)) 
+#      /1024/1024,2),0.00),"Mb") total_size, 
+#    CONCAT(IFNULL(ROUND(((SUM(t.data_length)+SUM(t.index_length))-
+#      SUM(t.data_free))/1024/1024,2),0.00),"Mb") data_used,
+#    CONCAT(IFNULL(ROUND(SUM(data_free)/1024/1024,2),0.00),"Mb") data_free,
+#    IFNULL(ROUND((((SUM(t.data_length)+SUM(t.index_length))-SUM(t.data_free)) 
+#      /((SUM(t.data_length)+SUM(t.index_length)))*100),2),0) pct_used,
+#    COUNT(table_name) total_tables 
+#      FROM INFORMATION_SCHEMA.SCHEMATA s
+#      LEFT JOIN INFORMATION_SCHEMA.TABLES t ON s.schema_name = t.table_schema 
+#      WHERE s.schema_name = "'$dbname'";'
+#else #simpler but does not get number of tables
+#      q=$q'SELECT "'$dbname'", 
+#      SUM( data_length + index_length ) / 1024 / 1024 "Data Base Size in MB", 
+#      SUM( data_free )/ 1024 / 1024 "Free Space in MB"
+#      FROM information_schema.TABLES;'
+#else
+      # shared hosts dont always allow the above, so we will count each one
+      q=$q'SELECT ROUND(SUM((data_length + index_length)/1024/1024),2) total_size,
+        COUNT(table_name) total_tables FROM information_schema.TABLES 
+        WHERE table_schema = "'$dbname'";'
+
+#fi
   else echo -e "\tInvalid argument was given to wpconn... nothing to do" && return 1
   fi
   myconn=$(mysql -u "$dbuser" -p"$dbpass" -h "$dbhost" -e "$q" 2>&1)
@@ -272,18 +304,58 @@ function wpdb() {
     echo -e "\twpdb [option [param]]\n"
     echo -e "\t-i FILE\n\t\texport current database to file FILE.\n\t\tThe specified FILE must end in .sql\n"
     echo -e "\t-e [FILE]\n\t\texport current database to optional file FILE.\n\t\tIf a FILE is specified, it must end in .sql\n"
+    echo -e "\t-s\n\t\tshow the size of all tables and the database\n"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
+  
+  if [[ $1 == '-s' ]] ; then
+    if [[ $2 == '-q' ]] ; then
+      wpconn "wpdbsize"
+      echo "$myconn" | awk 'END{print $0}' | \
+      awk 'NF && NF-1 {print "\tDB size:\t" ( $(NF-1) ) " MB" \
+        "\n\tDB tables:\t" ( $(NF) ) " tables"}'
+      return
+    else
+      echo
+      wpconn "wptablesize"
+      echo
+      echo "Above you will see each table's total rows and size"
+      echo -e "Below is the total amount of space used by the database.\n"
+      wpdb -s -q
+# ## removed because shared host was locking up on full size query
+#      awk 'NF && NF-4 { print "\tDB total size:  \t" ( $(NF-4) ) \
+#                            "\n\tDB data used:   \t" ( $(NF-3) ) \
+#                            "\n\tDB data free:   \t" ( $(NF-2) ) \
+#                            "\n\tDB percent used:\t" ( $(NF-1) "%" ) \
+#                            "\n\tDB total tables:\t" ( $(NF) ) " tables" }'
+      echo
+  fi
+    return
+  fi
+  
   wpconn "wpdb"
-  [[ $1 != "-q" ]] && echo -e "\n\tDB user:\t$dbuser\n\tDB pass:\t$dbpass\n\tDB host:\t$dbhost\n\tDB name:\t$dbname\n\tDB prefix:\t$dbprefix\n"
+  if [[ $1 != "-q" ]] ; then
+    echo -e "\n
+\tDB user:\t$dbuser
+\tDB pass:\t$dbpass
+\tDB host:\t$dbhost
+\tDB name:\t$dbname
+\tDB prefix:\t$dbprefix\n"
+  fi
   if [[ -z $myconn ]]; then
     [[ $1 == "-q" ]] && echo -e "\tDatabase:\tPrefix?" || echo -e "Connected with no errors, but no tables that match specified prefix"!"\n"
+    # put size and tables lookups here, so if db is slow we aren't waiting forever
+    wpdb -s -q
+    echo
   elif [[ $myconn == "ERROR"* ]]; then
     [[ $1 == "-q" ]] && echo -e "\tDatabase:\tError"! || echo -e "$myconn\n"
     return 9
   else
     [[ $1 == "-q" ]] && echo -e "\tDatabase:\tOK" || echo -e "Database connection settings appear to be fine.\n"
+    # put size and tables lookups here, so if db is slow we aren't waiting forever
+    wpdb -s -q
+    echo
   fi
   if [[ $1 == "-i" ]]; then
     if [[ -z "$2" ]]; then echo -e "No import file specified!\n"
@@ -1296,6 +1368,11 @@ edit_desc="
 \t wpbackup/wprestore     Quick backup/restore. See their help pages.\n"
 __wptool_to_show_or_not
 
+# wpdb -s
+edit="1426364069"
+edit_desc="
+\t wpdb -s      Shows all tables and their sizes, and total db size.\n"
+__wptool_to_show_or_not
 # ------- End Changes ----------
 
 # display them if we have any

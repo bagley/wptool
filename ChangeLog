@@ -7,6 +7,8 @@ ChangeLog:
   home: http://domain.com, but siteurl: http://domain.com/files
 - now clears WP Super Cache files
 - Improvements on database and status messages.
+- wpdb can now show database size and number of tables
+  wpdb -s will show the size of each table
 
 1.8.0
 - Added basic malware scanning
