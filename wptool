@@ -198,6 +198,15 @@ function wpconn() {
   elif [[ $1 == "wpurlmod" ]]; then
     [[ -z $2 ]] && echo No URL specified! && return 9
     q=$q'UPDATE '$dbprefix'options SET option_value="'$2'" WHERE option_name="siteurl" OR option_name="home";'
+  # getting and setting only siteurl or homeurl
+  elif [[ $1 == "wpsiteurl" ]]; then q=$q'SELECT option_id, option_name, option_value FROM '$dbprefix'options WHERE option_name = "siteurl";'
+  elif [[ $1 == "wphomeurl" ]]; then q=$q'SELECT option_id, option_name, option_value FROM '$dbprefix'options WHERE option_name = "home";'
+  elif [[ $1 == "wpsiteurlmod" ]]; then
+    [[ -z $2 ]] && echo No URL specified! && return 9
+    q=$q'UPDATE '$dbprefix'options SET option_value="'$2'" WHERE option_name="siteurl";'
+  elif [[ $1 == "wphomeurlmod" ]]; then
+    [[ -z $2 ]] && echo No URL specified! && return 9
+    q=$q'UPDATE '$dbprefix'options SET option_value="'$2'" WHERE option_name="home";'
   # search the posts and rename the old url to a new one
   elif [[ $1 == "wpurlreplace" ]]; then
     [[ -z "$2" || -z "$3" ]] && echo To replace urls in posts there has to be two urls! && return 9
@@ -307,13 +316,50 @@ Usage:\twpurl [URL]
 \t\tpictures aren't loading. We only search the posts 
 \t\tand postsmeta tables. But that should be enough for most.
 
+\t--setsite|-s [url]   set the siteurl to [url] (used for files)
+\t--sethome|-m [url]   set the homeurl to [url] (used for links)
+
 \tIf any of the above URLs do not start with 'http://' or 'https://', 
 \tit will automatically be appended with 'http://'.
 "
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
+  
   if [[ $# -eq 2 ]] ; then
+    if [[ $1 == '--setsite' ]] ; then
+      # set siteurl
+      newurl=$2
+      __wpurl_check_http addfollow
+      wpconn wpsiteurlmod $newurl && echo "Updated site URL to $newurl..."
+      return
+    elif [[ $1 == '--sethome' ]] ; then
+      # set home url
+      newurl=$2
+      # we don't need a trailing / on home
+      __wpurl_check_http
+      wpconn wphomeurlmod $newurl && echo "Updated home URL to $newurl..."
+      return
+    fi
+    # if they didn't match, we keep going
+  fi
+  if [[ $# -eq 1 ]] ; then
+    if [[ $1 == '--site' ]] ; then
+       # get site url
+       wpconn wpsiteurl
+       echo -e "$myconn" | tail -n -1 | awk '{print "\t"$2"("$1"):\t"$3}'
+       return
+    elif [[ $1 == '--home' ]] ; then
+       # get home url
+       wpconn wphomeurl
+       echo -e "$myconn" | tail -n 1 | awk '{print "\t"$2"("$1"):\t"$3}'
+       return
+    fi
+    # if they didn't match, we keep going
+  fi
+  
+  if [[ $# -eq 2 ]] ; then
+    # search and replace of url
     newurl=$1
     __wpurl_check_http addfollow
     oldurl=$newurl
@@ -334,6 +380,7 @@ Usage:\twpurl [URL]
       echo "Failed to replace urls in database"
     fi
   elif [[ -n $1 ]]; then
+    # setting 
     oldsite="$(wpurl -q | awk '{if (NR==1) {print $3}}')"
     newurl=$1
     __wpurl_check_http
@@ -362,6 +409,10 @@ Usage:\twpurl [URL]
   fi
   echo
 }
+# this function checks that the url in $newurl has a http or https before it. 
+# if it does not, it adds it
+# use 'addfollow' to also add a '/' if needed
+# sets url to $newurl
 function __wpurl_check_http() {
   [[ ! $newurl =~ https?://* ]] && newurl="http://"$newurl && echo "No 'http://' or 'https://' in provided URL" && echo -e "Using '$newurl' instead...\n"
   if [[ "$1" == "addfollow" ]] ; then

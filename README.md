@@ -73,6 +73,16 @@ Search and replace every instance of oldurl with newurl in the posts and postsme
 
     wpurl oldurl newurl
 
+Set the siteurl to [url]
+
+	--setsite [url]   
+
+Set the homeurl to [url]
+
+	--sethome [url]
+  
+You may also use --site and --home to get just the siteurl and home.
+
 *Note: If the URL does not start with 'http://' or 'https://' it will automatically be prepended with 'http://'..*
 
 ---------
