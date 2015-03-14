@@ -142,7 +142,7 @@ function wpfix() {
 ?>
 EOF
   echo
-  echo "Also try wptest and wptrace. They help to identify errors."
+  echo "Also try wptests and wptrace. They help to identify errors."
   echo
 }
 
@@ -368,12 +368,12 @@ Usage:\twpurl [URL]
     if [[ $1 == '--site' ]] ; then
        # get site url
        wpconn wpsiteurl
-       echo -e "$myconn" | tail -n -1 | awk '{print "\t"$2"("$1"):\t"$3}'
+       echo -en "$myconn" | awk 'END{print $3}'
        return
     elif [[ $1 == '--home' ]] ; then
        # get home url
        wpconn wphomeurl
-       echo -e "$myconn" | tail -n 1 | awk '{print "\t"$2"("$1"):\t"$3}'
+       echo -en "$myconn" | awk 'END{print $3}'
        return
     fi
     # if they didn't match, we keep going
