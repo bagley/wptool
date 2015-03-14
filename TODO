@@ -139,6 +139,12 @@ when making the access link, put a file in the dir and try to go to it
 first try siteurl, then home, and then just use siteurl and warn the user
 that it may not work, or to add "this path" the whatever url they are using.
 
+make access file valid for only +-24 hours. This allows for problems like
+php running under UTC but bash (server) running under a time zone.
+
+have access file change its permissions if it can't remove itself
+and make a file simular in name that blocks it from running.
+
  ----------------------
 |                      |
 |       Finished       |
