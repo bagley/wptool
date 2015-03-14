@@ -1285,6 +1285,16 @@ function wpstats() {
 }
 
 function wptool() {
+  if [[ $1 == 'changes' ]] ; then
+    echo "Downloading ChangeLog..."
+    curl -Ssf "https://raw.githubusercontent.com/bagley/wptool/master/ChangeLog" | less
+    return
+  elif [[ $1 == 'docs' ]] || [[ $1 == 'man' ]] ; then
+    echo "Downloading Readme..."
+    curl -Ssf "https://raw.githubusercontent.com/bagley/wptool/master/README.md" \
+      | sed 's/####/* /g' | sed 's/###//g' | sed 's/##//g' |less
+    return
+  fi
   echo -e "
   _       ______  __              __
  | |     / / __ \/ /_____  ____  / /
@@ -1312,6 +1322,9 @@ function wptool() {
 \twpver:   returns version info
 \twpbackup:   backup files and/or db
 \twprestore:  restore database from file
+
+  wptool changes  Shows all changes and updates
+  wptool man      Shows the manual page in terminal
 "
 }
 
@@ -1401,7 +1414,8 @@ __wptool_to_show_or_not
 
 # display them if we have any
 if [[ -n "$recent_changes" ]] ; then
-  echo -e "\n\tRecent Changes to WPTool:\n$recent_changes"
+  echo -e "\n\tRecent Big Changes to WPTool:\n$recent_changes"
+  echo -e "\t*To see all changes and updates run 'wptool changes'"
 fi
 
 

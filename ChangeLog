@@ -5,6 +5,8 @@ ChangeLog:
 [New]  'wplogin' is an alias to wpuser # -l that will give you a
    link to automatically login as first admin user it finds. 
    No more searching for user ids, just run and click.
+- New tools 'wptool changes/man' show the changelog and readme 
+    from within the terminal.
 - Fixed wpuser's access link to work with sites whos
   files are in a sub directory but the site is using 
   the regurlar path, for example:
