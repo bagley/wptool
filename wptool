@@ -812,40 +812,39 @@ function wpscan() {
   if [[ -z $1 || $1 == "--help" || $1 == "-h" ]]; then
     if [[ $2 == "strings" ]] ; then
       # wpscan -h strings
-      echo -e "
-\twpscan uses strings to find bad files. By default it will load
-\ta default set when a scan is run, if none are already loaded.
+      echo -e "wpscan uses strings to find bad files, which it loads by default.
+Usage: wpscan [show-strings|default-strings|add-strings|clear-strings]
 
-\twpscan show-strings
+\tshow-strings
 \t\tShow a list of the scan strings that are currently loaded.
 
-\twpscan default-strings [devel|alpha]
+\tdefault-strings [devel|alpha]
 \t\tOptional method to set the strings back to the default list.
 \t\tOptionally specify devel or alpha to use newer(?) string lists.
 
-\tYou may also override it with your own set(s).
+\tYou may also override the strings with your own set(s).
 
 \textra_strings='string1\\\nstring2\\\nstring3'
-\t\tSet any custom strings to the variable \$extra_strings be
-\t\tincluded in the scan. Use ' and separate each with a '\\\n'
+\t\tInclude your own strings in the scan by setting them to the 
+\t\t\$extra_strings variable. Use ' and separate each with a '\\\n'
 
-\twpscan add-strings [url]
-\t\tLoad your own strings from the given address, one string search
-\t\tper line. Default strings are not be added if you do this first.
+\tadd-strings http(s)://domain.com/stringsfile
+\t\tLoad your own strings from a file at the given address. 
+\t\tDefault strings are not be added if you do this first.
 
-\twpscan clear-strings
-\t\tClear out all scan strings.'."
-      echo
+\tclear-strings
+\t\tClear out all scan strings"
+      
       return
     else
       # wpscan -h
       echo -e "This tool scans for strings that are in typical malware.\n
-Usage: wpscan [quick|full|add scan_string_url]\n\t\t\n
-\twpscan quick
+Usage: wpscan [quick|full]\n\t\t\n
+\tquick
 \t\t Scans the core files, plugins, and themes.\n
-\twpscan full
+\tfull
 \t\t Scans all files in the current directory and down.\n
-\twpscan [quick|full] quiet
+\t[quick|full] quiet
 \t\t Only show the actual phrase matched. Not the whole line.\n
 
 \tYou can use your own list of strings to search for.
