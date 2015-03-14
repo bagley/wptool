@@ -458,6 +458,13 @@ Usage:\twpurl [URL]
     oldurl=$newurl
     newurl=$2
     __wpurl_check_http addfollow
+    
+    echo -e "\tI recommend running a backup of your database before continuing:\n"
+    wpdb -s -q
+    echo
+    read -p "$(echo $'\t')To run a backup now with 'wpbackup db' press 'y' (N/y) " -n 1 -r
+    [[ $REPLY =~ ^[Yy]$ ]] && echo -e '\n\n' && wpbackup db -q
+    
     echo -e "\tAre you sure you want to search and replace your posts as follows:\n"
     echo -e "\tOld url: $oldurl"
     echo -e "\tNew url: $newurl\n"
@@ -1186,12 +1193,22 @@ function wpbackup() {
   
   if [[ "$1" == "db" || "$1" == "database" ]] ; then
     # do database
+    if [[ $2 != '-q' ]] ; then
+      echo
+      wpdb -s -q
+      echo
+    fi
     wpconn wpdbexportgz
   elif [[ "$1" == "files" ]] ; then
     # files
     __wp_backup_files
   elif [[ "$1" == "all" ]] ; then
     # db and files
+    if [[ $2 != '-q' ]] ; then
+      echo
+      wpdb -s -q
+      echo
+    fi
     wpconn wpdbexportgz
     __wp_backup_files
   fi
