@@ -668,7 +668,8 @@ function wpuser() {
   else echo -e "\tInvalid option"!"\n" && return 1; fi		#Otherwise, end.
   if [[ $myconn == "" ]]; then echo -e "\tUser not found"!
   elif [[ $myconn != "ERROR"* ]]; then
-    if [[ -z $1 ]]; then  echo -e "\t(only showing upto 23 users. To see all use 'wpuser all')\n"
+    if [[ -z $1 ]]; then  
+      echo -e "\t(only showing upto 23 users. To see all use 'wpuser all')\n"
       echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
     elif [[ $1 == "all" ]]; then echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
     elif [[ $1 == "admins" ]]; then echo -e "\tAdmins:\n";echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
@@ -1305,7 +1306,7 @@ function wptool() {
 
   WPtool $wptoolv is suite of bash functions to administer Wordpress installs.
   It assumes you are running said functions in the site's root folder. Each
-  command listed below each have a -h option for more specific information:
+  command listed below has a -h option for more specific information:
   
 \twpstats: basic overview
 \twpurl:   URL tools

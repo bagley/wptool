@@ -2,30 +2,33 @@ ChangeLog:
 
 1.8.1
 
-[New]  'wplogin' is an alias to wpuser # -l that will give you a
-   link to automatically login as first admin user it finds. 
-   No more searching for user ids, just run and click.
+- New tool 'wplogin' is an alias to wpuser # -l that will give you a
+    link to automatically login as first admin user it finds. 
+    No more searching for user ids, just run and click.
+- New option 'wpdb -s' will show the size of each table
+    also, 'wpdb' nows show database size and number of tables
+- New feature to 'wpfix' now clears WP Super Cache files
 - New tools 'wptool changes/man' show the changelog and readme 
     from within the terminal.
 - Fixed wpuser's access link to work with sites whos
-  files are in a sub directory but the site is using 
-  the regurlar path, for example:
-  home: http://domain.com, but siteurl: http://domain.com/files
-- now clears WP Super Cache files
+    files are in a sub directory but the site is using 
+    the regurlar path, for example:
+    home: http://domain.com, but siteurl: http://domain.com/files
 - Improvements on database and status messages.
-- wpdb can now show database size and number of tables
-  wpdb -s will show the size of each table
+- Some redoing and rethinking of the changes page.
+
 
 1.8.0
-- Added basic malware scanning
+
+- New tool 'wpscan' is a new tool that does basic malware scanning
+- New option 'wpcore new' can install wp
+    After install, go to the site in the browser
+    to configure database and set main user
 - Improved wpuser access links
  - Fixes in php file
  - Removes even on Ctrl+C
  - Handles subdir installs
 - Better documentation and Readme file
 - Verify zip files are downloaded properly
-- wpcore new can install wp
- - then just go to the site in the browser
-   to configure database and set main user
 - made wget work on older systems
   that don't have w.org's root cert
