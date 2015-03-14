@@ -1315,10 +1315,6 @@ function wptool() {
 "
 }
 
-#search, multisite
-wptoolv="1.8.1"
-echo -e "\n    Injected WPtool $wptoolv into current session. For details, type 'wptool'.\n"
-
 # show a recent changes prompt for three weeks after last edit.
 # ie, let's inform the techs, but not annoy them
 # each edit is treated separatly
@@ -1405,7 +1401,14 @@ __wptool_to_show_or_not
 
 # display them if we have any
 if [[ -n "$recent_changes" ]] ; then
-  echo -e "\t\t\t\tRecent Changes:\n$recent_changes"
+  echo -e "\n\tRecent Changes to WPTool:\n$recent_changes"
 fi
+
+
+
+#search, multisite
+wptoolv="1.8.1"
+echo -e "\n    Injected WPtool $wptoolv into current session.
+       For details, type 'wptool', 'wptool changes', or 'wptool man'.\n"
 
 unset HISTFILE
