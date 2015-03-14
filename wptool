@@ -130,6 +130,12 @@ function wpfix() {
   if (function_exists('w3tc_flush_all')) {
     echo "Cleared W3 Total Caches\n";
     w3tc_flush_all(); }
+    echo "Cleared W3 Total Caches\n"; 
+  }
+  if (function_exists('wp_cache_clear_cache')) {
+    wp_cache_clear_cache();
+    echo "Cleared WP Super Cache files\n";
+  }
 ?>
 EOF
   echo
