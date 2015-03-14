@@ -292,16 +292,24 @@ function wpurl() {
   [[ $1 == "-q" ]] && wpconn "wpurl" && echo "$myconn" | tail -n +2 && return
   echo
   if [[ $1 == "--help" || $1 == "-h" ]]; then
-    echo -e "This tool returns the current URL settings in the database, or updates them to a specified URL.\n"
-    echo -e "Usage:\n"
-    echo -e "\twpurl [URL]\n"
-    echo -e "\tURL\n\t\tspecify a URL to change the site to."
-    echo -e "
-\tOLDURL NEWURL\n\t\tdo a search and replace in posts for a new url.
+    echo -e "This tool returns the current URL settings in the database, or updates them to a specified URL.
+
+Usage:\twpurl [URL]
+
+\tNo options - show the current site and home urls
+
+\tURL
+\t\tspecify a URL to change the site to.
+
+\tOLDURL NEWURL
+\t\tdo a search and replace in posts for a new url.
 \t\tuseful if you moved/renamed a site's url and the 
 \t\tpictures aren't loading. We only search the posts 
-\t\tand postsmeta tables. But that should be enough for most.\n"
-    echo -e "\tIf any of the above URLs do not start with 'http://' or 'https://', \n\tit will automatically be appended with 'http://'.\n"
+\t\tand postsmeta tables. But that should be enough for most.
+
+\tIf any of the above URLs do not start with 'http://' or 'https://', 
+\tit will automatically be appended with 'http://'.
+"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
