@@ -33,9 +33,6 @@ installs with lots of users, and trying to find one user
 
 standardize options
 
-wpuser admin -l : will give a access link for the first admin user
-or just wplogin/wpaccess
-
 have it check for deleteme user on load, or the first time wpuser is run?
 
 access link should only be available for an hour
@@ -95,10 +92,6 @@ wpplug/wptheme
 - have a reinstall option, to fix corrupt files.
 - it needs to be able to install specific versions of them too
 
-wpurl needs to have an option to set only siteurl or homeurl
-- some sites are setup with a subdir with content but not wanting 
-  to show a subdir path in the address bar
-
 wpurl could have an "autodiscover" option, but that may be too awesome.
 
 verify that it can handle, move, and work with domains with ports:
@@ -111,8 +104,6 @@ add ability to install and activate plugins from command line.
 shortlink https://short.link/wptool?
 
 link others to wptool. have it fetch from github.
-
-wptests, not wptest
 
 wpcore reinstalls should do a find2perl that looks for unwritable files/folders.
 - only on wp-admin and wp-includes
@@ -145,11 +136,22 @@ php running under UTC but bash (server) running under a time zone.
 have access file change its permissions if it can't remove itself
 and make a file simular in name that blocks it from running.
 
+make a better 'which' style finder for commands used, like php, fgrep, php-cli
+
  ----------------------
 |                      |
 |       Finished       |
 |                      |
  ----------------------
+
+wptests, not wptest
+
+wpurl needs to have an option to set only siteurl or homeurl
+- some sites are setup with a subdir with content but not wanting 
+  to show a subdir path in the address bar
+
+(wplogin): wpuser admin -l : will give a access link for the first admin user
+or just wplogin/wpaccess
 
 Bug: wpuser 1 -l: needs to use siteurl if the wp is in a subdir
 and if siteurl and homeurl are different
