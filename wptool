@@ -411,16 +411,15 @@ function wpdb() {
   if [[ -z $myconn ]]; then
     [[ $1 == "-q" ]] && echo -e "\tDatabase:\tPrefix?" || echo -e "Connected with no errors, but no tables that match specified prefix"!"\n"
     # put size and tables lookups here, so if db is slow we aren't waiting forever
-    wpdb -s -q
-    echo
+    [[ $1 != "-q" ]] && wpdb -s -q && echo
+    
   elif [[ $myconn == "ERROR"* ]]; then
     [[ $1 == "-q" ]] && echo -e "\tDatabase:\tError"! || echo -e "$myconn\n"
     return 9
   else
     [[ $1 == "-q" ]] && echo -e "\tDatabase:\tOK" || echo -e "Database connection settings appear to be fine.\n"
     # put size and tables lookups here, so if db is slow we aren't waiting forever
-    wpdb -s -q
-    echo
+    [[ $1 != "-q" ]] && wpdb -s -q && echo
   fi
   if [[ $1 == "-i" ]]; then
     if [[ -z "$2" ]]; then echo -e "No import file specified!\n"
