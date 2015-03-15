@@ -949,7 +949,8 @@ Usage: wpplug [-d]
 \t\tshow a list of enabled plugins and all plugins installed
 
 \t-d, --disable [plugin]
-\t\tdisable selected plugin in the database, specified by its folder name
+\t\tdisable selected plugin in the database, by its folder name
+\t\thint: list all the plugins, and you'll see it in there.
 
 \t--disable-all, --da
 \t\tdisable all plugins in the database (safer method)
@@ -1069,7 +1070,7 @@ function __wpt_disable_plugin() {
   wpconn wpplugset $now_active
 }
 
-function _wpt_disable_plugin_last() {
+function __wpt_disable_plugin_last() {
 echo none;
 } 
 
@@ -1131,8 +1132,10 @@ Tests can be all at once with 'all' or run individually. After afterwards they r
   runtest=$1
   
   # until it is fixed only run pfolder
-  [[ $runtest != "pfolder" ]] && runtest="pfolder"
-  echo "fyi: only the pfolder test in currently working... all others are under work"
+  if [[ $runtest != "pfolder" ]] ; then
+    echo "fyi: only the 'pfolder' test in currently working... all others are under work"
+    return
+  fi
   
   echo
   [[ $status != "255" && $status != "500" ]] && echo -e "No errors detected..." || echo -e "500 error on page"!
@@ -1149,7 +1152,10 @@ Tests can be all at once with 'all' or run individually. After afterwards they r
       echo "and for WordPress not to run. Recommend you"
       echo "stop the test and remove or move it."
       __wp_continue_or_done || return
-    fi 
+    fi
+    wperr
+    echo "Please review the above error logs to see if they help"
+    __wp_continue_or_done || return
   fi
   
   # perms
