@@ -1044,22 +1044,146 @@ echo none;
 
 function wptests() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
-    echo -e "This tool does basic tests on the install.\n"
-    echo -e "Usage:\n"
-    echo -e "\twptests [param [option param]]\n"
-    echo -e "\tall\n\t\ttests each item in wp-content/plugins on the server\n"
-    echo -e "\tall --url URL\n\t\ttests HTTP status code for each item in wp-content/plugins at specified url URL\n"
+    echo -e "This tool tests out many usual probles on WordPress. Because it does so much, it is recommended to try out wpcore cur before continuing.
+Usage:\twptests [-q|all|htaccess|theme|treset|dbrepair|plugins|pfolder|phpcheck]
+
+   [ ... I haven't put the code in for these yet ... ]
+
+\tall
+\t\tRuns all tests until we get a status 200
+
+\trunall
+\t\tRuns all tests, asking user what tests to run/skip
+
+Tests can be all at once with 'all' or run individually. After afterwards they reset the data back what it was before.
+
+\tbasic
+\t\tThis runs obvious checks, like if there's a blank /index.html
+\thtaccess
+\t\tMoves the htaccess file and checks
+\tperms
+\t\tChecks the file permissions of WordPress files and plugins
+\ttheme
+\t\tChecks theme's files for php errors (esp functions.php)
+\twpcorefix
+\t\tReinstalls WordPress core files
+\tplugins
+\t\tDisables plugins one by one in the database until it works
+\ttreset
+\t\tResets theme to twentytwelve to see if that fixes it
+\tdbrepair
+\t\tRepairs the database and optimizes it
+\tpfolder
+\t\tRenames plugin files one by one to see if one is really broke.
+\tphpcheck
+\t\tChecks all php files for errors (this one is long)
+"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
-  if [[ $2 == "--url" && -n $3 ]]; then status=$(curl -sIL -o /dev/null -w "%{http_code}\n" $3)
-  else status=$(php index.php >/dev/null && php wp-admin/index.php >/dev/null; echo $?); fi
-  [[ $1 == "-q" ]] && echo $status && return
+  # other functions call us with wpstats -q [--url url] to get site status
+  if [[ $1 == "-q" ]] ; then
+    if [[ $2 == "--url" && -n $3 ]]; then 
+      status=$(curl -sIL -o /dev/null -w "%{http_code}\n" $3)
+    else 
+      status=$(php index.php >/dev/null && php wp-admin/index.php >/dev/null; echo $?); 
+    fi
+    echo $status && return
+  fi
+  if [[ -z $1 ]] ; then
+    wptests -h
+    return
+  fi
+  
+  runtest=$1
+  
+  # until it is fixed only run pfolder
+  [[ $runtest != "pfolder" ]] && runtest="pfolder"
+  echo "fyi: only the pfolder test in currently working... all others are under work"
+  
   echo
   [[ $status != "255" && $status != "500" ]] && echo -e "No errors detected..." || echo -e "500 error on page"!
   echo
-  [[ -z $1 ]] && return
-  [[ $1 == "all" ]] && folders="wp-content/plugins" || folders=$(echo $1|sed "s|/$||g")
+  
+  # run checks here
+
+  # basic
+  if [[ $runtest == "all" || $runtest == "basic" ]] ; then
+    echo -e "\n\tPerforming basic checks"
+    if [[ -f "index.html" ]] ; then
+      echo "An index.html file was found in the web root"
+      echo "This usually causes that page to load first,"
+      echo "and for WordPress not to run. Recommend you"
+      echo "stop the test and remove or move it."
+      __wp_continue_or_done || return
+    fi 
+  fi
+  
+  # perms
+  if [[ $runtest == "all" || $runtest == "perms" ]] ; then
+    echo -e "\n\tChecking that all permissions are writeable..."
+    # prob put a perl script in here to cycle through the files?
+    # I'd rather not use find if I can help it
+    
+  fi
+  
+  # htaccess
+  if [[ $runtest == "all" || $runtest == "htaccess" ]] ; then
+    echo -e "\n\tChecking htaccess file"
+    # touch the htaccess file so we know which one it is
+    # if the ssh shell should close...
+    # or are we going to need a process running that if we
+    # loose the connection, it will fix everything?
+    # create a lock file, add our pid into it, and have a
+    # spinoff program watching. We keep on adding things 
+    # that need doing a file simular to the lock file, and when
+    # we are done, we delete the lock file and the other program
+    # will fix it. Or we can just fix it and tell the other 
+    # program to close
+    # .... seems complex 
+    
+  fi
+  
+  # theme
+  if [[ $runtest == "all" || $runtest == "theme" ]] ; then
+    echo -e "\n\tChecking theme files for php errors"
+    
+  fi
+  
+  # wpcorefix
+  if [[ $runtest == "all" || $runtest == "wpcorefix" ]] ; then
+    echo -e "\n\tReinstalling core files"
+    wpcore cur
+  fi
+  
+  # plugins
+  if [[ $runtest == "all" || $runtest == "plugins" ]] ; then
+    echo -e "\n\tDisabling plugins in database one by one"
+    # this does just what the other one does, but backwards:
+    #  - start disabling all plugins, and check status
+    #  - when status 200 shows, start reenabling plugins
+    #  - if one hits a 500, mark that one and keep it disabled.
+    #  - then keep on trying to enable. That's bc there may
+    #  - be more than one that is causing the issue.
+  fi
+  
+  # treset (theme reset)
+  if [[ $runtest == "all" || $runtest == "treset" ]] ; then
+    echo -e "\n\tReinstalling and activating basic theme"
+    wptheme fresh
+  fi
+  
+  # dbrepair
+  if [[ $runtest == "all" || $runtest == "dbrepair" ]] ; then
+    echo -e "\n\tRepairing and optimizing database"
+    
+  fi
+  
+  # pfolder
+  if [[ $runtest == "all" || $runtest == "pfolder" ]] ; then
+    echo -e "\n\tDeactivating all plugins and then reacivating one by one"
+    
+  # [[ $1 == "all" ]] && folders="wp-content/plugins" || folders=$(echo $1|sed "s|/$||g")
   temp=$(now)
   if [[ $2 == "--url" && -n $3 ]]; then echo -e "*** NOTE: This test doesn't confirm items are fully functional; it simply checks the status code on '$3'. DO NOT INTERRUPT! ***\n"
   else echo -e "*** NOTE: This test doesn't confirm items are fully functional; it simply tries to run index.php and wp-admin/index.php in the local shell. DO NOT INTERRUPT! ***\n"; fi
@@ -1083,6 +1207,29 @@ function wptests() {
     mv "$f"_$temp/* $f && echo "Moved $f back to original folder..." && rm -rf "$f"_$temp && echo "Removed $f"_$temp...
   done
   echo
+  
+  fi
+  
+  # phpcheck
+  if [[ $runtest == "all" || $runtest == "phpcheck" ]] ; then
+    echo -e "\n\tVerifying php scripts one by one. This will take some time...."
+    
+  fi
+  
+}
+
+function __wp_continue_or_done() {
+  [[ -n $1 ]] && __msg="$1 test" || __msg="tests"
+  if [[ -n $2 ]] ; then
+    read -p "$(echo $'\n\t')$2 (y/N)? " -n 1 -r
+  else
+    read -p "$(echo $'\n\t')Would you like to [Y] continue with the ${__msg}? (y/N)? " -n 1 -r
+  fi
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo -e "\nExiting..."
+    return 0
+  fi
+  return 1
 }
 
 function wptrace() {
