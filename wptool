@@ -235,8 +235,15 @@ function wpconn() {
       echo "Variable \$wpt_disabled_plugins is empty. Nothing to do." && return 9
     fi
     wpt_disabled_plugins_noquot="$(echo $wpt_disabled_plugins | sed 's/"/\\"/g')"
-    echo $wpt_disabled_plugins_noquot
     q=$q'UPDATE '$dbprefix'options SET option_value="'$wpt_disabled_plugins_noquot'" WHERE option_name = "active_plugins";'
+  elif [[ $1 == "wpplugset" ]]; then 
+    if [[ -z "$2" ]] ; then
+      echo "No plugin data was given. If you are trying to disable all, try 'wpconn wpplugdisableall'"
+      return 9
+    fi
+    wpt_plugins_set=$2
+    wpt_plugins_set_noquot="$(echo $wpt_plugins_set | sed 's/"/\\"/g')"
+    q=$q'UPDATE '$dbprefix'options SET option_value="'$wpt_plugins_set_noquot'" WHERE option_name = "active_plugins";'
   elif [[ $1 == "wptheme" ]]; then q=$q'SELECT option_id, option_name, option_value FROM '$dbprefix'options WHERE option_name = "stylesheet" OR option_name = "template";'
   elif [[ $1 == "wpthememod"* ]]; then
     [[ -z $2 ]] && echo No theme specified! && return 9
@@ -308,6 +315,13 @@ function wpconn() {
     wpt_disabled_plugins_test=$(echo "$myconn" | tail -n +2)
     if [[ "$wpt_disabled_plugins_test" != "$wpt_disabled_plugins" ]] ; then
       echo "I checked the actual saved active_plugins and it doesn't match what it should be"
+      return 9
+    fi
+  elif [[ $1 == "wpplugset" ]]; then 
+    wpconn "wpplug"
+    wpt_plugins_set_test=$(echo "$myconn" | tail -n +2)
+    if [[ "$wpt_plugins_set_test" != "$wpt_plugins_set" ]] ; then
+      echo "I checked the actual saved active_plugins key and it doesn't match what it should be"
       return 9
     fi
   fi
@@ -476,6 +490,7 @@ Usage:\twpurl [URL]
     newurl=$2
     __wpurl_check_http addfollow
     
+    echo -e "\tStarting the siteurl/home rename process...\n"
     echo -e "\tI recommend running a backup of your database before continuing:\n"
     wpdb -s -q
     echo
@@ -900,8 +915,9 @@ Usage: wpplug [-d]
 \t[no option]
 \t\tshow a list of enabled plugins and all plugins installed
 
-\t-d
-\t\tdisable all plugins by renaming the plugins folder
+\t-d, --disable [plugin]
+\t\tdisable selected plugin in the database, specified by its folder name
+
 \t--disable-all, --da
 \t\tdisable all plugins in the database (safer method)
 
@@ -955,6 +971,9 @@ Usage: wpplug [-d]
     fi
     temp=$(now)
     mv $wpt_plugins_folder "$wpt_plugins_folder"_$temp && echo "Moved plugins to $wpt_plugins_folder"_$temp...
+  elif [[ $1 == "--disable" ]] && [[ -n $2 ]]; then
+    __wpt_disable_plugin $2
+    
   elif [[ -z $1 ]]; then
     echo -e "Active plugins:\n"
     wpconn "wpplug"
@@ -969,6 +988,59 @@ Usage: wpplug [-d]
   fi
   echo
 }
+
+function __wpt_disable_plugin() {
+  plugin_remove=$1
+  # take only the folder if a path was given
+  # ie 'autoptimize' vs 'autoptimize/autoptimize.php'
+  if [ -n "$(echo $plugin_remove | grep '/')" ] ; then
+    echo "warning, a path was given for the plugin name... fixing."
+    plugin_remove="$(echo $plugin_remove | cut -f1 -d'/')"
+  fi
+  if [[ -z $plugin_remove ]] ; then
+    echo "__wpt_disable_plugin: No plugin given"
+    return 9
+  fi
+  wpconn "wpplug"
+  active=$(echo "$myconn" | tail -n +2)
+#    php -q <<"EOF"
+#    <?php
+#      \$plugin_list=unserialize('\'$active');
+#      \$remove_index = array_search('test', \$plugin_list);
+#      unset(\$plugin_list[\$remove_index]);
+#      printr(serialize(\$plugin_list));
+#    ?>
+#EOF
+  #active_noquot="$(echo $active | sed 's/"/\\"/g')"
+  #plugin_noquot="$(echo $2 | sed 's/"/\\"/g')"
+  now_active=$(php -r "\$plugin_list=unserialize('"$active"');
+  // remember that $plugin_remove is not escaped, as we are subing it in
+  \$plugin_list=preg_grep ( '/^"$plugin_remove"\/.*/' , \$plugin_list, PREG_GREP_INVERT);
+  // the long way, but kept just in case
+  //  foreach (\$plugin_list as \$k => \$p) {
+  //    if ( preg_match('/"$plugin_remove"\/.*/', \$p) == TRUE ) {
+  //      unset(\$plugin_list[\$k]);
+  //    }
+  //  }
+  print_r(serialize(\$plugin_list));")
+  
+  # check it
+  if [ -z $now_active ] ; then
+    echo "Failed to parse plugin data (__wpt_disable_plugin). Nothing done."
+    return 9
+  fi
+  if [ -n "$(echo $now_active | grep "$plugin_remove/")" ] ; then
+    echo "Warning, the plugin may have not been removed"
+  fi
+  echo wpconn
+  wpconn wpplugset $now_active
+}
+
+function _wpt_disable_plugin_last() {
+echo none;
+} 
+
+
 
 function wptests() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
