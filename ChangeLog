@@ -2,13 +2,15 @@ ChangeLog:
 
 1.8.1
 
-- New tool 'wplogin' is an alias to wpuser # -l that will give you a
-    link to automatically login as first admin user it finds. 
+* 'wplogin' is an alias to wpuser # -l that will automatically
+    give you a link to login as first admin user it finds. 
     No more searching for user ids, just run and click.
-- New option 'wpdb -s' will show the size of each table
-    also, 'wpdb' nows show database size and number of tables
-- New feature to 'wpfix' now clears WP Super Cache files
-- New tools 'wptool changes/man' show the changelog and readme 
+* 'wpplug --disable-all' will disable all plugins
+    so you can quickly see if it is a plugin issue
+* 'wpdb -s' shows the size of each table, and
+    'wpdb' nows show database size and number of tables
+* 'wpfix' now clears WP Super Cache files and
+* 'wptool changes/man' show the changelog and readme 
     from within the terminal.
 * 'wpfix' can now fix file permissions. Basic setup as of now.
 - Fixed wpuser's access link to work with sites whos
@@ -21,8 +23,8 @@ ChangeLog:
 
 1.8.0
 
-- New tool 'wpscan' is a new tool that does basic malware scanning
-- New option 'wpcore new' can install wp
+* 'wpscan' is a new tool that does basic malware scanning
+* 'wpcore new' can install wp
     After install, go to the site in the browser
     to configure database and set main user
 - Improved wpuser access links
@@ -33,3 +35,126 @@ ChangeLog:
 - Verify zip files are downloaded properly
 - made wget work on older systems
   that don't have w.org's root cert
+
+
+1.7.5.1
+
+* 'wpbackup' and 'wprestore' and quick functions allow one to
+    backup/restore the database and wp-content files.
+* 'wpfix' now clears W3 Total Cache's files too.
+- make __wp_rand_string function more robust and workable.
+    It's now used in more places for better security.
+- wpurl now asks user for confirmation on search and replace
+- wpuser shows "only showing first 23 users" so we remember that.
+- Some reformatting and better suggestions.
+
+
+1.7.5
+
+* 'wpurl OLD NEW' is a new option allows you to search and replace
+    urls in the posts table. This is usually for fixing up 
+    pic urls on site moves.
+* 'wptrace' is a new tool that shows a trace of what WP is doing.
+    This can help with wsod or odd errors.
+* We now show recent big changes (during the last 3 weeks) on load.
+- Added License file.
+- Fixes to the access link (wpuser # -l) to work on sub directories,
+    not show two '//' (for real this time), and only warn if 
+    user not found (but go ahead and make the link anyways).
+- dbconn was saying 'invalid query' when it really meant "bad argument'
+
+
+1.7.4
+
+* 'wpuser' now has options to list all users, and admins.
+- check if access link exists before removing
+
+
+1.7.3
+
+* 'wperr' is a new tool that shows a tail of WP's error logs.
+
+
+1.7.1.4
+
+* 'wpuser # -l' is a new option that adds the ability to login 
+    as any user using a given link. It does this by creating a link
+    that asks WP for the cookies of the given user, and then loads
+    them into the browser. Yet all the user is doing is specifying
+    the user id, and then clicking the link. It automatically logs
+    into the WP Dashboard. No more 'deleteme'!
+
+
+1.7.1.3
+
+* 'wpuser -n' now creates a random password for deleteme creation.
+    No more having to redo the password, (or forgetting about it).
+- Created readme file.
+
+
+1.7.1.2
+
+- Updated to https.
+
+
+1.7.1.1
+
+- Added email to deleteme user. Also added a notice to 
+  delete/rename said user.
+- Removed antiquated function from wpfix.
+- Simplified wpht processing, and copied instead of moved 
+  old .htaccess so as to preserve other rules.
+
+
+1.6.8
+
+- Updated obscure single quote bug.
+- Simplified default version output.
+- Made it clear that "No WP files found" wasn't an error.
+- Updated doc for wpcore and wpver.
+
+
+1.6.7
+
+- Cleaned up wpver, as well as updating wpcore to download 
+  based on db version instead of file version.
+- Clean up injection line.
+- Cosmetic changes to info page.
+
+
+1.6.6
+
+- Made it easier to update the version number.
+- More robust error-catching. Also, it's better to only create 
+  a folder when needed as opposed to deleting it if empty. 
+- Minor readability cleanup.
+- Check for wpcore cur before going to default.
+- Added is_empty.
+
+
+1.6.5
+
+- Updates to wpcore.
+- Use require_once() instead of require()
+
+
+1.6.1
+
+- Ignore chars when sorting database params, 
+  as some servers have different defaults.
+
+
+1.6
+
+- Enabled database dropping.
+- Added simple undocumented database drop feature.
+- Enabled gzip import/export of database.
+- Filtered out lines starting with a slash (comments), and sorted matches 
+- Cleaned up database detail parsing.
+- Cosmetics; also restoring return codes.
+- Fixed export with no name specifiedm 
+
+
+1.5
+
+- Added wptool
