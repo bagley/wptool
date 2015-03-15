@@ -426,7 +426,7 @@ Usage:\twpurl [URL]
 \t\tpictures aren't loading. We only search the posts 
 \t\tand postsmeta tables. But that should be enough for most.
 
-\t--setsite|-s [url]   set the siteurl to [url] (used for files)
+\t--setsite|-u [url]   set the siteurl to [url] (used for files)
 \t--sethome|-m [url]   set the homeurl to [url] (used for links)
 
 \tIf any of the above URLs do not start with 'http://' or 'https://', 
@@ -437,13 +437,13 @@ Usage:\twpurl [URL]
   fi
   
   if [[ $# -eq 2 ]] ; then
-    if [[ $1 == '--setsite' ]] ; then
+    if [[ $1 == '--setsite' ]] || [[ $1 == '-u' ]] ; then
       # set siteurl
       newurl=$2
       __wpurl_check_http addfollow
       wpconn wpsiteurlmod $newurl && echo "Updated site URL to $newurl..."
       return
-    elif [[ $1 == '--sethome' ]] ; then
+    elif [[ $1 == '--sethome' ]] || [[ $1 == '-m' ]] ; then
       # set home url
       newurl=$2
       # we don't need a trailing / on home
