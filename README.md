@@ -37,6 +37,23 @@ If you would like to use newer features you can use the devel branch. Or you can
 
 *Hosting Note: If you plan on putting wptool on your own server/website, like onto a hosting account you have, please see the note in the "Hosting WPTool" section before doing so.*
 
+##Some Basic Ones
+
+Here are some basic ones to get you started off right:
+
+wpstats
+^--- Show basic infomation about the site (url, theme, status)
+
+wpdb
+^--- Show info about the database (user, password, tables)
+
+wplogin
+^--- This will give you a link that you can click with your browser and automatically be logged in as an administrator.
+
+wpfix
+^--- This will quickly clear up most caches and clear things up. Also try 'wpht'
+
+Towards the bottom I have some scenarios of what commands to use in common situations, like a wsod.
 
 ##Commands
 
@@ -151,13 +168,29 @@ DB tables:  31 tables
 
 This tool does basic plugin functions, such as displaying active and available plugins, or disabling them all.
 
-List currently enabled/disabled plugins of the current install.
+Usage: wpplug [--disable <plugin>|--disable-all|--restore-all|--disable-all-via-folder]
+
+List currently enabled/disabled plugins of the current install (no options).
 
     wpplug
 
-Disables plugins by renaming the plugin folder
+Disable selected plugin in the database, by its folder name
+Hint: list all the plugins, and you'll see it in there.
 
-    wpplug -d
+    -d, --disable <plugin>
+
+Disable all plugins in the database (this is just how WP does it)
+
+    --disable-all, --da
+
+Restore the plugins that were active before, as --disable-all saves them to $wpt_disabled_plugins. Of course it's only valid for this session
+
+    --restore-all, --ra
+
+Disables plugins by renaming the plugin folder (warning! may cause data loss).
+
+    --disable-all-via-folder
+		
 
 
 ---------
@@ -202,11 +235,17 @@ Download and install/replace a specific version of the Wordpress core, in the fo
 
 ###wpfix
 
-This tool runs various built-in Wordpress functions and fixes. It has no options.
+This tool runs various built-in Wordpress functions and fixes, and a few others.
 
-Generate a fix report
+Clear WordPress's cache and runs any needed database updates.
+This is safe, as it's what you normally do when you upgrade WP
 
-    wpfix
+    wpfix 
+
+Fix the permissions of WP files to writeable.
+
+	--perms
+
 
 ---------
 
@@ -365,6 +404,44 @@ This tool shows the WordPress file and database versions.
 
 ---------
 
+##Common Scenarios and What to do
+
+### Have a white screen (wsod)
+
+Check the error logs.
+
+    wperr
+
+Reset htaccess file (and try moving it out of the way).
+
+    wpht
+
+Clear site's cache
+
+    wpfix
+
+Reinstall core files (this helps out a lot)
+
+    wpcore cur
+
+Reset Theme to TwentyTwelve
+
+    wptheme fresh
+
+Disable all plugins
+
+    wpplug --disable-all
+    # verify, and then restore previous setting:
+    wpplug --restore-all
+
+### Need to login
+
+    wplogin
+    wpuser # -l
+
+That's the simple answer. But if that fails (and let me know the details, if you can), you can make a new user with 'wpuser -n'.
+
+---------
 
 ##Previous Versions
 
