@@ -10,6 +10,7 @@ ChangeLog:
 - New feature to 'wpfix' now clears WP Super Cache files
 - New tools 'wptool changes/man' show the changelog and readme 
     from within the terminal.
+* 'wpfix' can now fix file permissions. Basic setup as of now.
 - Fixed wpuser's access link to work with sites whos
     files are in a sub directory but the site is using 
     the regurlar path, for example:

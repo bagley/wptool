@@ -103,12 +103,46 @@ specified version.
 function wpfix() {
   echo
   if [[ $1 == "--help" || $1 == "-h" ]]; then
-    echo -e "This tool runs various built-in Wordpress functions and fixes.\n\nUsage:\n\n\twpfix\n"
+    echo -e "This tool runs various built-in Wordpress functions and fixes,
+and can run a few others too.
+
+Usage:\twpfix [perms]
+
+\t(No options)
+\t\tClears WordPress's cache and runs any needed database updates.
+\t\tThis is safe, as it's what you normally do when you upgrade WP.
+
+\t--perms
+\t\tFix the permissions of WP files to writeable.
+"
     return
+  elif [[ $1 == "--perms" ]] ; then
+  # changing perms does not need wp-config, and wp-admin could be blocked
+  # TODO: allow user to specify perms (755 777, 640, etc)
+#    "There are several ways we can change your permissions:
+#     [1] chmod a-rwx,u=rwX,go=rX -R files
+#     [2] find2perl files -type [d/f] | perl | chmod 755/644 
+#     [3] find files -type [d/f] | chmod 755/644
+#     (Note that the find commands will actually be 2 commands)
+#     If you don't know, '1' is a good choice.
+#     How would you like to reset the permissions?  [1,2,3]?"
+    echo "Resetting permissions"
+    # these first ones may or may not be here...
+    chmod -c -f a-rwx,u=rwX,go=rX xmlrpc.php .htaccess
+    chmod -c -f a-rwx,u=rwX,go=rX -R wp-* index.php \
+      && echo "Successfully changed file permissions" \
+      || echo "Failed to fix permissions or you are missing files"
+    return $?
+    
   elif [[ ! -f wp-config.php || ! -f wp-admin/upgrade-functions.php ]]; then
     echo -e "Could not find one or more of the necessary files (wp-config.php or wp-admin/upgrade-functions.php)!\n"
     return 9
-  fi 
+  elif [[ -n $1 ]] ; then
+    echo "Unknown option(s): $*"
+    wpfix -h
+    return 9
+  fi
+  
   echo "Loading WordPress.."
   php -q <<"EOF" && echo "Ran fix..." || echo Error running fix!
 <?php
