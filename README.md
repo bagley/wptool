@@ -6,7 +6,7 @@ The WPtool is suite of (SSH) bash functions to administer Wordpress installs. Wi
 **Features**
 
 * Auto removal of tool once SSH session ends.
-* Login as any user on the site, or make a new user. (wpuser)
+* Login as any user on the site, or make a new user. (wpuser/wplogin)
 * Reinstall/fix core files in a single command (wpcore)
 * Fix common problems and htaccess issues (wpfix/wpht)
 * Test for issues and find problems (wptests/wptrace)
@@ -15,7 +15,7 @@ The WPtool is suite of (SSH) bash functions to administer Wordpress installs. Wi
 * List and activate/deactivate plugins (wpplug)
 * Change the url address and update that url in posts (wpurl)
 * Quickly backup and restore the site (wpbackup/wprestore)
-* Scan for malware (wpscan)
+* Scan for common malware (wpscan)
 * Man pages for each command for quick syntax references:
     command -h
 
@@ -37,21 +37,17 @@ If you would like to use newer features you can use the devel branch. Or you can
 
 *Hosting Note: If you plan on putting wptool on your own server/website, like onto a hosting account you have, please see the note in the "Hosting WPTool" section before doing so.*
 
-##Some Basic Ones
+##Some Basic Starting Options
 
 Here are some basic ones to get you started off right:
 
-wpstats
-^--- Show basic infomation about the site (url, theme, status)
+wpstats   <--- Show basic infomation about the site (url, theme, status)
 
-wpdb
-^--- Show info about the database (user, password, tables)
+wpdb     <--- Show info about the database (user, password, tables)
 
-wplogin
-^--- This will give you a link that you can click with your browser and automatically be logged in as an administrator.
+wplogin  <--- This will give you a link that you can click with your browser and automatically be logged in as an administrator.
 
-wpfix
-^--- This will quickly clear up most caches and clear things up. Also try 'wpht'
+wpfix    <--- This will quickly clear up most caches and clear things up. Also try 'wpht'
 
 Towards the bottom I have some scenarios of what commands to use in common situations, like a wsod.
 
@@ -151,15 +147,15 @@ Show the size of all tables and the database
     wpdb -s
 
 Output will look like:
-+------------------------------+------------+------------+
-| TABLE_NAME                   | table_rows | Size in MB |
-+------------------------------+------------+------------+
-| wptEiW_commentmeta           |        845 |      16.75 |
-| wptEiW_comments              |        345 |      31.59 |
-.....
 
-DB size:    98.24 MB
-DB tables:  31 tables
+    +------------------------------+------------+------------+
+    | TABLE_NAME                   | table_rows | Size in MB |
+    +------------------------------+------------+------------+
+    | wptEiW_commentmeta           |        845 |      16.75 |
+    | wptEiW_comments              |        345 |      31.59 |
+    .....
+    DB size:    98.24 MB
+    DB tables:  31 tables
 
 
 -------
