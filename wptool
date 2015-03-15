@@ -229,6 +229,14 @@ function wpconn() {
         UPDATE '$dbprefix'posts SET post_content = replace(post_content, "'$2'", "'$3'");
         UPDATE '$dbprefix'postmeta SET meta_value = replace(meta_value, "'$2'", "'$3'");'
   elif [[ $1 == "wpplug" ]]; then q=$q'SELECT option_value FROM '$dbprefix'options WHERE option_name = "active_plugins";'
+  elif [[ $1 == "wpplugdisableall" ]]; then q=$q'UPDATE '$dbprefix'options SET option_value="a:0:{}" WHERE option_name = "active_plugins";'
+  elif [[ $1 == "wpplugrestoreall" ]]; then 
+    if [[ -z "$wpt_disabled_plugins" ]] ; then
+      echo "Variable \$wpt_disabled_plugins is empty. Nothing to do." && return 9
+    fi
+    wpt_disabled_plugins_noquot="$(echo $wpt_disabled_plugins | sed 's/"/\\"/g')"
+    echo $wpt_disabled_plugins_noquot
+    q=$q'UPDATE '$dbprefix'options SET option_value="'$wpt_disabled_plugins_noquot'" WHERE option_name = "active_plugins";'
   elif [[ $1 == "wptheme" ]]; then q=$q'SELECT option_id, option_name, option_value FROM '$dbprefix'options WHERE option_name = "stylesheet" OR option_name = "template";'
   elif [[ $1 == "wpthememod"* ]]; then
     [[ -z $2 ]] && echo No theme specified! && return 9
@@ -293,6 +301,15 @@ function wpconn() {
   elif [[ $myconn == "ERROR"* ]]; then 
     echo "There was a database error: $myconn"
     return 9
+  fi
+  # check that we saved it properly
+  if [[ $1 == "wpplugrestoreall" ]]; then 
+    wpconn "wpplug"
+    wpt_disabled_plugins_test=$(echo "$myconn" | tail -n +2)
+    if [[ "$wpt_disabled_plugins_test" != "$wpt_disabled_plugins" ]] ; then
+      echo "I checked the actual saved active_plugins and it doesn't match what it should be"
+      return 9
+    fi
   fi
 }
 
@@ -872,32 +889,83 @@ trap - 0 1 2 3 15
 
 function wpplug() {
   echo
-  folder=wp-content/plugins
+  
+  # only set plugins folder if not set. This will allow us to use custom folder locations
+  [[ -z "$wpt_plugins_folder" ]] && wpt_plugins_folder="wp-content/plugins"
+  
   if [[ $1 == "--help" || $1 == "-h" ]]; then
-    echo -e "This tool does basic plugin functions, such as displaying active and available plugins, or disabling them all.\n"
-    echo -e "Usage: wpplug [-d]
+    echo -e "This tool does basic plugin functions, such as displaying active and available plugins, or disabling them.
+Usage: wpplug [-d]
 
 \t[no option]
 \t\tshow a list of enabled plugins and all plugins installed
 
 \t-d
 \t\tdisable all plugins by renaming the plugins folder
+\t--disable-all, --da
+\t\tdisable all plugins in the database (safer method)
+
+\t--restore-all, --ra
+\t\trestore the plugins that were active before, as --disable-all
+\t\tsaves them to \$wpt_disabled_plugins. Of course it's only 
+\t\tvalid for this session.
+
+\t--disable-all-via-folder
+\t\tdisable all plugins by renaming pluging folder 
+\t\t(warning! may cause data loss)
 "
     return
-  elif [[ ! -d $folder ]]; then echo "The $folder folder was not found"! && return 9
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
-  if [[ $1 == "-d" ]]; then
+  if [[ $1 == "--da" ]] || [[ $1 == "--disable-all-folder" ]] ; then
+    # get current plugins
+    wpconn "wpplug"
+    wpt_disabled_plugins=$(echo "$myconn" | tail -n +2)
+    if [[ -z "$wpt_disabled_plugins" ]] ; then
+      echo "Failed to get a list of plugins... or is active_plugins empty?"
+      echo "Nothing done"
+      return 9
+    else
+      # disable all
+      wpconn "wpplugdisableall" && echo "Disabled all plugins" || echo "Failed to disable plugins"
+      echo "You may want to copy the following code, in case your shell closes:"
+      echo
+      echo $wpt_disabled_plugins
+      echo
+      return
+    fi
+  
+  elif [[ $1 == "--ra" ]] || [[ $1 == "--restore-all" ]] ; then
+    if [[ -z "$wpt_disabled_plugins" ]] ; then
+      echo "There is nothing saved in \$wpt_disabled_plugins"
+      echo "Are you sure you disabled itFailed to get a list of plugins... or is active_plugins empty?"
+      echo "Nothing that I can do... exiting."
+      return 9
+    else
+      wpconn "wpplugrestoreall" && echo "Restored all plugins" || echo "Failed to restore plugins"
+      return
+    fi
+    
+  elif [[ $1 == "--disable-all-via-folder" ]]; then
+    if [[ ! -d $wpt_plugins_folder ]]; then 
+      echo "The plugin folder $wpt_plugins_folder was not found"!
+      echo "Try setting wpt_disabled_plugins=path/to/plugins"
+      echo "Currently it is set to: $wpt_plugins_folder"
+      return 9
+    fi
     temp=$(now)
-    mv $folder "$folder"_$temp && echo "Moved plugins to $folder"_$temp...
+    mv $wpt_plugins_folder "$wpt_plugins_folder"_$temp && echo "Moved plugins to $wpt_plugins_folder"_$temp...
   elif [[ -z $1 ]]; then
     echo -e "Active plugins:\n"
     wpconn "wpplug"
     active=$(echo "$myconn" | tail -n +2)
-    php-cli -r "print_r(unserialize('$active'));" | grep "=>" | sed "s|.*=> \(.*\)|\t\1|"
+    php -r "print_r(unserialize('$active'));" | grep "=>" | sed "s|.*=> \(.*\)|\t\1|"
     echo
     echo -e "Available plugins:\n"
-    ls -F $folder |grep "/"|grep -v "^\."|sed "s|^\(.*\)/|\t\1|" #ls -A is overwritten by default $LS_OPTIONS in alias
+    ls -F $wpt_plugins_folder |grep "/"|grep -v "^\."|sed "s|^\(.*\)/|\t\1|" #ls -A is overwritten by default $LS_OPTIONS in alias
+  else
+    echo "Unknown option(s): $0"
+    wpplug -h
   fi
   echo
 }
