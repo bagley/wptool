@@ -1092,6 +1092,23 @@ echo none;
 } 
 
 
+function __wpt_which_tool() {
+  fallback=$1
+  found_tool=""
+  for tool in $* ; do
+    for each in $(echo $PATH | sed 's/:/ /g') ; do
+      if [[ $found_tool == "" ]] ; then
+        if [[ -f "$each/$tool" ]] || [[ -L "$each/$tool" ]] ; then
+          found_tool=$each/$tool
+        fi
+      fi
+    done
+  done
+  if [[ $found_tool == "" ]] ; then
+    found_tool=$fallback
+  fi
+}
+
 
 function wptests() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
