@@ -163,6 +163,12 @@ http://www.techrepublic.com/article/checking-and-repairing-mysql-tables/
     echo -e "\t-o\n\t\toptimizes the database (not yet impletmented)\n"
     # via OPTIMIZE TABLE
 
+Disable of plugin needs to be able to use full file paths, as
+some plugins have multiple plugins in the same folder.
+So allow user to just do plugin folder, but also allow user
+to specify the full path (as active_plugins sees it)
+-so, either just folder (folder), or folder and file (folder/file.php)
+
  ----------------------
 |                      |
 |       Finished       |
