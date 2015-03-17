@@ -1027,9 +1027,9 @@ Usage: wpplug [-d]
       return 9
     fi
     active=$(echo "$myconn" | tail -n +2)
-    __wpt_which_tool php-cli php
-    $php_cli=$found_tool
-    $php_cli -r "print_r(unserialize('$active'));" | grep "=>" | sed "s|.*=> \(.*\)|\t\1|"
+    #__wpt_which_tool php-cli php
+    #$php_cli=$found_tool
+    php-cli -r "print_r(unserialize('$active'));" | grep "=>" | sed "s|.*=> \(.*\)|\t\1|"
     echo
     echo -e "Available plugins:\n"
     ls -F $wpt_plugins_folder |grep "/"|grep -v "^\."|sed "s|^\(.*\)/|\t\1|" #ls -A is overwritten by default $LS_OPTIONS in alias
@@ -1068,9 +1068,9 @@ function __wpt_disable_plugin() {
 #EOF
   #active_noquot="$(echo $active | sed 's/"/\\"/g')"
   #plugin_noquot="$(echo $2 | sed 's/"/\\"/g')"
-  __wpt_which_tool php-cli php
-  $php_cli=$found_tool
-  now_active=$($php_cli -r "\$plugin_list=unserialize('"$active"');
+  #__wpt_which_tool php-cli php
+  #$php_cli=$found_tool
+  now_active=$(php-cli -r "\$plugin_list=unserialize('"$active"');
   // remember that $plugin_remove is not escaped, as we are subing it in
   \$plugin_list=preg_grep ( '/^"$plugin_remove"\/.*/' , \$plugin_list, PREG_GREP_INVERT);
   // the long way, but kept just in case
