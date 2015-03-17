@@ -967,9 +967,13 @@ Usage: wpplug [-d]
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
-  if [[ $1 == "--da" ]] || [[ $1 == "--disable-all-folder" ]] ; then
+  if [[ $1 == "--da" ]] || [[ $1 == "--disable-all" ]] ; then
     # get current plugins
     wpconn "wpplug"
+    if [[ $myconn == "ERROR"* ]]; then 
+      echo "There was a database error: $myconn"
+      return 9
+    fi
     wpt_disabled_plugins=$(echo "$myconn" | tail -n +2)
     if [[ -z "$wpt_disabled_plugins" ]] ; then
       echo "Failed to get a list of plugins... or is active_plugins empty?"
@@ -1011,6 +1015,10 @@ Usage: wpplug [-d]
   elif [[ -z $1 ]]; then
     echo -e "Active plugins:\n"
     wpconn "wpplug"
+    if [[ $myconn == "ERROR"* ]]; then 
+      echo "There was a database error: $myconn"
+      return 9
+    fi
     active=$(echo "$myconn" | tail -n +2)
     php -r "print_r(unserialize('$active'));" | grep "=>" | sed "s|.*=> \(.*\)|\t\1|"
     echo
@@ -1036,6 +1044,10 @@ function __wpt_disable_plugin() {
     return 9
   fi
   wpconn "wpplug"
+  if [[ $myconn == "ERROR"* ]]; then 
+      echo "There was a database error: $myconn"
+      return 9
+  fi
   active=$(echo "$myconn" | tail -n +2)
 #    php -q <<"EOF"
 #    <?php
@@ -1068,6 +1080,10 @@ function __wpt_disable_plugin() {
   fi
   echo wpconn
   wpconn wpplugset $now_active
+  if [[ $myconn == "ERROR"* ]]; then 
+      echo "There was a database error: $myconn"
+      return 9
+  fi
 }
 
 function __wpt_disable_plugin_last() {
