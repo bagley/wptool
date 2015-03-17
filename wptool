@@ -1009,6 +1009,7 @@ Usage: wpplug [-d]
     fi
     temp=$(now)
     mv $wpt_plugins_folder "$wpt_plugins_folder"_$temp && echo "Moved plugins to $wpt_plugins_folder"_$temp...
+  
   elif [[ $1 == "--disable" ]] && [[ -n $2 ]]; then
     __wpt_disable_plugin $2
     
@@ -1115,15 +1116,19 @@ Tests can be all at once with 'all' or run individually. After afterwards they r
 \t\tChecks the file permissions of WordPress files and plugins
 \ttheme
 \t\tChecks theme's files for php errors (esp functions.php)
-\twpcorefix
-\t\tReinstalls WordPress core files
+\twpchkcore
+\t\tChecks the WordPress core files against known md5 sums
+\twpchkplugins
+\t\tChecks the plugins against w.org repository known md5 sums
+\twpchkthemes
+\t\tChecks the themes against w.org repository known md5 sums
 \tplugins
 \t\tDisables plugins one by one in the database until it works
-\ttreset
+\tthemereset
 \t\tResets theme to twentytwelve to see if that fixes it
-\tdbrepair
-\t\tRepairs the database and optimizes it
-\tpfolder
+\tdbcheck
+\t\tChecks the database for common errors (same as wpdb -c)
+\tpluginsfolder
 \t\tRenames plugin files one by one to see if one is really broke.
 \tphpcheck
 \t\tChecks all php files for errors (this one is long)
@@ -1148,8 +1153,8 @@ Tests can be all at once with 'all' or run individually. After afterwards they r
   runtest=$1
   
   # until it is fixed only run pfolder
-  if [[ $runtest != "pfolder" ]] ; then
-    echo "fyi: only the 'pfolder' test in currently working... all others are under work"
+  if [[ $runtest != "pluginsfolder" ]] ; then
+    echo "fyi: only the 'pluginsfolder' test in currently working... all others are under work"
     return
   fi
   
@@ -1205,10 +1210,24 @@ Tests can be all at once with 'all' or run individually. After afterwards they r
     
   fi
   
-  # wpcorefix
-  if [[ $runtest == "all" || $runtest == "wpcorefix" ]] ; then
-    echo -e "\n\tReinstalling core files"
-    wpcore cur
+  # wpchkcore
+  if [[ $runtest == "all" || $runtest == "wpchkcore" ]] ; then
+    echo -e "\n\tChecking core files"
+    
+  fi
+  
+  # wpchkplugins
+  if [[ $runtest == "all" || $runtest == "wpchkplugins" ]] ; then
+    echo -e "\n\tChecking plugins files"
+    echo -e "\tNote: Some plugin authors do not keep their files synced, or do other things that will make some files look incorrect. So if a file gets flagged, do not simply assume that it is so. Investigate!"
+    
+  fi
+  
+  # wpchkthemes
+  if [[ $runtest == "all" || $runtest == "wpchkthemes" ]] ; then
+    echo -e "\n\tChecking theme files"
+    echo -e "\tNote: Some theme authors do not keep their files synced, or do other things that will make some files look incorrect. So if a file gets flagged, do not simply assume that it is so. Investigate!"
+    
   fi
   
   # plugins
@@ -1223,7 +1242,7 @@ Tests can be all at once with 'all' or run individually. After afterwards they r
   fi
   
   # treset (theme reset)
-  if [[ $runtest == "all" || $runtest == "treset" ]] ; then
+  if [[ $runtest == "all" || $runtest == "themereset" ]] ; then
     echo -e "\n\tReinstalling and activating basic theme"
     wptheme fresh
   fi
@@ -1235,7 +1254,7 @@ Tests can be all at once with 'all' or run individually. After afterwards they r
   fi
   
   # pfolder
-  if [[ $runtest == "all" || $runtest == "pfolder" ]] ; then
+  if [[ $runtest == "all" || $runtest == "pluginsfolder" ]] ; then
     echo -e "\n\tDeactivating all plugins and then reacivating one by one"
     
   # [[ $1 == "all" ]] && folders="wp-content/plugins" || folders=$(echo $1|sed "s|/$||g")

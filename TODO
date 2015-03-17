@@ -138,6 +138,17 @@ and make a file simular in name that blocks it from running.
 
 make a better 'which' style finder for commands used, like php, fgrep, php-cli
 
+wptests full check
+- I need one for 500 errors, for wsod errors, and one that just does normal checks
+- I can allow user to run 'wptests run basic,wpchkplugins,themereset,phpcheck'
+- or just run 
+  - wptests 500error    -> runs htaccess test (would be awesome to verify .htaccess... but...)
+  - wptests wsod [--url url] -> runs tests like htaccess, plugins and themereset until we get a 200 response
+    - this would need to also work for admin pages, setting a cookies file/var
+  - wptests verifyfiles -> runs tests that verify files (wpchk{core,plugins,themes}
+  - wptests all         -> runs every test
+  - wptests interactive -> runs all tests, but asking if to run and if to contunue.
+
  ----------------------
 |                      |
 |       Finished       |
