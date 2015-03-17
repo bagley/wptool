@@ -149,6 +149,20 @@ wptests full check
   - wptests all         -> runs every test
   - wptests interactive -> runs all tests, but asking if to run and if to contunue.
 
+wpcheck or wpsecurity
+- shows out of date core, themes, plugins
+- shows bad php config options?
+- could test for common exploits
+
+wpdb checking and repair
+http://www.techrepublic.com/article/checking-and-repairing-mysql-tables/
+    echo -e "\t-c\n\t\tchecks tables for common errors (not yet impletmented)\n"
+    # via mysqlcheck or CHECK TABLE
+    echo -e "\t-r\n\t\trepairs the database (not yet impletmented)\n"
+    # via REPAIR TABLE
+    echo -e "\t-o\n\t\toptimizes the database (not yet impletmented)\n"
+    # via OPTIMIZE TABLE
+
  ----------------------
 |                      |
 |       Finished       |
