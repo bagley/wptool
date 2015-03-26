@@ -806,12 +806,23 @@ function wplogin() {
     "Error connecting to the database: $myconn"
     return
   fi
-  __admin_id="$(echo -e $myconn | awk 'END{print $0}' | awk 'NF-1 {print ( $(NF-1) )}')"
-  if [[ -z "$__admin_id" ]] ; then
-    echo "Error: I was not able to get the id of any admins. Try 'wpuser admins'"
-    return
-  fi
-  wpuser $__admin_id -l
+  # __admin_id="$(echo -e $myconn | tail +1 | awk 'NF-1 {print ( $(NF-1) )}')"
+  __admin_id="$(echo $myconn | awk '{if (NR==1) {print $3}}')"
+  # check that it is a number
+  case $__admin_id in
+    ''|*[!0-9]*) 
+      # not a number 
+      echo "Error: I was not able to get the id of any admins."
+      echo "Try 'wpuser admins' and wpuser # -l"
+      echo "(ID number returned: $__admin_id)"
+      return 9
+      ;;
+    *) 
+      echo -e "\nUsing admin with ID $__admin_id"
+      wpuser $__admin_id -l
+      ;;
+  esac
+  
 }
 
 function __wp_create_access_file() {
