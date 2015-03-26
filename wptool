@@ -1029,7 +1029,8 @@ Usage: wpplug [-d]
     active=$(echo "$myconn" | tail -n +2)
     #__wpt_which_tool php-cli php
     #$php_cli=$found_tool
-    php-cli -r "print_r(unserialize('$active'));" | grep "=>" | sed "s|.*=> \(.*\)|\t\1|"
+    __wpt_get_php_inline
+    $wpt_php -r "print_r(unserialize('$active'));" 2>/dev/null | grep "=>" | sed "s|.*=> \(.*\)|\t\1|"
     echo
     echo -e "Available plugins:\n"
     ls -F $wpt_plugins_folder |grep "/"|grep -v "^\."|sed "s|^\(.*\)/|\t\1|" #ls -A is overwritten by default $LS_OPTIONS in alias
@@ -1070,7 +1071,8 @@ function __wpt_disable_plugin() {
   #plugin_noquot="$(echo $2 | sed 's/"/\\"/g')"
   #__wpt_which_tool php-cli php
   #$php_cli=$found_tool
-  now_active=$(php-cli -r "\$plugin_list=unserialize('"$active"');
+  __wpt_get_php_inline
+  now_active=$($wpt_php -r "\$plugin_list=unserialize('"$active"');
   // remember that $plugin_remove is not escaped, as we are subing it in
   \$plugin_list=preg_grep ( '/^"$plugin_remove"\/.*/' , \$plugin_list, PREG_GREP_INVERT);
   // the long way, but kept just in case
@@ -1094,6 +1096,25 @@ function __wpt_disable_plugin() {
   if [[ $myconn == "ERROR"* ]]; then 
       echo "There was a database error: $myconn"
       return 9
+  fi
+}
+
+# This function detects if we should use php-cli or php for the -r arg
+# (and clear out wpt_php var, in case it was set wrong)
+wpt_php=""
+function __wpt_get_php_inline() {
+  [[ -n "$wpt_php" ]] && return
+  # detect which php can run with -r (inline)
+  php-cli -r "\$test=1; \$test2=2;" >/dev/null 2>&1
+  if [ $? -eq 0 ] ; then
+    wpt_php="php-cli"
+  else
+    php -r "\$test=1; \$test2=2;"
+    if [ $? -eq 0 ] ; then
+      wpt_php="php"
+    else
+      echo "Warning, I was unable to detect which php can run with -r (inline). Setting it to 'php-cli'. Set wpt_php= to override"
+    fi
   fi
 }
 

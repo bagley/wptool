@@ -18,6 +18,7 @@ ChangeLog:
     the regurlar path, for example:
     home: http://domain.com, but siteurl: http://domain.com/files
 - Improvements on database and status messages.
+- Detect if we should use php-cli or php for running code.
 - Some redoing and rethinking of the changes page.
 
 
