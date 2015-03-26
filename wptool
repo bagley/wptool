@@ -1046,7 +1046,7 @@ function __wpt_disable_plugin() {
   # take only the folder if a path was given
   # ie 'autoptimize' vs 'autoptimize/autoptimize.php'
   if [ -n "$(echo $plugin_remove | grep '/')" ] ; then
-    echo "warning, a path was given for the plugin name... fixing."
+    #echo "warning, a path was given for the plugin name... fixing."
     plugin_remove="$(echo $plugin_remove | cut -f1 -d'/')"
   fi
   if [[ -z $plugin_remove ]] ; then
@@ -1091,7 +1091,7 @@ function __wpt_disable_plugin() {
   if [ -n "$(echo $now_active | grep "$plugin_remove/")" ] ; then
     echo "Warning, the plugin may have not been removed"
   fi
-  echo wpconn
+  
   wpconn wpplugset $now_active
   if [[ $myconn == "ERROR"* ]]; then 
       echo "There was a database error: $myconn"
@@ -1668,17 +1668,17 @@ edit_desc="
 __wptool_to_show_or_not
 
 # wpdb -s
-edit="1426364069"
+edit="1427342565"
 edit_desc="
 \t wpdb -s      Shows all tables and their sizes, and total db size.\n"
 __wptool_to_show_or_not
 
 # wplogin
-edit="1426364069"
+edit="1427342565"
 edit_desc="
 \t wplogin      Generates a link for your browser for the first
 \t              admin user it finds, allowing you to quickly get in.
-\t              No needing to create 'deleteme' or search for usernames.\n"
+\t              No need to create 'deleteme' or search for usernames.\n"
 __wptool_to_show_or_not
 
 
