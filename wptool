@@ -1538,11 +1538,11 @@ function wpstats() {
 function wptool() {
   if [[ $1 == 'changes' ]] ; then
     echo "Downloading ChangeLog..."
-    curl -Ssf "https://raw.githubusercontent.com/bagley/wptool/master/ChangeLog" | less
+    curl -f "https://raw.githubusercontent.com/bagley/wptool/master/ChangeLog" | less
     return
   elif [[ $1 == 'docs' ]] || [[ $1 == 'man' ]] ; then
     echo "Downloading Readme..."
-    curl -Ssf "https://raw.githubusercontent.com/bagley/wptool/master/README.md" \
+    curl -f "https://raw.githubusercontent.com/bagley/wptool/master/README.md" \
       | sed 's/####/* /g' | sed 's/###//g' | sed 's/##//g' |less
     return
   fi
