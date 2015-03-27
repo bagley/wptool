@@ -2,11 +2,11 @@ ChangeLog:
 
 1.8.1
 
-* 'wplogin' is an alias to wpuser # -l that will automatically
-    give you a link to login as first admin user it finds. 
+* 'wplogin' gives a quick link to access the site as an admin user.
     No more searching for user ids, just run and click.
+    It is simply uses 'wpuser # -l' with the first admin it finds.
 * 'wpplug --disable-all' will disable all plugins
-    so you can quickly see if it is a plugin issue
+    so you can quickly see if the issue is a plugin issue
 * 'wpdb -s' shows the size of each table, and
     'wpdb' nows show database size and number of tables
 * 'wpfix' now clears WP Super Cache files
