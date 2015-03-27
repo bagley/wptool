@@ -9,10 +9,12 @@ ChangeLog:
     so you can quickly see if it is a plugin issue
 * 'wpdb -s' shows the size of each table, and
     'wpdb' nows show database size and number of tables
-* 'wpfix' now clears WP Super Cache files and
+* 'wpfix' now clears WP Super Cache files
 * 'wptool changes/man' show the changelog and readme 
     from within the terminal.
-* 'wpfix' can now fix file permissions. Basic setup as of now.
+* 'wpfix perms' fixes file permissions. Basic setup as of now.
+* 'wpplug --disable <plugin>' will disable a specific plugins
+    in the database.
 - Fixed wpuser's access link to work with sites whos
     files are in a sub directory but the site is using 
     the regurlar path, for example:
