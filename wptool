@@ -1592,24 +1592,16 @@ function wptool() {
   It assumes you are running said functions in the site's root folder. Each
   command listed below has a -h option for more specific information:
   
-\twpstats: basic overview
-\twpurl:   URL tools
-\twptheme: theme tools
-\twpdb:    db tools
-\twpuser:  user tools
-\twpplug:  plugin tools
-\twpht:    .htaccess generator
-\twpcore:  core replacement tools
-\twpfix:   built-in WP fixes
-\twptrace: follow what wp is doing (and failing to do)
-\twperr:   show most recent errors
-\twpscan:  scan site files for signs of malware
-\twpver:   returns version info
-\twpbackup:   backup files and/or db
-\twprestore:  restore database from file
-
-  wptool changes  Shows all changes and updates
-  wptool man      Shows the manual page in terminal
+  wpstats:  basic overview              wperr:    show most recent errors
+  wpurl:    URL tools                   wpfix:    built-in WP fixes 
+  wpdb:     db tools                    wpplug:   plugin tools
+  wpuser:   user tools                  wptheme:  theme tools
+  wpht:     .htaccess generator         wpscan:   scan for malware
+  wpcore:   core replacement tools      wptrace:  see what wp is doing
+  wpbackup: backup files and/or db      wprestore: restore database from file
+  wpver:    returns version info        wplogin:  login as first admin
+  
+  wptool man:  Manual page              wptool changes:  Changes and Updates
 "
 }
 
