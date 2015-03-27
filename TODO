@@ -169,6 +169,8 @@ So allow user to just do plugin folder, but also allow user
 to specify the full path (as active_plugins sees it)
 -so, either just folder (folder), or folder and file (folder/file.php)
 
+wpplug saveactive - saves the current list/state of the active plugins
+
  ----------------------
 |                      |
 |       Finished       |

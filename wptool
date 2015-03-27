@@ -1697,10 +1697,8 @@ __wptool_to_show_or_not
 # wpplug
 edit="1427342565"
 edit_desc="
-\t wpplug disable-all | wpplug enable-all
-\t              First this disables all plugins in the database. The 
-\t              The list of active plugins is saved, so when you 
-\t              restore it, the same plugins that were active again.\n
+\t wpplug disable-all | wpplug restore-all
+\t              Easily disable and reenable all plugins quickly.\n
 \t wpplug disable <plugin>
 \t              Disable a single plugin in the database.\n"
 __wptool_to_show_or_not
