@@ -5,16 +5,17 @@ ChangeLog:
 * 'wplogin' gives a quick link to access the site as an admin user.
     No more searching for user ids, just run and click.
     It is simply uses 'wpuser # -l' with the first admin it finds.
-* 'wpplug disable-all' will disable all plugins
-    so you can quickly see if the issue is a plugin issue
-* 'wpdb -s' shows the size of each table, and
-    'wpdb' nows show database size and number of tables
+* 'wpplug disable-all' will disable all plugins in the database
+    so you can quickly see if the issue is a plugin issue, and
+    'wpplug restore-all' will restore them exactly how they were.
+* 'wpdb -s' shows the number of rows and size of each table, and
+    'wpdb' now shows database size and number of tables
 * 'wpfix' now clears WP Super Cache files
 * 'wptool changes/man' show the changelog and readme 
     from within the terminal.
 * 'wpfix perms' fixes file permissions. Basic setup as of now.
-* 'wpplug disable <plugin>' will disable a specific plugins
-    in the database.
+* 'wpplug disable <plugin>' will disable a specific plugin
+    from within in the database.
 - Fixed wpuser's access link to work with sites whos
     files are in a sub directory but the site is using 
     the regurlar path, for example:
