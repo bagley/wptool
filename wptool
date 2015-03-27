@@ -1694,6 +1694,16 @@ edit_desc="
 \t              No need to create 'deleteme' or search for usernames.\n"
 __wptool_to_show_or_not
 
+# wpplug
+edit="1427342565"
+edit_desc="
+\t wpplug disable-all | wpplug enable-all
+\t              First this disables all plugins in the database. The 
+\t              The list of active plugins is saved, so when you 
+\t              restore it, the same plugins that were active again.\n
+\t wpplug disable <plugin>
+\t              Disable a single plugin in the database.\n"
+__wptool_to_show_or_not
 
 # ------- End Changes ----------
 
@@ -1706,7 +1716,7 @@ fi
 
 
 #search, multisite
-wptoolv="1.8.1"
+wptoolv="1.8.1.1"
 echo -e "\n    Injected WPtool $wptoolv into current session.
        For details, type 'wptool', 'wptool changes', or 'wptool man'.\n"
 

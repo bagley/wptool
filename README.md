@@ -240,7 +240,7 @@ This is safe, as it's what you normally do when you upgrade WP
 
 Fix the permissions of WP files to writeable.
 
-	  wpfix perms
+    wpfix perms
 
 
 ---------
