@@ -1108,6 +1108,7 @@ function __wpt_disable_plugin() {
       echo "There was a database error: $myconn"
       return 9
   fi
+  echo "Successfully deactivated $plugin_remove"
 }
 
 # This function detects if we should use php-cli or php for the -r arg
