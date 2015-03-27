@@ -714,6 +714,7 @@ function wpuser() {
     echo -e "\tUSERID -d\n\t\tdelete user USERID"
     echo -e "\tUSERID -l, login\n\t\tmake login/access link for user USERID"
     echo -e "\t        -> this is easier and faster than making a user"
+    echo -e "\t        -> you can also just run 'wplogin' as a shortcut"
     echo -e "\t-n, new\n\t\tcreate new admin user"
     echo -e "\tall\n\t\tlist all users"
     echo -e "\tadmins\n\t\tlist all admins\n"
@@ -1672,12 +1673,6 @@ edit_desc="
 \t wpbackup/wprestore     Quick backup/restore. See their help pages.\n"
 __wptool_to_show_or_not
 
-# wpdb -s
-edit="1427342565"
-edit_desc="
-\t wpdb -s      Shows all tables and their sizes, and total db size.\n"
-__wptool_to_show_or_not
-
 # wplogin
 edit="1427342565"
 edit_desc="
@@ -1686,28 +1681,37 @@ edit_desc="
 \t              No need to create 'deleteme' or search for usernames.\n"
 __wptool_to_show_or_not
 
+# wpdb -s
+edit="1427342565"
+edit_desc="
+\t wpdb -s      Shows all tables and their sizes, and total db size.\n"
+__wptool_to_show_or_not
+
 # wpplug
 edit="1427342565"
 edit_desc="
-\t wpplug disable-all | wpplug restore-all
-\t              Easily disable and reenable all plugins quickly.\n
 \t wpplug disable <plugin>
-\t              Disable a single plugin in the database.\n"
+\t              Disable a single plugin in the database.\n
+\t wpplug disable-all
+\t wpplug restore-all
+\t              Easily disable and reenable all plugins.\n"
 __wptool_to_show_or_not
 
 # ------- End Changes ----------
 
-# display them if we have any
-if [[ -n "$recent_changes" ]] ; then
-  echo -e "\n\tRecent Big Changes to WPTool:\n$recent_changes"
-  echo -e "\t*To see all changes and updates run 'wptool changes'"
-fi
-
-
 
 #search, multisite
 wptoolv="1.8.1.1"
-echo -e "\n    Injected WPtool $wptoolv into current session.
-       For details, type 'wptool', 'wptool changes', or 'wptool man'.\n"
+echo -e "\n    Injected WPtool $wptoolv into the current session.\n
+       For details and tool list,   type 'wptool'
+       For manual and instructions, type 'wptool man'
+       For a full list of changes,  type 'wptool changes'\n"
+
+
+# display them if we have any
+if [[ -n "$recent_changes" ]] ; then
+  echo -en "\n    Recent Big Improvements and New Things for WPTool:\n$recent_changes\n"
+  #echo -e "\t*To see all changes and updates run 'wptool changes'"
+fi
 
 unset HISTFILE
