@@ -1021,7 +1021,7 @@ Usage: wpplug [-d]
     temp=$(now)
     mv $wpt_plugins_folder "$wpt_plugins_folder"_$temp && echo "Moved plugins to $wpt_plugins_folder"_$temp...
   
-  elif [[ $1 == "--disable" ]] && [[ -n $2 ]]; then
+  elif [[ $1 == "--disable" ]] || [[ $1 == "-d" ]] && [[ -n $2 ]]; then
     __wpt_disable_plugin $2
     
   elif [[ -z $1 ]]; then
