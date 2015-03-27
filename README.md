@@ -164,7 +164,7 @@ Output will look like:
 
 This tool does basic plugin functions, such as displaying active and available plugins, or disabling them all.
 
-Usage: wpplug [--disable <plugin>|--disable-all|--restore-all|--disable-all-via-folder]
+Usage: wpplug [disable <plugin>|disable-all|restore-all|disable-all-via-folder]
 
 List currently enabled/disabled plugins of the current install (no options).
 
@@ -173,19 +173,19 @@ List currently enabled/disabled plugins of the current install (no options).
 Disable selected plugin in the database, by its folder name
 Hint: list all the plugins, and you'll see it in there.
 
-    -d, --disable <plugin>
+    -d, disable <plugin>
 
 Disable all plugins in the database (this is just how WP does it)
 
-    --disable-all, --da
+    disable-all, --da
 
 Restore the plugins that were active before, as --disable-all saves them to $wpt_disabled_plugins. Of course it's only valid for this session
 
-    --restore-all, --ra
+    restore-all, --ra
 
 Disables plugins by renaming the plugin folder (warning! may cause data loss).
 
-    --disable-all-via-folder
+    disable-all-via-folder
 		
 
 
@@ -240,7 +240,7 @@ This is safe, as it's what you normally do when you upgrade WP
 
 Fix the permissions of WP files to writeable.
 
-	--perms
+	  wpfix perms
 
 
 ---------

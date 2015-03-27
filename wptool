@@ -112,11 +112,11 @@ Usage:\twpfix [perms]
 \t\tClears WordPress's cache and runs any needed database updates.
 \t\tThis is safe, as it's what you normally do when you upgrade WP.
 
-\t--perms
+\tperms
 \t\tFix the permissions of WP files to writeable.
 "
     return
-  elif [[ $1 == "--perms" ]] ; then
+  elif [[ $1 == "perms" ]] || [[ $1 == "--perms" ]] ; then
   # changing perms does not need wp-config, and wp-admin could be blocked
   # TODO: allow user to specify perms (755 777, 640, etc)
 #    "There are several ways we can change your permissions:
@@ -954,31 +954,31 @@ function wpplug() {
   
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "This tool does basic plugin functions, such as displaying active and available plugins, or disabling them.
-Usage: wpplug [-d]
+Usage: wpplug [disable <plugin>|disable-all|restore-all|disable-all-via-folder]
 
 \t[no option]
 \t\tshow a list of enabled plugins and all plugins installed
 
-\t-d, --disable [plugin]
+\t-d, disable [plugin]
 \t\tdisable selected plugin in the database, by its folder name
 \t\thint: list all the plugins, and you'll see it in there.
 
-\t--disable-all, --da
+\tdisable-all, --da
 \t\tdisable all plugins in the database (safer method)
 
-\t--restore-all, --ra
-\t\trestore the plugins that were active before, as --disable-all
+\trestore-all, --ra
+\t\trestore the plugins that were active before, as disable-all
 \t\tsaves them to \$wpt_disabled_plugins. Of course it's only 
 \t\tvalid for this session.
 
-\t--disable-all-via-folder
+\tdisable-all-via-folder
 \t\tdisable all plugins by renaming pluging folder 
 \t\t(warning! may cause data loss)
 "
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
-  if [[ $1 == "--da" ]] || [[ $1 == "--disable-all" ]] ; then
+  if [[ $1 =~ ^[-]*da$ ]] || [[ $1 =~ ^[-]*disable-all$ ]] ; then
     # get current plugins
     wpconn "wpplug"
     if [[ $myconn == "ERROR"* ]]; then 
@@ -1000,7 +1000,7 @@ Usage: wpplug [-d]
       return
     fi
   
-  elif [[ $1 == "--ra" ]] || [[ $1 == "--restore-all" ]] ; then
+  elif [[ $1 =~ ^[-]*ra$ ]] || [[ $1 =~ ^[-]*restore-all$ ]] ; then
     if [[ -z "$wpt_disabled_plugins" ]] ; then
       echo "There is nothing saved in \$wpt_disabled_plugins"
       echo "Are you sure you disabled itFailed to get a list of plugins... or is active_plugins empty?"
@@ -1011,7 +1011,7 @@ Usage: wpplug [-d]
       return
     fi
     
-  elif [[ $1 == "--disable-all-via-folder" ]]; then
+  elif [[ $1 =~ ^[-]*disable-all-via-folder$ ]]; then
     if [[ ! -d $wpt_plugins_folder ]]; then 
       echo "The plugins folder $wpt_plugins_folder was not found"!
       echo "Try setting wpt_plugins_folder=path/to/plugins"
@@ -1021,7 +1021,7 @@ Usage: wpplug [-d]
     temp=$(now)
     mv $wpt_plugins_folder "$wpt_plugins_folder"_$temp && echo "Moved plugins to $wpt_plugins_folder"_$temp...
   
-  elif [[ $1 == "--disable" ]] || [[ $1 == "-d" ]] && [[ -n $2 ]]; then
+  elif [[ $1 =~ ^[-]*disable$ ]] || [[ $1 == "-d" ]] && [[ -n $2 ]]; then
     __wpt_disable_plugin $2
     
   elif [[ -z $1 ]]; then
@@ -1046,7 +1046,7 @@ Usage: wpplug [-d]
     echo -e "Available plugins:\n"
     ls -F $wpt_plugins_folder |grep "/"|grep -v "^\."|sed "s|^\(.*\)/|\t\1|" #ls -A is overwritten by default $LS_OPTIONS in alias
   else
-    echo "Unknown option(s): $0"
+    echo "Unknown option(s): $@"
     wpplug -h
   fi
   echo
