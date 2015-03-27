@@ -1126,6 +1126,7 @@ function __wpt_get_php_inline() {
       wpt_php="php"
     else
       echo "Warning, I was unable to detect which php can run with -r (inline). Setting it to 'php-cli'. Set wpt_php= to override"
+      wpt_php="php-cli"
     fi
   fi
 }
