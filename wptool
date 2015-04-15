@@ -84,6 +84,7 @@ specified version.
   if [[ -d "$oldcore/wp-content" ]]; then
     mv wp-content wp-content_stock && echo "Moved default wp-content to wp-content_stock..."
     mv "$oldcore/wp-content" . && echo "Moved old wp-content back into place..."
+    rm "wp-content_stock" -rf && echo "Removed wp-content_stock"
   fi
   if [[ -f "$oldcore/wp-config.php" ]]; then
     cp "$oldcore/wp-config.php" .
