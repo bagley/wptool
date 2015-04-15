@@ -1784,4 +1784,8 @@ fi
 
 wptool
 
+if [[ -n "$recent_changes" ]] ; then
+  echo "                Scroll up to see a list of recent updates."
+fi
+
 unset HISTFILE
