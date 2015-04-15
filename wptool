@@ -23,7 +23,7 @@ specified version.
 \t\tthe Wordpress core, in the form of #.#.#
 "
     return
-  elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q | awk '{print $1}')
+  elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q | tail -n 1 | awk '{print $1}')
   elif [[ $1 == "db" ]]; then file=wordpress-$(wpver -q | awk '{print $3}')
   elif [[ $1 == "new" ]]; then file="latest"
   elif [[ -n $1 ]]; then file="wordpress-$1"
@@ -67,7 +67,8 @@ specified version.
     return
   fi
   
-  temp=$(now)
+  __wp_rand_string
+  temp=$(now)_$wp_rand_string
   echo "Checking for WP files..."
   local wpfiles=$(find -maxdepth 1 -name "wp-*" -o -name index.php -o -name license.txt -o -name readme.html -o -name xmlrpc.php)
   if [[ -z "$wpfiles" ]]; then
@@ -89,6 +90,8 @@ specified version.
   if [[ -f "$oldcore/wp-config.php" ]]; then
     cp "$oldcore/wp-config.php" .
     echo "Copied old wp-config.php back into place..."
+    # run fixes - no need if we don't have a config file
+    wpfix
   else
     # Do not do this. On a new install the user will get:
     #    "Error establishing a database connection"
@@ -97,7 +100,47 @@ specified version.
     #echo "Copied wp-config-sample.php into place..."
     echo "No config was found. You need to go to your site and run through the setup."
     # if it's an upgrade, run upgrades
-    wpfix
+  fi
+  
+  # seal up core_xxxxx in a tar.gz file
+  if [[ -d "$oldcore" ]] ; then
+    # remove any wp-config.php if still in oldcore
+    rm -f $oldcore/wp-config*
+    tar czf $oldcore.tar.gz $oldcore
+    rm $oldcore -rf && echo "Old core files placed into a tar file"
+  fi
+  
+  # search for malware
+  echo
+  echo
+  echo "*** WARNING: *** This tool is not meant to be used to fix hacked sites."
+  echo " If the site you are fixing is hacked, this tool may be able to get the"
+  echo " site back up, but the malware will rehack the site within a few days"
+  echo " (or hours/moments), making you or your customer have a miserable day..."
+  echo
+  echo "Performing a quick check of the main files..."
+  scanresults="$(wpscan quick script)"
+  if [[ -n $scanresults ]] ; then
+    echo "
+ERROR!!! This site appears to (still) contain malware. While it may load, 
+the site will reinfect itself within the next few days (or sooner)
+
+    This site ***really*** needs to be checked and cleaned.
+    
+Begin list HACKED files (or so they appear), as './path/to/file: code-example'
+
+$scanresults
+
+  End list HACKED files.
+  
+ And if you are a tech working for a hosting company, you should talk to and
+ notify those in charge of scanning and suspending acounts, before this 
+ infection spreads, or (more) spam messages get sent out.
+"
+
+  # should we put the site into maintenance mode?
+  else
+    echo "No common hack files found. If in doubt, you may try 'wpscan full"
   fi
 }
 
@@ -1350,9 +1393,9 @@ Usage: wpscan [quick|full]\n\t\t\n
   # if this is a scan and the scan string is empty, load it.
   elif [[ $1 == "full" || $1 == "quick" ]] ; then
     if [[ -z $scan_strings ]] ; then
-      __wpscan_get_strings || return 9
+      __wpscan_get_strings $2 || return 9
       scan_strings=$get_strings
-      echo "Default scan strings loaded"
+      [[ $2 != "script" ]] && echo "Default scan strings loaded"
     fi
     
   else
@@ -1362,7 +1405,7 @@ Usage: wpscan [quick|full]\n\t\t\n
   
   # add extra strings if variable is set
   if [[ -n "$extra_strings" ]] ; then
-    echo "The variable \$extra_strings is set. Adding strings..."
+    [[ $2 != "script" ]] && echo "The variable \$extra_strings is set. Adding strings..."
     scan_strings="$(echo -e "$scan_strings\n$extra_strings")"
     extra_strings=""
   fi
@@ -1372,11 +1415,9 @@ Usage: wpscan [quick|full]\n\t\t\n
     echo "No scan strings were not loaded. I can't continue without them"
     return 9
   fi
-  __wpscan_show_strings
+  #__wpscan_show_strings
   
-  
-  
-  echo -e "
+  [[ $2 != "script" ]] && echo -e "
 \tNote! Scanning can take a huge amount of cpu and disk drive.
 \tIf you abuse your provider's resources, they may shut you down.
 \tScanning for malware is an advanced topic and requires that
@@ -1385,11 +1426,11 @@ Usage: wpscan [quick|full]\n\t\t\n
 \tprobably do not have malware in them. This is just to help you
 \tout. So either know what you are doing, or go buy a product.\n"
 
-  read -p "$(echo $'\t')Do you understand what you are doing and want to proceed? (N/y)? " -n 1 -r
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "\nExiting..."
-    return
-  fi
+#  read -p "$(echo $'\t')Do you understand what you are doing and want to proceed? (N/y)? " -n 1 -r
+#  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+#    echo -e "\nExiting..."
+#    return
+#  fi
   
   quiet=''
   if [[ "$2" == "quiet" ]] ; then
@@ -1397,19 +1438,45 @@ Usage: wpscan [quick|full]\n\t\t\n
   fi
   
   if [[ $1 == "quick" ]] ; then
-    echo -e "\n\n\tStarting quickscan...\n"
-    LC_ALL=C fgrep -nr$quiet --include  \*.php "$scan_strings" *.php \
-      ./wp-admin ./wp-content ./wp-includes 
- 
+    [[ $2 != "script" ]] && echo -e "\n\n\tStarting quickscan...\n"
+    if [[ $quiet == 'o' ]] ; then
+      LC_ALL=C fgrep -ilr$quiet --include  \*.php "$scan_strings" *.php \
+        ./wp-admin ./wp-content ./wp-includes
+    else
+      LC_ALL=C fgrep -ir$quiet --color=always --include  \*.php "$scan_strings" *.php \
+        ./wp-admin ./wp-content ./wp-includes  | cut -c1-200
+    fi
   elif [[ $1 == "full" ]] ; then
     echo -e "\n\n\tStarting full scan...\n"
-    LC_ALL=C fgrep -nr$quiet "$scan_strings" ./
+    if [[ $quiet == 'o' ]] ; then
+      LC_ALL=C fgrep -ilr$quiet "$scan_strings" ./
+    else
+      LC_ALL=C fgrep -ir$quiet --color=always "$scan_strings" ./  | cut -c1-200
+    fi
     #LC_ALL=C grep -a -F -n -r -f ./search-strings.txt ./ | cut -c1-200
-  
+    
   else
     echo "Invalid option. Try 'wpscan -h'"
   fi
-  echo -e "\nScan Finished."
+  
+  # check for an index.html with the word "hacked" in it
+  if [[ -f "index.html" ]] ; then
+    if [[ -n "$(egrep -i '(hacked|h@cked|pwned)' index.html)" ]] ; then
+      echo
+      echo "* There is an index.html file with the word 'hacked' in it. Advise you check it out"
+      echo
+    fi
+  fi
+  
+  # check for any php files in uploads
+  if [[ -d "wp-content/uploads" ]] && [[ -n "$(find wp-content/uploads -name '*.php')" ]] ; then
+    echo
+    echo "There are php files in the uploads folder. You should investigate this:"
+    echo
+    find wp-content/uploads -name '*.php'
+  fi
+  
+  [[ $2 != "script" ]] && echo -e "\nScan Finished."
 }
 
 function __wpscan_show_strings() {
@@ -1417,8 +1484,8 @@ function __wpscan_show_strings() {
 }
 
 function __wpscan_get_strings() {
-  if [[ -z $1 ]] ; then
-    echo "Downloading the default strings..."
+  if [[ -z $1 ]] || [[ $1 == "script" ]] ; then
+    [[ $1 != "script" ]] && echo "Downloading the default strings..."
     get_strings="$(curl -Ssf https://raw.githubusercontent.com/bagley/wptool/master/scanstrings)"
   
   elif [[ $1 == "devel" ]] ; then
