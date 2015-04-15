@@ -1,0 +1,3 @@
+chr(ord(
+ini_get('safe_mode');
+shell_exec(

@@ -30,13 +30,9 @@ Windows-1251";preg_replace(
 ); exit(); } if(isset(
 system("$cmd"); die;}
 rtrim($security_code, "/");
-chr(ord(
-ini_get('safe_mode');
 window.top.location.href="http://
 @ini_get("disable_functions")
 x6C\x28\x67\x7A\x69\x6E\x66\x6C\x61\x74
-hacked
 pwned
 die(PHP_OS.chr(49).chr(48).chr(43).md5(0987654321)
 die(PHP_OS.chr(49).chr(49).chr(43).md5(0987654321)
-shell_exec
