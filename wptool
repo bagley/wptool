@@ -1469,11 +1469,11 @@ Usage: wpscan [quick|full]\n\t\t\n
   fi
   
   # check for any php files in uploads
-  if [[ -d "wp-content/uploads" ]] && [[ -n "$(find wp-content/uploads -name '*.php')" ]] ; then
+  if [[ -n "$(find wp-content/uploads/{1,2,3}* -name '*.php' 2>/dev/null)" ]] ; then
     echo
     echo "There are php files in the uploads folder. You should investigate this:"
     echo
-    find wp-content/uploads -name '*.php'
+    find wp-content/uploads/{1,2,3}* -name '*.php' 2>/dev/null
   fi
   
   [[ $2 != "script" ]] && echo -e "\nScan Finished."
