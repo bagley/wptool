@@ -1782,4 +1782,6 @@ if [[ -n "$recent_changes" ]] ; then
   #echo -e "\t*To see all changes and updates run 'wptool changes'"
 fi
 
+wptool
+
 unset HISTFILE
