@@ -1422,9 +1422,9 @@ Usage: wpscan [quick|full]\n\t\t\n
 \tIf you abuse your provider's resources, they may shut you down.
 \tScanning for malware is an advanced topic and requires that
 \tyou know php code, and what is good code and what is bad code.
-\tSo PLEASE realize that many of the files you are about to see
-\tprobably do not have malware in them. This is just to help you
-\tout. So either know what you are doing, or go buy a product.\n"
+\tSo PLEASE realize that you may be presented with files that
+\tare not actually hacked, or just need to be cleaned. 
+\t  So either know what you are doing, or go buy a product.\n"
 
 #  read -p "$(echo $'\t')Do you understand what you are doing and want to proceed? (N/y)? " -n 1 -r
 #  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -1769,7 +1769,7 @@ __wptool_to_show_or_not
 
 
 #search, multisite
-wptoolv="1.8.2"
+wptoolv="1.8.2.3"
 echo -e "\n    Injected WPtool $wptoolv into the current session.\n
        For details and tool list,   type 'wptool'
        For manual and instructions, type 'wptool man'
