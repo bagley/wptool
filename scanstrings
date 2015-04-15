@@ -36,3 +36,5 @@ x6C\x28\x67\x7A\x69\x6E\x66\x6C\x61\x74
 pwned
 die(PHP_OS.chr(49).chr(48).chr(43).md5(0987654321)
 die(PHP_OS.chr(49).chr(49).chr(43).md5(0987654321)
+eval($s21(${$s20}
+strtolower($sF[4].$sF[5].$sF[9].$sF[10]
