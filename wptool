@@ -1440,18 +1440,18 @@ Usage: wpscan [quick|full]\n\t\t\n
   if [[ $1 == "quick" ]] ; then
     [[ $2 != "script" ]] && echo -e "\n\n\tStarting quickscan...\n"
     if [[ $quiet == 'o' ]] ; then
-      LC_ALL=C fgrep -ilr$quiet --include  \*.php "$scan_strings" *.php \
+      LC_ALL=C fgrep -F -ilr$quiet --include  \*.php "$scan_strings" *.php \
         ./wp-admin ./wp-content ./wp-includes
     else
-      LC_ALL=C fgrep -ir$quiet --color=always --include  \*.php "$scan_strings" *.php \
+      LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php "$scan_strings" *.php \
         ./wp-admin ./wp-content ./wp-includes  | cut -c1-200
     fi
   elif [[ $1 == "full" ]] ; then
     echo -e "\n\n\tStarting full scan...\n"
     if [[ $quiet == 'o' ]] ; then
-      LC_ALL=C fgrep -ilr$quiet "$scan_strings" ./
+      LC_ALL=C fgrep -F -ilr$quiet "$scan_strings" ./
     else
-      LC_ALL=C fgrep -ir$quiet --color=always "$scan_strings" ./  | cut -c1-200
+      LC_ALL=C fgrep -F -ir$quiet --color=always "$scan_strings" ./  | cut -c1-200
     fi
     #LC_ALL=C grep -a -F -n -r -f ./search-strings.txt ./ | cut -c1-200
     
@@ -1463,7 +1463,7 @@ Usage: wpscan [quick|full]\n\t\t\n
   if [[ -f "index.html" ]] ; then
     if [[ -n "$(egrep -i '(hacked|h@cked|pwned)' index.html)" ]] ; then
       echo
-      echo "* There is an index.html file with the word 'hacked' in it. Advise you check it out"
+      echo "* There is an index.html file with the word 'hacked/h@cked/pwned' in it. Advise you check it out"
       echo
     fi
   fi
