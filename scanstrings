@@ -1,8 +1,10 @@
+# remember all \ must be converted to '\\'
 eval($___($__));
 eval(stripslashes(@$_POST[
 eval(stripslashes(array_pop(
 eval(base64_decode(
 eval(gzinflate(str_rot13(base64_decode(
+eval(decodeURIComponent
 gzinflate(base64_decode(
 Array(base64_decode(
 sha1(base64_decode(
@@ -11,6 +13,7 @@ wsoScandir($dir)
 substr(current(array_keys(
 cwd = @getcwd();
 $OOO000000=urldecode(
+wsoScandir($dir
 $l___l_='base'.(32*2)
 substr(md5(strrev(
 cwd[strlen($cwd)
@@ -23,18 +26,94 @@ system("wget
 symlink("/","sym/root");
 @copy($_FILES['file']['tmp_name']
 error_reporting(0);if(
-x6C\x28\x67\x7A\x69
-"/.*/e","\x28\x65\x76\x61
+x6C\\x28\\x67\\x7A\\x69
+"/.*/e","\\x28\\x65\\x76\\x61
 preg_replace("/.*/e",
+preg_replace(\"\x
 Windows-1251";preg_replace(
 ); exit(); } if(isset(
 system("$cmd"); die;}
 rtrim($security_code, "/");
 window.top.location.href="http://
 @ini_get("disable_functions")
-x6C\x28\x67\x7A\x69\x6E\x66\x6C\x61\x74
-pwned
 die(PHP_OS.chr(49).chr(48).chr(43).md5(0987654321)
 die(PHP_OS.chr(49).chr(49).chr(43).md5(0987654321)
 eval($s21(${$s20}
 strtolower($sF[4].$sF[5].$sF[9].$sF[10]
+${eval(base64_decode('DQokYXV0aF9wYXNzID0gIiI7DQokY29sb3IgP
+fwrite($fp,"\\xEF\\xBB\\xBF"
+if(strtolower(substr(PHP_OS,0,3))=='win') $s="\
+${"_PO"."ST"}
+${'_PO'.'ST'}
+\\x47LOB\\x41\\x4c\\x53
+\\x76\\x72vw\\x65y\\x70\\x7an\\x69\\x70\\x75
+\\x61\\x63\\x74\\x69\\x6f\\x6e
+$_passssword =
+passsword
+passssword
+passsssword
+passssssword
+@array((string)$_REQUEST['password']
+stripslashes($_REQUEST['re_password'])
+eval(base64_decode(file_get_contents('php://input')))
+mt_rand(0,count($not_android_urls)-1)
+mt_rand(0,count($android_urls)-1);
+\\x65\\x76\\x61\\x6C\\x28\\x67\\x7A\\x69\\x6E\\x66\\x6C\\x61
+x78\\x6b\\x72\\x74\\x79z\\x6e
+x65\\x74\\x75\\x72\\x6e
+$default_action = 'FilesMan';
+[php][RES]" . base64_encode($respond) . "[/RES]
+base64_decode($_GET['u'])
+eval(gzuncompress(base64_decode('eNqs/QV3Y1e2Lgz/FSXjvCPdKce1W
+$au=$jq(@$_COOKIE['ContentJQ1']);
+eval(base64_decode($_REQUEST["sam"]));
+$slash.implode($slash,$t_p)
+eval(gzinflate(str_rot13(base64_decode('FZrHroTMkmFfpXTdVAzwQX
+eval(gzinflate(base64_decode("NZjHDoRIEkTv+xlzmhEr4Z1We8
+strtolower($sF[4].$sF[5].$sF[9].$sF[10].$sF[6]
+eval($OOO0000O0(
+%66%67%36%73%62%65%68%70
+$www= $_POST['ice']) && @preg_replace(
+#p@$c@#
+x6C\\x28\\x67\\x7A\\x69\\x6E\\x66\\x6C\\x61\\x74
+is_uploaded_file/*;*/($_FILES
+= mail(stripslashes($
+x70i\\x6c\\x69\\x72\\x77\\x71\\x67
+'wz8' . 'osA' . '/Jp' . '1Zy'
+@preg_replace('/(.*)/e'
+strtoupper($qV[4].$qV[3].$qV[2].$qV[0]
+$GLOBALS[$GLOBALS['
+"ba".""."s"."e"."".""."6"."4"."_"."de"."c"."o". ""."de".""
+ZXZhbCgiXHg2NVx4NzZceDYxXHg2Q1x4MjhceDY3XHg3QVx4NjlceDZFXHg2Nl
+md5($_REQUEST["pwd"])==="92eef09d8ed4eae0ce299c8c6f5f2a9b"
+x6c\\x69\\x63e\\x6es\\x65\\x5f\\x69np\\x75t_f\\x61\\x6c\\x6cb\\x61\\x63\\x6b
+namespace eval whois {
+implode("\r\n",array("%1html%3","%1head%3",head(
+document.write(unescape(
+<?php $__FILE__=__FILE__;$__X__
+try{window.onload
+x47\\x4c\\x4f\\x42A\\x4c\\x53
+escape(document[
+escape(navigator[
+setAttribute('src'
+document.write(string.fromcharcode
+base64'.'_decode
+gzun'.'compress
+gz'.'inflate
+preg_replace("/.*/e","\x
+if(!isset($GLOBALS['."\\'\\a\\e\\0
+\\x61\\156\\x75\\156\\x61
+strtolower($_SERVER["\\x48\\124\\x54\\120\\x5f\\125\\x53
+x47\\x4c\\x4f\\x42\\x41\\x4c\\x53
+base64_decode('PD9waHAKLyoqCiAqIEZyb250IHRvIHRoZSBXb3JkUH
+base64_decode('IyBCRUdJTiBXb3JkUHJlc3MKPElmTW9
+\\x65\\x76\\x61\\x6C\\x28\\x24\\x4A\\x46\\x61\\x63\\x74\\x6F\\x72\\x79\\x28
+document.write(unescape("%3C%68%74%6D%6C%3E%3C%68%65%61%64%3E%3C%74%69%74%6C%65%3E%48
+$time = str_replace("@"," ",$_GET["localtime"])
+substr(md5($_GET["localdate"]),
+@system("killall -9 ".basename("/usr/bin/host"));
+\\x7f\\x45\\x4c\\x46\\x01\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00
+\\x7f\\x45\\x4c\\x46\\x02\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00
+crontab -l|grep -v crontab;echo;echo
+@system("killall -9 ".basename(
+array(/*'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I'
