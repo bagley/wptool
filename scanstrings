@@ -49,10 +49,14 @@ ${'_PO'.'ST'}
 \\x76\\x72vw\\x65y\\x70\\x7an\\x69\\x70\\x75
 \\x61\\x63\\x74\\x69\\x6f\\x6e
 $_passssword =
-passsword
-passssword
-passsssword
-passssssword
+$passsword
+$passssword
+$passsssword
+$passssssword
+$_passsword
+$_passssword
+$_passsssword
+$_passssssword
 @array((string)$_REQUEST['password']
 stripslashes($_REQUEST['re_password'])
 eval(base64_decode(file_get_contents('php://input')))
@@ -95,7 +99,6 @@ try{window.onload
 x47\\x4c\\x4f\\x42A\\x4c\\x53
 escape(document[
 escape(navigator[
-setAttribute('src'
 document.write(string.fromcharcode
 base64'.'_decode
 gzun'.'compress
