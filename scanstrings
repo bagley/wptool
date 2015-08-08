@@ -91,7 +91,7 @@ ZXZhbCgiXHg2NVx4NzZceDYxXHg2Q1x4MjhceDY3XHg3QVx4NjlceDZFXHg2Nl
 md5($_REQUEST["pwd"])==="92eef09d8ed4eae0ce299c8c6f5f2a9b"
 x6c\\x69\\x63e\\x6es\\x65\\x5f\\x69np\\x75t_f\\x61\\x6c\\x6cb\\x61\\x63\\x6b
 implode("\r\n",array("%1html%3","%1head%3",head(
-<?php $__FILE__=__FILE__;$__X__
+$__FILE__=__FILE__;$__X__
 x47\\x4c\\x4f\\x42A\\x4c\\x53
 escape(document[
 escape(navigator[
