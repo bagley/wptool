@@ -27,7 +27,7 @@ error_reporting(0);if(
 x6C\\x28\\x67\\x7A\\x69
 "/.*/e","\\x28\\x65\\x76\\x61
 preg_replace("/.*/e",
-preg_replace(\"\x
+preg_replace(\\"\\x
 Windows-1251";preg_replace(
 ); exit(); } if(isset(
 system("$cmd"); die;}
@@ -40,7 +40,7 @@ eval($s21(${$s20}
 strtolower($sF[4].$sF[5].$sF[9].$sF[10]
 ${eval(base64_decode('DQokYXV0aF9wYXNzID0gIiI7DQokY29sb3IgP
 fwrite($fp,"\\xEF\\xBB\\xBF"
-if(strtolower(substr(PHP_OS,0,3))=='win') $s="\
+if(strtolower(substr(PHP_OS,0,3))=='win') $s="\\
 ${"_PO"."ST"}
 ${'_PO'.'ST'}
 \\x47LOB\\x41\\x4c\\x53
@@ -90,7 +90,7 @@ $GLOBALS[$GLOBALS['
 ZXZhbCgiXHg2NVx4NzZceDYxXHg2Q1x4MjhceDY3XHg3QVx4NjlceDZFXHg2Nl
 md5($_REQUEST["pwd"])==="92eef09d8ed4eae0ce299c8c6f5f2a9b"
 x6c\\x69\\x63e\\x6es\\x65\\x5f\\x69np\\x75t_f\\x61\\x6c\\x6cb\\x61\\x63\\x6b
-implode("\r\n",array("%1html%3","%1head%3",head(
+implode("\\r\\n",array("%1html%3","%1head%3",head(
 $__FILE__=__FILE__;$__X__
 x47\\x4c\\x4f\\x42A\\x4c\\x53
 escape(document[
@@ -98,7 +98,7 @@ escape(navigator[
 base64'.'_decode
 gzun'.'compress
 gz'.'inflate
-preg_replace("/.*/e","\x
+preg_replace("/.*/e","\\x
 if(!isset($GLOBALS['."\\'\\a\\e\\0
 \\x61\\156\\x75\\156\\x61
 strtolower($_SERVER["\\x48\\124\\x54\\120\\x5f\\125\\x53
@@ -116,8 +116,8 @@ substr(md5($_GET["localdate"]),
 crontab -l|grep -v crontab;echo;echo
 @system("killall -9 ".basename(
 array(/*'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I'
-${"\x47\x4c\x4f\x42\x41L\x53"}["\x77m\x68\x72\x76\x6c\x6c"]="\x6b";
-${"GL\x4fB\x41\x4c\x53"}["\x6bg\x6e\x72\x77i\x6e\x64\x62n"]
+${"\\x47\\x4c\\x4f\\x42\\x41L\\x53"}["\\x77m\\x68\\x72\\x76\\x6c\\x6c"]="\\x6b";
+${"GL\\x4fB\\x41\\x4c\\x53"}["\\x6bg\\x6e\\x72\\x77i\\x6e\\x64\\x62n"]
 base64_decode("LyhwcmludHxzcHJpbnR8ZWNobykv")
 eval(base64_decode("93X2NvbnRlbnQoJGNvbnRlbnQpIHsKCQlpZiAob3VyVXJsQW5kUmVmZXJlcigpICAmJiA
 base64_decode("aWYgKGlzc2V0KCRfUE9TVFsnY2hlY2snXSkpIH
@@ -161,7 +161,7 @@ array("w"=>"o","t"=>"g","l"=>"i","r"=>"a","q"=>"c"
 strtoupper(md5(uniqid(time(
 $s['o'].$s['w'].$s['v'].$s['q'].$s['w'].$s['t'].$s['c']
 "\\163\\164\\162"
-subprocess.Popen('del C:\data.txt'
+subprocess.Popen('del C:\\data.txt'
 array_unshift($data,119,105,110,100,111,119,46,116
 if ( $password == "123456" )
 \\x47L\\x4f\\x42\\x41\\x4c\\x53
