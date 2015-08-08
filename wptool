@@ -929,27 +929,22 @@ if ( ! isset (\$_GET['z'])
   echo 'Forbidden';
   exit;
 }
+
 // load wp libs
 require_once( './wp-load.php' );
+
 // cannot check as we do not have cookie
 // but left it here so to remember
 //if ( !current_user_can('admin') ) {
+  
 // gen and set auth cookies
 wp_set_auth_cookie($u);
-//}
-// for debugging
-//print_r(\$_COOKIE);
+
 // redirect
-if ( user_can($u,'switch_themes') ) {
-//	\$url = admin_url();
-//  echo \$url;
-  wp_redirect( admin_url() );
-}
-else {
-//	\$url = home_url();
-//  echo \$url;
-  wp_redirect( home_url() );
-}
+// do not test for redirect, as 'user_can' is only >3.5
+//if ( user_can($u,'switch_themes') ) {
+wp_redirect( admin_url() );
+
 // just to be safe
 if ( file_exists(__FILE__) ) {
   unlink(__FILE__);
