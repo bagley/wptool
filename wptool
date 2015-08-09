@@ -1465,13 +1465,15 @@ Usage: wpscan [quick|full]\n\t\t\n
   fi
   
   # check for an index.html with the word "hacked" in it
-  if [[ -f "index.html" ]] ; then
-    if [[ -n "$(egrep -i '(hacked|h@cked|pwned)' index.html)" ]] ; then
-      echo
-      echo "* There is an index.html file with the word 'hacked/h@cked/pwned' in it. Advise you check it out"
-      echo
+  for each in index.html index.php lndex.php ; do
+    if [[ -f "$each" ]] ; then
+      if [[ -n "$(egrep -i '(hacked|h@cked|pwned)' $each)" ]] ; then
+        echo
+        echo "* Warning: There is an $each file with the word(s) 'hacked/h@cked/pwned' in it. Advise you check it out"
+        echo
+      fi
     fi
-  fi
+  done
   
   # check for any php files in uploads
   if [[ -n "$(find wp-content/uploads/{1,2,3}* -name '*.php' 2>/dev/null)" ]] ; then
@@ -1774,7 +1776,7 @@ __wptool_to_show_or_not
 
 
 #search, multisite
-wptoolv="1.8.3"
+wptoolv="1.8.3.1"
 echo -e "\n    Injected WPtool $wptoolv into the current session.\n
        For details and tool list,   type 'wptool'
        For manual and instructions, type 'wptool man'
