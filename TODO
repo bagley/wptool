@@ -19,6 +19,16 @@ what is the difference between wpfix and wptest?
 
 test file that can check for regressions
 
+
+it is failing if config file has multiple of the same thing:
+
+// $table_prefix = 'wp_prefix_';
+// $table_prefix = 'something_else_';
+$table_prefix = 'real_';
+
+--> There was a database error: ERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'wp_RAND_users JOIN wp_prefix_ real_ wp_RAND_usermeta ON (something_else_ real_ wp_RAND_' at line 1
+
+
 # disable plugins
 UPDATE wp_options SET option_value = 'a:0:{}' WHERE option_name = 'active_plugins';
 
@@ -170,6 +180,23 @@ to specify the full path (as active_plugins sees it)
 -so, either just folder (folder), or folder and file (folder/file.php)
 
 wpplug saveactive - saves the current list/state of the active plugins
+
+php shell
+- server status
+- df status
+- top
+
+check 
+  add_query_arg
+  remove_query_arg
+for improper use:
+https://blog.sucuri.net/2015/04/security-advisory-xss-vulnerability-affecting-multiple-wordpress-plugins.html
+https://easydigitaldownloads.com/blog/security-fix-released/
+https://ithemes.com/2015/04/20/coordinated-wordpress-plugin-security-update/
+- look in git for changes
+- OSSEC, Snort and ModSecurity
+- WordPress SEO
+- Broken-Link-Checker
 
  ----------------------
 |                      |
