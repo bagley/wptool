@@ -192,7 +192,6 @@ chr(101)."\\x76".chr(97)."".chr(108)."".chr(40)."g\\x7Ai\\x6E".chr(102)
 '1'=>'Z', '0'=>'q', '3'=>'6', '2'=>'H', '5'=>'V', '4'=>'M'
 '1'=>'d', '0'=>'e', '3'=>'C', '2'=>'U', '5'=>'6', '4'=>'V'
 '1'=>'z', '0'=>'G', '3'=>'5', '2'=>'X', '5'=>'N', '4'=>'V'
-s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg
 "b" . "a" . "s" . "e" . "6" . "4" . "_" . "d" . "e" . "c" . "o" . "d" . "e"
 eval/**test*/(/**test*/$config/**test*/(/**test*/
 $wordpress('eNqN/U+r9Eq75gd+lWo48J4DNVBIqVVP1uEYHmUqpFSmQkuh+CNF0
@@ -202,3 +201,6 @@ preg_replace('/ad/e','@'.str_rot13(
 $aa = explode('}">', $a);
 array (q,w,e,r,t,y,u,i,o,p,a,s,d,f,g,h,j,k,l,z,x
 str_replace("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+if(isset($_GET["ickey"])){echo"<font color=#FFFFFF>[uname]".php_uname()
+eval(base64_decode("ICAgIGVycm9yX3JlcG9ydGluZygwKTsgICRscnUgPSAiZ2cvNDcwNTYxN
+return $str ? '=?utf-8?B?'.base64_encode($str).'?=' : null
