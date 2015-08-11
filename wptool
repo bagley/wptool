@@ -1436,27 +1436,27 @@ Usage: wpscan [quick|full]\n\t\t\n
   if [[ $1 == "quick" ]] ; then
     [[ $2 != "script" ]] && echo -e "\n\n\tStarting quickscan...\n"
     if [[ $quiet == 'o' ]] ; then
-      LC_ALL=C fgrep -F -ilr$quiet --include  \*.php "$scan_strings" *.php \
+      LC_ALL=C fgrep -F -ilr$quiet --include  \*.php\* "$scan_strings" *.php \
         ./wp-admin ./wp-content ./wp-includes
     else
-      LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php "$scan_strings" *.php \
+      LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php\* "$scan_strings" *.php \
         ./wp-admin ./wp-content ./wp-includes  | cut -c1-200
     fi
   
   elif [[ $1 == "rquick" ]] || [[ $1 == "quickall" ]] ; then
     [[ $2 != "script" ]] && echo -e "\n\n\tStarting recursive quickscan...\n"
     if [[ $quiet == 'o' ]] ; then
-      LC_ALL=C fgrep -F -ilr$quiet --include  \*.php "$scan_strings" \
-        *.php ./wp-admin ./wp-content ./wp-includes \
-        */*.php ./*/wp-admin ./*/wp-content ./*/wp-includes \
-        */*/*.php ./*/*/wp-admin ./*/*/wp-content ./*/*/wp-includes \
-        */*/*/*.php ./*/*/*/wp-admin ./*/*/*/wp-content ./*/*/*/wp-includes 2>/dev/null
+      LC_ALL=C fgrep -F -ilr$quiet --include  \*.php\* "$scan_strings" \
+        *.php* ./wp-admin ./wp-content ./wp-includes \
+        */*.php* ./*/wp-admin ./*/wp-content ./*/wp-includes \
+        */*/*.php* ./*/*/wp-admin ./*/*/wp-content ./*/*/wp-includes \
+        */*/*/*.php* ./*/*/*/wp-admin ./*/*/*/wp-content ./*/*/*/wp-includes 2>/dev/null
     else
-      LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php "$scan_strings" \
-        *.php ./wp-admin ./wp-content ./wp-includes \
-        */*.php ./*/wp-admin ./*/wp-content ./*/wp-includes \
-        */*/*.php ./*/*/wp-admin ./*/*/wp-content ./*/*/wp-includes \
-        */*/*/*.php ./*/*/*/wp-admin ./*/*/*/wp-content ./*/*/*/wp-includes 2>/dev/null | cut -c1-200
+      LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php\* "$scan_strings" \
+        *.php* ./wp-admin ./wp-content ./wp-includes \
+        */*.php* ./*/wp-admin ./*/wp-content ./*/wp-includes \
+        */*/*.php* ./*/*/wp-admin ./*/*/wp-content ./*/*/wp-includes \
+        */*/*/*.php* ./*/*/*/wp-admin ./*/*/*/wp-content ./*/*/*/wp-includes 2>/dev/null | cut -c1-200
     fi  
   
   elif [[ $1 == "full" ]] ; then
