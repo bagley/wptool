@@ -1333,7 +1333,7 @@ Usage: wpscan [quick|full]\n\t\t\n
 \t\t Scans the core files, plugins, and themes.\n
 \tfull
 \t\t Scans all files in the current directory and down.\n
-\t[quick|full] quiet
+\t[quick|full|rquick] quiet
 \t\t Only show the actual phrase matched. Not the whole line.\n
 
 \tYou can use your own list of strings to search for.
@@ -1386,7 +1386,8 @@ Usage: wpscan [quick|full]\n\t\t\n
     return
     
   # if this is a scan and the scan string is empty, load it.
-  elif [[ $1 == "full" || $1 == "quick" || $1 == "pics" ]] ; then
+  elif [[ $1 == "full" || $1 == "quick" || $1 == "pics" ]] || \
+    [[ $1 == "rquick" ]] || [[ $1 == "quickall" ]] ; then
     if [[ -z $scan_strings ]] ; then
       __wpscan_get_strings $2 || return 9
       scan_strings=$get_strings
@@ -1441,6 +1442,23 @@ Usage: wpscan [quick|full]\n\t\t\n
       LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php "$scan_strings" *.php \
         ./wp-admin ./wp-content ./wp-includes  | cut -c1-200
     fi
+  
+  elif [[ $1 == "rquick" ]] || [[ $1 == "quickall" ]] ; then
+    [[ $2 != "script" ]] && echo -e "\n\n\tStarting recursive quickscan...\n"
+    if [[ $quiet == 'o' ]] ; then
+      LC_ALL=C fgrep -F -ilr$quiet --include  \*.php "$scan_strings" \
+        *.php ./wp-admin ./wp-content ./wp-includes \
+        */*.php ./*/wp-admin ./*/wp-content ./*/wp-includes \
+        */*/*.php ./*/*/wp-admin ./*/*/wp-content ./*/*/wp-includes \
+        */*/*/*.php ./*/*/*/wp-admin ./*/*/*/wp-content ./*/*/*/wp-includes 2>/dev/null
+    else
+      LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php "$scan_strings" \
+        *.php ./wp-admin ./wp-content ./wp-includes \
+        */*.php ./*/wp-admin ./*/wp-content ./*/wp-includes \
+        */*/*.php ./*/*/wp-admin ./*/*/wp-content ./*/*/wp-includes \
+        */*/*/*.php ./*/*/*/wp-admin ./*/*/*/wp-content ./*/*/*/wp-includes 2>/dev/null | cut -c1-200
+    fi  
+  
   elif [[ $1 == "full" ]] ; then
     echo -e "\n\n\tStarting full scan...\n"
     if [[ $quiet == 'o' ]] ; then
