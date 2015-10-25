@@ -1,0 +1,5 @@
+The tool in this folder is for pasting the program into the shell/terminal rather than downloading remotely.
+
+Use create-paste-into-shell.sh to create the actual paste-into-shell file.
+
+Copy the contents of that file and paste it into a terminal. This will load the program into the current shell.
