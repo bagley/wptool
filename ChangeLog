@@ -1,5 +1,28 @@
 ChangeLog:
 
+1.8.3.1
+
+* wpscan: Added new command 'rquick' to recursively scan
+   all WP installs below the current directory. Also scans
+   for .php5 and other uncommon php files.
+* New paste-into-shell script to create code to paste directly 
+   into a shell/terminal, as an alternitive to downloading.
+- More scan strings
+
+
+1.8.3
+
+* On wpcore reinstall of core files, check for hacked files.
+- wplogin: do not redirect after login, as can only 
+   work on versions of WP after 3.5.
+- More scan strings. 
+
+
+1.8.2
+
+- Reformatting of help pages
+
+
 1.8.1
 
 * 'wplogin' gives a quick link to access the site as an admin user.
