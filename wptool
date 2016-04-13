@@ -345,6 +345,7 @@ function wpconn() {
     deleteme_pass="$wp_rand_string"
     q=$q'INSERT INTO '$dbprefix'users (user_login, user_pass, user_email) VALUES ("deleteme", MD5("'$deleteme_pass'"), "deleteme@example.com"); SET @new_id=LAST_INSERT_ID(); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'capabilities", '"'a:1:{s:13:\"administrator\";b:1;}'"'); INSERT INTO '$dbprefix'usermeta (user_id,meta_key,meta_value) VALUES (@new_id, "'$dbprefix'user_level", 10); SELECT @new_id;'
   elif [[ $1 == "wptablesize" ]] ; then
+    # show columns here as the user needs to see them to understand the db size.
     mysql -u "$dbuser" -p"$dbpass" -h "$dbhost" -e 'SELECT TABLE_NAME, 
       table_rows, round(((data_length + index_length) / 1024 / 1024),2) \
       "Size in MB" FROM information_schema.TABLES WHERE table_schema = "'$dbname'";'
@@ -378,7 +379,11 @@ function wpconn() {
 #fi
   else echo -e "\tInvalid argument was given to wpconn... nothing to do" && return 1
   fi
-  myconn=$(mysql -u "$dbuser" -p"$dbpass" -h "$dbhost" -e "$q" 2>&1)
+  # --skip-column-names do not show columns as they will get in the way
+  # (and some versions of mysql show them while others dont)
+  # and dont use the users default config.
+  myconn=$(mysql --skip-column-names -u "$dbuser" -p"$dbpass" -h "$dbhost" -e "$q" 2>&1 | \
+    grep -v 'Warning: Using a password on the command line')
   if [[ 1 -eq 0 ]]; then #Debug
     echo -e "\nConnected to the database..."
     echo -e "Query:\n\n\t$q"
@@ -390,14 +395,14 @@ function wpconn() {
   # check that we saved it properly
   if [[ $1 == "wpplugrestoreall" ]]; then 
     wpconn "wpplug"
-    wpt_disabled_plugins_test=$(echo "$myconn" | tail -n +2)
+    wpt_disabled_plugins_test=$(echo "$myconn")
     if [[ "$wpt_disabled_plugins_test" != "$wpt_disabled_plugins" ]] ; then
       echo "I checked the actual saved active_plugins and it doesn't match what it should be"
       return 9
     fi
   elif [[ $1 == "wpplugset" ]]; then 
     wpconn "wpplug"
-    wpt_plugins_set_test=$(echo "$myconn" | tail -n +2)
+    wpt_plugins_set_test=$(echo "$myconn")
     if [[ "$wpt_plugins_set_test" != "$wpt_plugins_set" ]] ; then
       echo "I checked the actual saved active_plugins key and it doesn't match what it should be"
       return 9
@@ -499,7 +504,7 @@ function wpurl() {
     echo "$myconn" | awk 'END{print $3}'
     return
   fi
-  [[ $1 == "-q" ]] && wpconn "wpurl" && echo "$myconn" | tail -n +2 && return
+  [[ $1 == "-q" ]] && wpconn "wpurl" && echo "$myconn" && return
   echo
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "This tool returns the current URL settings in the database, or updates them to a specified URL.
@@ -612,7 +617,7 @@ Usage:\twpurl [URL]
   elif [[ -z "$1" ]] ; then
     wpconn "wpurl"
     [[ -z $myconn ]] && echo -e "\thome:\tnot found\n\tsiteurl:\tnot found\n" && return
-    echo -e "$myconn" | tail -n +2 | awk '{print "\t"$2"("$1"):\t"$3}'
+    echo -e "$myconn" | awk '{print "\t"$2"("$1"):\t"$3}'
   else
     echo "Unknown option"
   fi
@@ -787,16 +792,16 @@ function wpuser() {
   elif [[ $myconn != "ERROR"* ]]; then
     if [[ -z $1 ]]; then  
       echo -e "\t(only showing upto 23 users. To see all use 'wpuser all')\n"
-      echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
-    elif [[ $1 == "all" ]]; then echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
-    elif [[ $1 == "admins" ]]; then echo -e "\tAdmins:\n";echo -e "$myconn" | tail -n +2 | awk '{print "\t"$1":\t"$2}'
+      echo -e "$myconn" | awk '{print "\t"$1":\t"$2}'
+    elif [[ $1 == "all" ]]; then echo -e "$myconn" | awk '{print "\t"$1":\t"$2}'
+    elif [[ $1 == "admins" ]]; then echo -e "\tAdmins:\n";echo -e "$myconn" | awk '{print "\t"$1":\t"$2}'
     elif [[ $1 == "-q" ]]; then echo $(echo -e "$myconn" | tail -1)
     elif [[ $2 == "-p" ]]; then echo -e "Updated password for user $1 ('$(echo -e "$myconn" | tail -1)') to '$3'..."
     elif [[ $2 == "-u" ]]; then echo -e "Updated username for user $1 from '$(echo -e "$myconn" | tail -1)' to '$3'..."
     elif [[ $2 == "-a" ]]; then echo -e "Promoted user $1 to admin..."
     elif [[ $2 == "-d" ]]; then echo -e "\nDeleted user $1 ('$(echo -e "$myconn" | tail -1)')..."
     elif [[ $1 == "new" || $1 == "-n" ]]; then echo -e "Created new admin (user '$(echo -e "$myconn" | tail -1)') with username 'deleteme'\n\n and password '$deleteme_pass'...\n\nMake sure to delete or rename this user"!
-    elif [[ -z $2 ]]; then echo -e "$myconn" | tail -n +2
+    elif [[ -z $2 ]]; then echo -e "$myconn"
     fi
   else echo "$myconn"
   fi
@@ -852,7 +857,8 @@ function wplogin() {
     return
   fi
   # __admin_id="$(echo -e $myconn | tail +1 | awk 'NF-1 {print ( $(NF-1) )}')"
-  __admin_id="$(echo $myconn | awk '{if (NR==1) {print $3}}')"
+  # changed from if (NR==1) {print $3} to if (NR==1) {print $1}.
+  __admin_id="$(echo $myconn | awk '{if (NR==1) {print $1}}')"
   # check that it is a number
   case $__admin_id in
     ''|*[!0-9]*) 
@@ -1025,7 +1031,7 @@ Usage: wpplug [disable <plugin>|disable-all|restore-all|disable-all-via-folder]
       echo "There was a database error: $myconn"
       return 9
     fi
-    wpt_disabled_plugins=$(echo "$myconn" | tail -n +2)
+    wpt_disabled_plugins=$(echo "$myconn")
     if [[ -z "$wpt_disabled_plugins" ]] ; then
       echo "Failed to get a list of plugins... or is active_plugins empty?"
       echo "Nothing done"
@@ -1077,7 +1083,7 @@ Usage: wpplug [disable <plugin>|disable-all|restore-all|disable-all-via-folder]
       echo "There was a database error: $myconn"
       return 9
     fi
-    active=$(echo "$myconn" | tail -n +2)
+    active=$(echo "$myconn")
     #__wpt_which_tool php-cli php
     #$php_cli=$found_tool
     __wpt_get_php_inline
@@ -1109,7 +1115,7 @@ function __wpt_disable_plugin() {
       echo "There was a database error: $myconn"
       return 9
   fi
-  active=$(echo "$myconn" | tail -n +2)
+  active=$(echo "$myconn")
 #    php -q <<"EOF"
 #    <?php
 #      \$plugin_list=unserialize('\'$active');
@@ -1790,11 +1796,20 @@ edit_desc="
 \t              Easily disable and reenable all plugins.\n"
 __wptool_to_show_or_not
 
+# Fixed mysql output
+edit="1460524933"
+edit_desc="
+\t This includes a fix to the mysql output. The output was
+\t including the column header and was messing up multiple
+\t commands like wpplugin and wpuser. 
+\t But it's now back to working order on the effected mysql versions.\n"
+__wptool_to_show_or_not
+
 # ------- End Changes ----------
 
 
 #search, multisite
-wptoolv="1.8.3.1"
+wptoolv="1.8.3.5"
 echo -e "\n    Injected WPtool $wptoolv into the current session.\n
        For details and tool list,   type 'wptool'
        For manual and instructions, type 'wptool man'
