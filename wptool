@@ -1810,22 +1810,21 @@ __wptool_to_show_or_not
 
 #search, multisite
 wptoolv="1.8.3.5"
-echo -e "\n    Injected WPtool $wptoolv into the current session.\n
-       For details and tool list,   type 'wptool'
-       For manual and instructions, type 'wptool man'
-       For a full list of changes,  type 'wptool changes'\n"
-
-
-# display them if we have any
-if [[ -n "$recent_changes" ]] ; then
-  echo -en "\n    Recent Big Improvements and New Things for WPTool:\n$recent_changes\n"
-  #echo -e "\t*To see all changes and updates run 'wptool changes'"
-fi
+#echo -e "\n    Injected WPtool $wptoolv into the current session.\n
+#       For details and tool list,   type 'wptool'
+#       For manual and instructions, type 'wptool man'
+#       For a full list of changes,  type 'wptool changes'\n"
 
 wptool
 
+# display them if we have any
 if [[ -n "$recent_changes" ]] ; then
-  echo "                Scroll up to see a list of recent updates."
+  echo -en "\n         ===  Recent Improvements and New Things for WPTool  ===\n$recent_changes\n"
+  #echo -e "\t*To see all changes and updates run 'wptool changes'"
 fi
+
+#if [[ -n "$recent_changes" ]] ; then
+#  echo "                Scroll up to see a list of recent updates."
+#fi
 
 unset HISTFILE
