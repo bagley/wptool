@@ -2,6 +2,21 @@ function now() {
   date -u +"%Y%m%d-%H%M%S"
 }
 
+# remove specific aliases that may cause troubles
+remove_aliases="mysql echo tail mkdir awk fgrep egrep"
+for ALIAS in $remove_aliases ; do
+  if [ -n "$(alias -p | grep "alias $ALIAS=")" ] ; then
+    unalias $ALIAS
+  fi
+done
+
+# only remove grep if it is using something other than --color
+if [ -n "$(alias -p | grep "alias grep=")" ] ; then
+  if [ -z "$(alias -p | grep "alias grep='grep --color'")" ] ; then
+    unalias grep
+  fi
+fi
+
 function wpcore() {
   if [[ $1 == "--help" || $1 == "-h" ]]; then
     echo -e "
