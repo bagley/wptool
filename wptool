@@ -397,7 +397,7 @@ function wpconn() {
   # --skip-column-names do not show columns as they will get in the way
   # (and some versions of mysql show them while others dont)
   # and dont use the users default config.
-  myconn=$(mysql --skip-column-names -u "$dbuser" -p"$dbpass" -h "$dbhost" -e "$q" 2>&1 | \
+  myconn=$(mysql --skip-column-names --batch -u "$dbuser" -p"$dbpass" -h "$dbhost" -e "$q" 2>&1 | \
     grep -v 'Warning: Using a password on the command line')
   if [[ 1 -eq 0 ]]; then #Debug
     echo -e "\nConnected to the database..."
