@@ -1458,45 +1458,45 @@ Usage: wpscan [quick|full]\n\t\t\n
     [[ $2 != "script" ]] && echo -e "\n\n\tStarting quickscan...\n"
     if [[ $quiet == 'o' ]] ; then
       LC_ALL=C fgrep -F -ilr$quiet --include  \*.php\* "$scan_strings" *.php \
-        ./wp-admin ./wp-content ./wp-includes
+        "$(pwd)/wp-admin" "$(pwd)/wp-content" $(pwd)/wp-includes"
     else
       LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php\* "$scan_strings" *.php \
-        ./wp-admin ./wp-content ./wp-includes  | cut -c1-200
+        "$(pwd)/wp-admin" "$(pwd)/wp-content" $(pwd)/wp-includes" | cut -c1-200
     fi
   
   elif [[ $1 == "rquick" ]] || [[ $1 == "quickall" ]] ; then
     [[ $2 != "script" ]] && echo -e "\n\n\tStarting recursive quickscan...\n"
     if [[ $quiet == 'o' ]] ; then
       LC_ALL=C fgrep -F -ilr$quiet --include  \*.php\* "$scan_strings" \
-        *.php* ./wp-admin ./wp-content ./wp-includes \
-        */*.php* ./*/wp-admin ./*/wp-content ./*/wp-includes \
-        */*/*.php* ./*/*/wp-admin ./*/*/wp-content ./*/*/wp-includes \
-        */*/*/*.php* ./*/*/*/wp-admin ./*/*/*/wp-content ./*/*/*/wp-includes 2>/dev/null
+        $(pwd)/*.php* $(pwd)/wp-admin $(pwd)/wp-content $(pwd)/wp-includes \
+        $(pwd)/*/*.php* $(pwd)/*/wp-admin $(pwd)/*/wp-content $(pwd)/*/wp-includes \
+        $(pwd)/*/*/*.php* $(pwd)/*/*/wp-admin $(pwd)/*/*/wp-content $(pwd)/*/*/wp-includes \
+        $(pwd)/*/*/*/*.php* $(pwd)/*/*/*/wp-admin $(pwd)/*/*/*/wp-content $(pwd)/*/*/*/wp-includes 2>/dev/null
     else
       LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php\* "$scan_strings" \
-        *.php* ./wp-admin ./wp-content ./wp-includes \
-        */*.php* ./*/wp-admin ./*/wp-content ./*/wp-includes \
-        */*/*.php* ./*/*/wp-admin ./*/*/wp-content ./*/*/wp-includes \
-        */*/*/*.php* ./*/*/*/wp-admin ./*/*/*/wp-content ./*/*/*/wp-includes 2>/dev/null | cut -c1-200
     fi  
   
+      $(pwd)/*.php* $(pwd)/wp-admin $(pwd)/wp-content $(pwd)/wp-includes \
+      $(pwd)/*/*.php* $(pwd)/*/wp-admin $(pwd)/*/wp-content $(pwd)/*/wp-includes \
+      $(pwd)/*/*/*.php* $(pwd)/*/*/wp-admin $(pwd)/*/*/wp-content $(pwd)/*/*/wp-includes \
+      $(pwd)/*/*/*/*.php* $(pwd)/*/*/*/wp-admin $(pwd)/*/*/*/wp-content $(pwd)/*/*/*/wp-includes | cut -c1-200
   elif [[ $1 == "full" ]] ; then
     echo -e "\n\n\tStarting full scan...\n"
     if [[ $quiet == 'o' ]] ; then
-      LC_ALL=C fgrep -F -ilr$quiet "$scan_strings" ./
+      LC_ALL=C fgrep -F -ilr$quiet "$scan_strings" "$(pwd)"
     else
-      LC_ALL=C fgrep -F -ir$quiet --color=always "$scan_strings" ./  | cut -c1-200
+      LC_ALL=C fgrep -F -ir$quiet --color=always "$scan_strings" "$(pwd)"  | cut -c1-200
     fi
     #LC_ALL=C grep -a -F -n -r -f ./search-strings.txt ./ | cut -c1-200
-  
+
   elif [[ $1 == "pics" ]] ; then
     echo -e "\n\n\tStarting picture scan...\n"
     if [[ $quiet == 'o' ]] ; then
       LC_ALL=C fgrep -F -ilr$quiet --include "*.jpg" --include "*.jpeg" \
-          --include "*.png" --include "*.bmp" --include "*.gif" '<?php' ./
+          --include "*.png" --include "*.bmp" --include "*.gif" '<?php' "$(pwd)"
     else
       LC_ALL=C fgrep -F -ir$quiet --color=always  --include "*.jpg" --include "*.jpeg" \
-          --include "*.png" --include "*.bmp" --include "*.gif" '<?php' ./ | cut -c1-200
+          --include "*.png" --include "*.bmp" --include "*.gif" '<?php' "$(pwd)" | cut -c1-200
     fi
     
   else
