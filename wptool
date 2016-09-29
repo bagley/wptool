@@ -1474,12 +1474,11 @@ Usage: wpscan [quick|full]\n\t\t\n
         $(pwd)/*/*/*/*.php* $(pwd)/*/*/*/wp-admin $(pwd)/*/*/*/wp-content $(pwd)/*/*/*/wp-includes 2>/dev/null
     else
       LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php\* "$scan_strings" \
-    fi  
-  
-      $(pwd)/*.php* $(pwd)/wp-admin $(pwd)/wp-content $(pwd)/wp-includes \
-      $(pwd)/*/*.php* $(pwd)/*/wp-admin $(pwd)/*/wp-content $(pwd)/*/wp-includes \
-      $(pwd)/*/*/*.php* $(pwd)/*/*/wp-admin $(pwd)/*/*/wp-content $(pwd)/*/*/wp-includes \
-      $(pwd)/*/*/*/*.php* $(pwd)/*/*/*/wp-admin $(pwd)/*/*/*/wp-content $(pwd)/*/*/*/wp-includes | cut -c1-200
+        $(pwd)/*.php* $(pwd)/wp-admin $(pwd)/wp-content $(pwd)/wp-includes \
+        $(pwd)/*/*.php* $(pwd)/*/wp-admin $(pwd)/*/wp-content $(pwd)/*/wp-includes \
+        $(pwd)/*/*/*.php* $(pwd)/*/*/wp-admin $(pwd)/*/*/wp-content $(pwd)/*/*/wp-includes \
+        $(pwd)/*/*/*/*.php* $(pwd)/*/*/*/wp-admin $(pwd)/*/*/*/wp-content $(pwd)/*/*/*/wp-includes | cut -c1-200
+    fi
   elif [[ $1 == "full" ]] ; then
     echo -e "\n\n\tStarting full scan...\n"
     if [[ $quiet == 'o' ]] ; then
