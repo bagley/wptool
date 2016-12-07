@@ -512,10 +512,11 @@ Again, the strings have no effect on the accounts that the script is loaded into
 
 ##Credits
 
-Developers: Thomas Bradshaw and Matt Bagley
+Current Developer and Maintainer: Matt Bagley
 
-Script pimp: Jacob Cloutier 
+Based on the original code by Thomas Bradshaw and Jacob Cloutier (not associated with this fork).
 
-Checked and approved by RVD, Brent Lundell and Jason Earl.
+Contributors:
+Cameron Larsen - database repair/optimization, additional malware rules and methods, recursive re-installing.
 
-This version/fork is maintained by Matt Bagley.
+To have your name added for code/help you have added (some people don't want their name on here), either email/message me, or send me a pull request!
