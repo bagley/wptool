@@ -4,6 +4,13 @@
 |      Todo  List      |
 |                      |
  ----------------------
+/////////////// HIGH PRIORITY ////////////////////
+Need to change the wpscan function to use grep -E
+to make searches more powerful. Stings list is 
+getting bloated and the ability to pattern match
+will help immenseley. 
+//////////////////////////////////////////////////
+
 
 wpplug findbroken (disables plugins one by one until 500 goes away)
 
