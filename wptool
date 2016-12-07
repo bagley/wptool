@@ -1557,10 +1557,10 @@ Usage: wpscan [quick|full]\n\t\t\n
     [[ $2 != "script" ]] && echo -e "\n\n\tStarting quickscan...\n"
     if [[ $quiet == 'o' ]] ; then
       LC_ALL=C fgrep -F -ilr$quiet --include  \*.php\* "$scan_strings" *.php \
-        "$(pwd)/wp-admin" "$(pwd)/wp-content" $(pwd)/wp-includes"
+        "$(pwd)/wp-admin" "$(pwd)/wp-content" "$(pwd)/wp-includes"
     else
       LC_ALL=C fgrep -F -ir$quiet --color=always --include  \*.php\* "$scan_strings" *.php \
-        "$(pwd)/wp-admin" "$(pwd)/wp-content" $(pwd)/wp-includes" | cut -c1-200
+        "$(pwd)/wp-admin" "$(pwd)/wp-content" "$(pwd)/wp-includes" | cut -c1-200
     fi
   
   elif [[ $1 == "rquick" ]] || [[ $1 == "quickall" ]] ; then
