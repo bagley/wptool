@@ -365,6 +365,17 @@ function wpconn() {
       table_rows, round(((data_length + index_length) / 1024 / 1024),2) \
       "Size in MB" FROM information_schema.TABLES WHERE table_schema = "'$dbname'";'
       return
+  
+  elif [[ $1 == "wpdbrepair" ]]   ; then 
+    mysqlcheck -p"$dbpass" -u "$dbuser" -h "$dbhost" "$dbname" -r 2>&1 | egrep -v '(Warning: Using a password on the command line|Warning: Using a password on the command line interface can be insecure)'
+    retval=$?
+    [ $retval -eq 0 ] && echo "Successfully repaired database" || echo "FAILED to repair database"
+    return $retval
+  elif [[ $1 == "wpdboptimize" ]] ; then 
+    mysqlcheck -p"$dbpass" -u "$dbuser" -h "$dbhost" "$dbname" -o 2>&1 | egrep -v '(Warning: Using a password on the command line|Warning: Using a password on the command line interface can be insecure)'
+    retval=$?
+    [ $retval -eq 0 ] && echo "Successfully optimized database" || echo "FAILED to optimize database"
+    return $retval
   elif [[ $1 == "wpdbsize" ]] ; then
 #if [ 1 == 1 ] ; then
 #    # get db size and number of tables and other info
@@ -434,7 +445,9 @@ function wpdb() {
     echo -e "\t-i FILE\n\t\texport current database to file FILE.\n\t\tThe specified FILE must end in .sql\n"
     echo -e "\t-e [FILE]\n\t\texport current database to optional file FILE.\n\t\tIf a FILE is specified, it must end in .sql\n"
     echo -e "\t-s\n\t\tshow the size of all tables and the database\n"
-    echo -e "\t-oa\n\t\trepair and optimize all wordpress databases\n"
+    echo -e "\t-o\n\t\toptimize the wordpress database\n"
+    echo -e "\t-r\n\t\toptimize and repair the wordpress database\n"
+    echo -e "\t-oa|--fix-all\n\t\trepair and optimize all wordpress databases\n"
     echo -e "\t-t\n\tcheck the number of transients in the _options table"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
@@ -444,14 +457,28 @@ function wpdb() {
   echo -e "\tTransient Count: $(u=$(wpdb | grep -i user | awk '{print $3}'); p=$(wpdb | grep -i pass | awk '{print $3}'); d=$(wpdb | grep -i name | awk '{print $3}'); pfx=$(wpdb | grep -i prefix | awk '{print $3}'); t="options"; mysql -p$p -u $u $d -e "SELECT COUNT(*) FROM $pfx$t WHERE option_name LIKE ('_transient_%')" | grep -Eo '[0-9]+')"
   fi
   
-  if [[ $1 == '-oa' ]] ; then
-  for i in $(find $(pwd) -iname 'wp-config.php' | sed 's/wp-config.php//g'); do echo $i; cd $i; u=$(wpdb | grep -i user | awk '{print $3}'); p=$(wpdb | grep -i pass | awk '{print $3}'); d=$(wpdb | grep -i name | awk '{print $3}'); mysqlcheck -p$p -u $u $d -r; mysqlcheck -p$p -u $u $d -o; done
+  if [[ $1 == '-oa' ]] || [[ $1 == '--fix-all' ]] ; then
+    current_dir="$(pwd)"
+    for i in $(find $(pwd) -iname 'wp-config.php' | sed 's/wp-config.php//g'); do 
+      echo "Repairing and Optimizing $i"
+      cd $i
+      wpconn wpdbrepair
+      wpconn wpdboptimize
+      return
+    done
+    cd "$current_dir"
   fi 
   
   if [[ $1 == '-o' ]] ; then
-  u=$(wpdb | grep -i user | awk '{print $3}'); p=$(wpdb | grep -i pass | awk '{print $3}'); d=$(wpdb | grep -i name | awk '{print $3}'); mysqlcheck -p$p -u $u $d -r; mysqlcheck -p$p -u $u $d -o;
+    wpconn wpdboptimize
+    return
   fi 
   
+  if [[ $1 == '-r' ]] ; then
+    wpconn wpdbrepair
+    wpconn wpdboptimize
+    return
+  fi
   if [[ $1 == '-s' ]] ; then
     if [[ $2 == '-q' ]] ; then
       wpconn "wpdbsize"
