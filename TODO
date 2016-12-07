@@ -198,6 +198,9 @@ https://ithemes.com/2015/04/20/coordinated-wordpress-plugin-security-update/
 - WordPress SEO
 - Broken-Link-Checker
 
+Make a random file with the database file for each run (remove when finished)
+this is much safer than on the command line (but per mysql docs, command line is still safer than env variable)
+
  ----------------------
 |                      |
 |       Finished       |

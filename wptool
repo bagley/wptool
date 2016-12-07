@@ -376,6 +376,9 @@ function wpconn() {
     retval=$?
     [ $retval -eq 0 ] && echo "Successfully optimized database" || echo "FAILED to optimize database"
     return $retval
+    
+  elif [[ $1 == "wpdbtransientscount" ]] ; then q=$q'SELECT COUNT(*) FROM '$dbprefix'options WHERE option_name LIKE ("'%\_transient\_%'")'
+  elif [[ $1 == "wpdbtransientsremove" ]] ; then q=$q'DELETE FROM '$dbprefix'options WHERE option_name LIKE ("'%\_transient\_%'")'
   elif [[ $1 == "wpdbsize" ]] ; then
 #if [ 1 == 1 ] ; then
 #    # get db size and number of tables and other info
@@ -409,7 +412,7 @@ function wpconn() {
   # (and some versions of mysql show them while others dont)
   # and dont use the users default config.
   myconn=$(mysql --skip-column-names --batch -u "$dbuser" -p"$dbpass" -h "$dbhost" -e "$q" 2>&1 | \
-    grep -v 'Warning: Using a password on the command line')
+    egrep -v '(Warning: Using a password on the command line|Warning: Using a password on the command line interface can be insecure)')
   if [[ 1 -eq 0 ]]; then #Debug
     echo -e "\nConnected to the database..."
     echo -e "Query:\n\n\t$q"
@@ -449,12 +452,28 @@ function wpdb() {
     echo -e "\t-r\n\t\toptimize and repair the wordpress database\n"
     echo -e "\t-oa|--fix-all\n\t\trepair and optimize all wordpress databases\n"
     echo -e "\t-t\n\tcheck the number of transients in the _options table"
+    echo -e "\t--rt\n\tremove all transients from the _options table"
     return
   elif [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! && return 9
   fi
   
   if [[ $1 == '-t' ]] ; then
-  echo -e "\tTransient Count: $(u=$(wpdb | grep -i user | awk '{print $3}'); p=$(wpdb | grep -i pass | awk '{print $3}'); d=$(wpdb | grep -i name | awk '{print $3}'); pfx=$(wpdb | grep -i prefix | awk '{print $3}'); t="options"; mysql -p$p -u $u $d -e "SELECT COUNT(*) FROM $pfx$t WHERE option_name LIKE ('_transient_%')" | grep -Eo '[0-9]+')"
+    wpconn wpdbtransientscount
+    transients="$(echo $myconn | grep -Eo '[0-9]+')"
+    echo -e "\n\tTotal Transients: $transients\n"
+    return
+  fi
+  if [[ $1 == '--rt' ]] ; then
+    # count how many we have now
+    wpconn wpdbtransientscount
+    transients_before="$(echo $myconn | grep -Eo '[0-9]+')"
+    # remove them
+    wpconn wpdbtransientsremove
+    # get the count now, and show how many we removed.
+    wpconn wpdbtransientscount
+    transients_after="$(echo $myconn | grep -Eo '[0-9]+')"
+    echo -e "\n\t$(expr $transients_before - $transients_after) transients removed ($transients_after left)\n"
+    return
   fi
   
   if [[ $1 == '-oa' ]] || [[ $1 == '--fix-all' ]] ; then
@@ -479,6 +498,7 @@ function wpdb() {
     wpconn wpdboptimize
     return
   fi
+  
   if [[ $1 == '-s' ]] ; then
     if [[ $2 == '-q' ]] ; then
       wpconn "wpdbsize"
