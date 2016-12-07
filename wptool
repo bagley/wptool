@@ -1407,7 +1407,7 @@ Usage: wpscan [quick|full]\n\t\t\n
     return
     
   # if this is a scan and the scan string is empty, load it.
-  elif [[ $1 == "full" || $1 == "quick" || $1 == "pics" ]] || \
+  elif [[ $1 == "full" || $1 == "quick" || $1 == "list" || $1 == "pics" ]] || \
     [[ $1 == "rquick" ]] || [[ $1 == "quickall" ]] ; then
     if [[ -z $scan_strings ]] ; then
       __wpscan_get_strings $2 || return 9
@@ -1486,7 +1486,16 @@ Usage: wpscan [quick|full]\n\t\t\n
     else
       LC_ALL=C fgrep -F -ir$quiet --color=always "$scan_strings" "$(pwd)"  | cut -c1-200
     fi
-    #LC_ALL=C grep -a -F -n -r -f ./search-strings.txt ./ | cut -c1-200
+    #LC_ALL=C grep -a -F -n -r -f ./search-strings.txt $(pwd) | cut -c1-200
+  
+  elif [[ $1 == "list" ]] ; then
+    echo -e "\n\n\tGenerating List...\n"
+    if [[ $quiet == 'o' ]] ; then
+      LC_ALL=C fgrep -F -ilr$quiet "$scan_strings" $(pwd)
+    else
+      LC_ALL=C fgrep -F -ilr$quiet "$scan_strings" $(pwd) | cut -c1-200 | sort | uniq
+    fi
+    #LC_ALL=C grep -a -F -n -r -f ./search-strings.txt $(pwd) | cut -c1-200 | sed 's/:/ /g' | awk '{print $1}' | sort | uniq
 
   elif [[ $1 == "pics" ]] ; then
     echo -e "\n\n\tStarting picture scan...\n"
