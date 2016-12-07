@@ -38,8 +38,8 @@ specified version.
 \t\twordpress or install a brand new installation.
 \t    #.#.#\n\t\tDownload and install/replace a specific version of 
 \t\tthe Wordpress core, in the form of #.#.#
-\t    ca\n\t\tDownload and replace core files for all installations
-\t    ua\n\t\tUpdate all insatllations to the current version
+\t    curall|ca\n\t\tDownload and replace core files for all installations
+\t    updateall|ua\n\t\tUpdate all installations to the current version
 "
     return
   elif [[ $1 == "cur" ]]; then file=wordpress-$(wpver -q | tail -n 1 | awk '{print $1}')
@@ -49,10 +49,27 @@ specified version.
   else file="latest"
   fi
 
-  if [[ "$1" == "ca" ]]; then for i in $(find $(pwd) -iname 'wp-config.php' | sed 's/wp-config.php//g'); do ver=`cd $i && wpver |grep 'WP version' | grep -Eo '[0-9]+\.[0-9]+(\.[0-9]{1,2})?' | uniq ` ; echo $i; echo $ver; cd $i && wpcore $ver; done
+  if [[ "$1" == "ca" ]] || [[ "$1" == "curall" ]] ; then 
+    current_dir="$(pwd)"
+    for i in $(find $(pwd) -iname 'wp-config.php' | sed 's/wp-config.php//g'); do
+      cd "$i"
+      echo "Entering site $i"
+      ver=`wpver | grep 'WP version' | grep -Eo '[0-9]+\.[0-9]+(\.[0-9]{1,2})?' | uniq `
+      echo "Reintalling core files for version $ver"
+      wpcore $ver
+    done
+    cd "$current_dir"
+    return
   fi
 
-  if [[ "$1" == "ua" ]]; then for i in $(find $(pwd) -iname 'wp-config.php' | sed 's/wp-config.php//g'); do wpcore new; done
+  if [[ "$1" == "ua" ]] || [[ "$1" == "updateall" ]]; then 
+    current_dir="$(pwd)"
+    for i in $(find $(pwd) -iname 'wp-config.php' | sed 's/wp-config.php//g'); do
+      cd "$i"
+      wpcore new
+    done
+    cd "$current_dir"
+    return
   fi
 
   if [[ "$file" == "wordpress-Unknown" ]]; then
@@ -490,7 +507,7 @@ function wpdb() {
     current_dir="$(pwd)"
     for i in $(find $(pwd) -iname 'wp-config.php' | sed 's/wp-config.php//g'); do 
       echo "Repairing and Optimizing $i"
-      cd $i
+      cd "$i"
       wpconn wpdbrepair
       wpconn wpdboptimize
       return
@@ -797,11 +814,18 @@ This tool returns the current install's file and database versions.
 
 \t    -q\n\t\tdisplay abbreviated version output
 \t    -h\n\t\tdisplay this help output
-\t    -a\n\t\tprint the path and version for all wordpress installations
+\t    --all\n\t\tprint the path and version for all wordpress installations
 "
     return
   fi
-  if [[ "$1" == "-a" ]]; then for i in $(find $(pwd) -iname 'wp-config.php' | sed 's/wp-config.php//g'); do ver=`cd $i && wpver -q | awk '{print $1}'`; echo "$i -- WP Version: $ver"; done
+  if [[ "$1" == "-a" ]] | [[ "$1" == "--all" ]]; then 
+    echo
+    for i in $(find $(pwd) -iname 'wp-config.php' | sed 's/wp-config.php//g'); do 
+      ver=`cd "$i" && wpver -q | awk '{print $1}'`
+      echo "$i -- WP Version: $ver"
+    done
+    echo
+    return
   fi
   local filever="Unknown"
   local dbver="Unknown"
