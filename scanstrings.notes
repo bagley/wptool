@@ -1,0 +1,18 @@
+gzinflate
+\\x67\\x7A\\x69\\x6E\\x66\\x6C\\x61\\x74\\x65
+
+base64_decode
+\\x62\\x61\\x73\\x65\\x36\\x34\\x5F\\x64\\x65\\x63\\x6F\\x64\\x65
+
+php
+"\\xEF\\xBB\\xBF"
+
+this is base64 for 'base64_decode'
+YmFzZTY0X2RlY29kZQ==
+
+preg_replace
+chr(112)."re".chr(103)."_\x72epl\x61".chr(99).chr(101)
+
+eval(
+chr(101)."\x76\x61l\x28"
+
