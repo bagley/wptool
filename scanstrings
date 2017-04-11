@@ -207,7 +207,6 @@ return $str ? '=?utf-8?B?'.base64_encode($str).'?=' : null
 GLOBALS.*x61
 IGlmICgg
 x77.x69.x76
-hacked by
 filesman
 c99shell
 POST.*do.*brut
