@@ -22,7 +22,6 @@ if(strtoupper(substr(PHP_OS, 0, 3) ) == "WIN")
 copy("endless.html
 system("wget
 symlink("/","sym/root");
-@copy($_FILES['file']['tmp_name']
 error_reporting(0);if(
 x6C\\x28\\x67\\x7A\\x69
 "/.*/e","\\x28\\x65\\x76\\x61
@@ -209,7 +208,6 @@ GLOBALS.*x61
 'IGlmICgg
 "IGlmICgg
 x77.x69.x76
-filesman
 c99shell
 POST.*do.*brut
 5UpbRhpW

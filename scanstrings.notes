@@ -16,3 +16,9 @@ chr(112)."re".chr(103)."_\x72epl\x61".chr(99).chr(101)
 eval(
 chr(101)."\x76\x61l\x28"
 
+remove: filesman
+In moodle: private $filesmanifest; // manifest of files to send to mahara (set during prepare_package
+
+remove: @copy($_FILES['file']['tmp_name']
+it's in prestashop.
+
