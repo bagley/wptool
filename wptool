@@ -1796,13 +1796,13 @@ function wptool() {
       | sed 's/####/* /g' | sed 's/###//g' | sed 's/##//g' |less
     return
   fi
-  echo -e "
-  _       ______  __              __
- | |     / / __ \/ /_____  ____  / /
- | | /| / / /_/ / __/ __ \/ __ \/ /
- | |/ |/ / ____/ /_/ /_/ / /_/ / /
- |__/|__/_/    \__/\____/\____/_/
-                    a toolkit production
+  echo "
+  _       ______  __              __  __  __
+ | |     / / __ \/ /_____  ____  / /  \ \/ /
+ | | /| / / /_/ / __/ __ \/ __ \/ /    \ \/
+ | |/ |/ / ____/ /_/ /_/ / /_/ / /     /\ \ 
+ |__/|__/_/    \__/\____/\____/_/     /_/\_\treeme Version
+                    a fixit now production
 
   WPtool $wptoolv is suite of bash functions to administer Wordpress installs.
   It assumes you are running said functions in the site's root folder. Each
@@ -1921,11 +1921,20 @@ edit_desc="
 \t But it's now back to working order on the effected mysql versions.\n"
 __wptool_to_show_or_not
 
+edit="1492132559"
+edit_desc="
+\t - Repair and optimize the database with: wpdb -r|-o
+\t - Reinstall all wordpress files in current and sub folders with:
+\t     wpcore --all
+\t - Fixed the quick scans to get all the .php files.
+\t - More scan strings.\n"
+__wptool_to_show_or_not
+
 # ------- End Changes ----------
 
 
 #search, multisite
-wptoolv="1.8.3.5"
+wptoolv="1.8.5"
 #echo -e "\n    Injected WPtool $wptoolv into the current session.\n
 #       For details and tool list,   type 'wptool'
 #       For manual and instructions, type 'wptool man'

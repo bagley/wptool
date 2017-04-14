@@ -1,5 +1,13 @@
 ChangeLog:
 
+1.8.5
+
+* Repair and optimize the database with: wpdb -r|-o
+* Reinstall all wordpress files in current and sub folders with:
+    wpcore --all
+- Fixed the quick scans to get all the .php files.
+- More scan strings
+
 1.8.3.1
 
 * wpscan: Added new command 'rquick' to recursively scan
