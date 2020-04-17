@@ -3,7 +3,7 @@ WPTool
 
 The WPtool is suite of (SSH) bash functions to administer Wordpress installs. With this tool you will be able to determine problems and make changes that we find to be most common among Wordpress users.
 
-**Features**
+## Features
 
 * Auto removal of tool once SSH session ends.
 * Login as any user on the site, or make a new user. (wpuser/wplogin)
@@ -17,10 +17,10 @@ The WPtool is suite of (SSH) bash functions to administer Wordpress installs. Wi
 * Quickly backup and restore the site (wpbackup/wprestore)
 * Scan for common malware (wpscan)
 * Man pages for each command for quick syntax references:
-    command -h
+    `command -h`
 
 
-##How to load it
+## How to load it
 
 Once you have made a SSH connection to an account with wordpress installed run this command:
 
@@ -37,7 +37,7 @@ If you would like to use newer features you can use the devel branch. Or you can
 
 *Hosting Note: If you plan on putting wptool on your own server/website, like onto a hosting account you have, please see the note in the "Hosting WPTool" section before doing so.*
 
-##Some Basic Starting Options
+## Some Basic Starting Options
 
 Here are some basic ones to get you started off right:
 
@@ -51,18 +51,18 @@ wpfix    <--- This will quickly clear up most caches and clear things up. Also t
 
 Towards the bottom I have some scenarios of what commands to use in common situations, like a wsod.
 
-##Commands
+## Commands
 
 Here is a list of all the commands and how to use them.
 
-###wptool
+### wptool
 This tool shows a quick guide and lists the commands injected by the wptool kit.
 
     wptool
 
 ---------
 
-###wpstats
+### wpstats
 
 This tool returns a basic overview of the Wordpress install.
 
@@ -70,7 +70,7 @@ This tool returns a basic overview of the Wordpress install.
 
 ---------
 
-###wpurl
+### wpurl
 
 This tool returns the current URL settings in the database, or updates them to a specified URL. It can also be used to replace existing urls in posts (useful in site moves).
 
@@ -93,14 +93,14 @@ Set the siteurl to [url]
 Set the homeurl to [url]
 
 	--sethome [url]
-  
+
 You may also use --site and --home to get just the siteurl and home.
 
 *Note: If the URL does not start with 'http://' or 'https://' it will automatically be prepended with 'http://'..*
 
 ---------
 
-###wptheme
+### wptheme
 
 This tool returns the current theme, as well as listing any available ones found in the wp-content/themes folder. It also can change to a specified stylesheet, template, both, or to a new copy of twentytwelve.
 
@@ -126,7 +126,7 @@ Installs a brand new twentytweleve theme for testing and renames the old one. Us
 
 ---------
 
-###wpdb
+### wpdb
 
 This tool tests the database connectivity based on settings in the wp-config.php file, and can import/export a database based on its settings.
 
@@ -160,7 +160,7 @@ Output will look like:
 
 -------
 
-###wpplug
+### wpplug
 
 This tool does basic plugin functions, such as displaying active and available plugins, or disabling them all.
 
@@ -186,12 +186,12 @@ Restore the plugins that were active before, as --disable-all saves them to $wpt
 Disables plugins by renaming the plugin folder (warning! may cause data loss).
 
     disable-all-via-folder
-		
+
 
 
 ---------
 
-###wpht
+### wpht
 
 This tool uses wordpress to create a fresh .htaccess file with required wordpress settings. Please note that the original .htaccess is renamed. This command has no options.
 
@@ -200,7 +200,7 @@ This tool uses wordpress to create a fresh .htaccess file with required wordpres
 --------
 
 
-###wpcore
+### wpcore
 
 This tool downloads the latest core, a new core of the current version, or a specified version while leaving wp-config.php and wpcontent untouched.
 
@@ -223,20 +223,20 @@ Download and install/replace the newest version of the core wordpress files. Thi
 Download and install/replace a specific version of the Wordpress core, in the form of #.#.#
 
     wpcore #.#.#
-    
+
     # example:
     wpcore 4.0.0
 
 -------
 
-###wpfix
+### wpfix
 
 This tool runs various built-in Wordpress functions and fixes, and a few others.
 
 Clear WordPress's cache and runs any needed database updates.
 This is safe, as it's what you normally do when you upgrade WP
 
-    wpfix 
+    wpfix
 
 Fix the permissions of WP files to writeable.
 
@@ -245,7 +245,7 @@ Fix the permissions of WP files to writeable.
 
 ---------
 
-###wpuser
+### wpuser
 
 This tool performs various user functions, including creating access links to allow you to enter wordpress as any user, returning info for a specified user, changing usernames, passwords, changing a user to an admin, creating new admin users, and deleting users.
 
@@ -260,28 +260,28 @@ Create a link that will allow you to enter the  WordPress site as the given user
     wpuser 1 -l
 
  Return details about specified user USERID
-     
+
     wpuser USERID
     # example: get the info of user 1
     wpuser 1
-    
+
 Change username of user USERID to NAME
 
     wpuser USERID -u NAME
     # example: change the name of user 1 to mark
     wpuser 1 -u mark
 
-Change password of user USERID to PASS 
+Change password of user USERID to PASS
 
     wpuser USERID -p PASS
     # example: change the password of user 4
     wpuser 4 -p My@New%Prase!
 
-Promote user USERID to admin 
+Promote user USERID to admin
 
     wpuser USERID -a
 
-Delete user USERID 
+Delete user USERID
 
     wpuser USERID -d
 
@@ -292,7 +292,7 @@ Create a new admin user. The user will be called 'deleteme' and will be given a 
 
 -----
 
-###wperr
+### wperr
 
 This tool shows the last few lines of the error_log and wp-admin/error_log if they exist. It has no options.
 
@@ -300,7 +300,7 @@ This tool shows the last few lines of the error_log and wp-admin/error_log if th
 
 --------
 
-###wpscan
+### wpscan
 
 This tool will scan the site for signs of malware. Note that is is **not** a complete solution. It only helps you out in determining if you have breaking. It does not fix it. It will give you several false positives. But it's helpful.
 
@@ -325,7 +325,7 @@ In short, the following methods are optional.
 Show a list of the scan strings that are currently loaded.
 
 	wpscan show-strings
-		
+
 Optional method to set the strings back to the default list. Optionally specify devel or alpha to use the strings located in those branches. They might be new, or they might not.
 
 	wpscan default-strings [devel|alpha]
@@ -335,13 +335,15 @@ You may also override the strings with your own set(s).
 Set any custom strings to this variable to be included in the scan. Use single quotes (') and separate each with a '\n':
 
   extra_strings='strings'
-  
+
 For example:
 
-  # first set the extra strings to use:
-  extra_strings='string1\nstring2\nstring3'
-  # then run the scan. It will automatically add the strings to the current list.
-  wpscan full
+```
+# first set the extra strings to use:
+extra_strings='string1\nstring2\nstring3'
+# then run the scan. It will automatically add the strings to the current list.
+wpscan full
+```
 
 Load your own strings from the given address. See the scanstrings file for an example. Default strings are not be added if you do this first, as they are only loaded on a empty string list. So do this after loading the default strings if you want to use those.
 
@@ -354,7 +356,7 @@ Clear out all scan strings.
 
 ---------		
 
-###wpbackup
+### wpbackup
 
 This tool creates a backup of db and/or files.
 
@@ -374,7 +376,7 @@ Makes a backup of database and files.
 
 ------
 
-###wprestore
+### wprestore
 
 This too restores the database. It is a shortcut to wpdb -i /file.
 
@@ -394,15 +396,15 @@ Restores from a sql.gz file w/o checking it's type.
 
 --------
 
-###wpver
+### wpver
 
 This tool shows the WordPress file and database versions.
 
 ---------
 
-##Common Scenarios and What to do
+## Common Scenarios and What to do
 
-### Have a white screen (wsod)
+### You get a white screen (wsod)
 
 Check the error logs.
 
@@ -439,17 +441,17 @@ That's the simple answer. But if that fails (and let me know the details, if you
 
 ---------
 
-##Previous Versions
+## Previous Versions
 
 This is how to use previous versions, which is useful if I change or break something (I am human). As we are using git, it makes it trivial to to this.
 
-####Browse for the file
+#### Browse for the file
 
 This way may be the simplest. Either click on Commits or Releases, and then click the one you want. Then click on the 'wptool' file. It will shows the code, but we want the Raw file. So click where it says Raw. It will then show the file. Copy the link and replace ADDRESS with it below:
 
     . <(curl -sS ADDRESS)
 
-####By Version
+#### By Version
 
 To use a particular version number, just substitute VERSION below with the version you would like to use:
 
@@ -459,7 +461,7 @@ For example, to use version v1.7.5.1 we would use:
 
     . <(curl -sS https://raw.githubusercontent.com/bagley/wptool/v1.7.5.1/wptool)
 
-####By Commit
+#### By Commit
 
  You can either browse the commits and get the file path, or if you get the commit hash just put it in:
 
@@ -472,11 +474,11 @@ For example, to use commit b0381758e548cb8bf6bca8ef209ff4869dca89ff we would use
 
 --------
 
-##Development Versions
+## Development Versions
 
 The devel and alpha branches contain the most recent changes that are being tested out before rolling out a release. I do this because the main code is constantly being used by people on various sites. I can't just roll out a change and "hope for the best."
 
-####Development Branch
+#### Development Branch
 
 The Development branch (devel) is code that while being new, has been tested and used by me. It may still have issues, but most of the bugs should be gone.
 
@@ -494,7 +496,7 @@ But if you want the latest and greatest, or you want to help out, or you are jus
 
 ------
 
-##Hosting WPTool
+## Hosting WPTool
 
 WPTool is free software, and you are welcome to copy it to your host/website/etc as you see fit.
 
@@ -510,7 +512,7 @@ Again, the strings have no effect on the accounts that the script is loaded into
 
 --------
 
-##Credits
+## Credits
 
 Current Developer and Maintainer: Matt Bagley
 
