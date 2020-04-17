@@ -1,7 +1,21 @@
-WPTool
+WPTool (DEPRECATED)
 ======
 
 The WPtool is suite of (SSH) bash functions to administer Wordpress installs. With this tool you will be able to determine problems and make changes that we find to be most common among Wordpress users.
+
+## No Longer Maintained
+
+> tl;dr I'm not updating it anymore, but you can use WP-CLI instead.
+
+Long ago, in a tech center far away, there was a really helpful droid, I mean tool, called `wptool` that assisted techs in helping customers repair and manage their WordPress installations.
+
+But life changes, and I've moved on to other things (such as [Jekyll](https://jekyllrb.com/) and [Hugo](https://gohugo.io/)), and haven't done anything with WordPress in a long time. This tool doesn't work with the latest versions, and I've decided to archive it. Feel free to fork and update it if you wish. You can still use `wpscan` to scan sites for malware, as that should always work, even on non-WordPress sites that are still PHP-based.
+
+One tool you may look into using is [WP-CLI](https://wp-cli.org/). Here is their [command page](https://developer.wordpress.org/cli/commands/) for how to use it.
+
+For a command line tool to login as a given user, there is a WP-CLI plugin called [WP-CLI Login Command](https://github.com/aaemnnosttv/wp-cli-login-command). See the page for how to install and use it. You may also need to enable permalinks on the site.
+
+I hope that will get you in the right direction. This was a fun project, and I'm glad it helped some people out.
 
 ## Features
 
@@ -18,7 +32,6 @@ The WPtool is suite of (SSH) bash functions to administer Wordpress installs. Wi
 * Scan for common malware (wpscan)
 * Man pages for each command for quick syntax references:
     `command -h`
-
 
 ## How to load it
 
